@@ -99,8 +99,18 @@ UPDATE users SET role = 'admin' WHERE email = 'sizin@mailiniz.com';
 
 ## 📸 Ekran Görüntüleri
 
-<!-- Ekran görüntülerini buraya ekleyin -->
-<!-- Örnek: ![Ana Sayfa](screenshots/landing.png) -->
+### Ana Sayfa
+![Ana Sayfa](screenshots/ss3.png)
+
+### Üyelik Paketleri
+![Giriş](screenshots/ss5.png)
+
+### Kişiselleştirilmiş Fitness Programı
+![Fitness Programı](screenshots/ss1.png)
+![Fitness Programı](screenshots/ss2.png)
+
+### PT Üyelerim
+![PT Üyelerim](screenshots/ss4.png)
 
 ## 📝 Not
 
