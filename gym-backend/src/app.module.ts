@@ -40,6 +40,16 @@ import { ProgramsService } from './programs/programs.service';
 
 import { FitnessProgram } from './programs/entities/fitness-program.entity';
 
+import { CheckIn } from './check-ins/entities/check-in.entity';
+
+import { CheckInsController } from './check-ins/check-ins.controller';
+import { CheckInsService } from './check-ins/check-ins.service';
+
+import { DashboardController } from './dashboard/dashboard.controller';
+import { DashboardService } from './dashboard/dashboard.service';
+
+import { AiProgramService } from './programs/ai-program.service';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -50,11 +60,11 @@ import { FitnessProgram } from './programs/entities/fitness-program.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, MembershipPlan, Enrollment, Exercise, WorkoutProgram, HealthProfile, FitnessProgram],
+      entities: [User, MembershipPlan, Enrollment, Exercise, WorkoutProgram, HealthProfile, FitnessProgram, CheckIn],
       synchronize: true,         // Tabloları otomatik oluşturur (dev için)
       logging: false,
     }),
-    TypeOrmModule.forFeature([User, MembershipPlan, Enrollment, Exercise, WorkoutProgram, HealthProfile, FitnessProgram]),
+    TypeOrmModule.forFeature([User, MembershipPlan, Enrollment, Exercise, WorkoutProgram, HealthProfile, FitnessProgram, CheckIn]),
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
@@ -70,6 +80,8 @@ import { FitnessProgram } from './programs/entities/fitness-program.entity';
     UsersController,
     HealthProfilesController,
     ProgramsController,
+    CheckInsController,
+    DashboardController,
   ],
   providers: [
     AuthService,
@@ -81,6 +93,9 @@ import { FitnessProgram } from './programs/entities/fitness-program.entity';
     UsersService,
     HealthProfilesService,
     ProgramsService,
+    CheckInsService,
+    DashboardService,
+    AiProgramService,
   ],
 })
 export class AppModule {}

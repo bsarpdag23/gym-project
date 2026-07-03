@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';import { Enrollment } from '../../enrollments/entities/enrollment.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn, BeforeInsert } from 'typeorm';import { Enrollment } from '../../enrollments/entities/enrollment.entity';
 import { WorkoutProgram } from '../../workout-programs/entities/workout-program.entity';
+import { randomBytes } from 'crypto';
 
 export enum UserRole {
   ADMIN   = 'admin',
@@ -43,4 +44,13 @@ export class User {
 
   @Column({ nullable: true })
   assignedTrainerId: number | null;
+
+  @Column({ nullable: true, unique: true })
+  qrToken: string;
+
+  @BeforeInsert()
+  generateQrToken() {
+    // 32 karakterlik rastgele, tahmin edilemez token
+    this.qrToken = randomBytes(16).toString('hex');
+  }
 }

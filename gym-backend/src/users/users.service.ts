@@ -119,4 +119,13 @@ export class UsersService {
     }
     return result;
   }
+  // Giriş yapan kullanıcının kendi bilgisi (QR token dahil)
+  findMe(userId: number) {
+    return this.repo.findOne({
+      where: { id: userId },
+      select: {
+        id: true, email: true, fullName: true, role: true, qrToken: true,
+      },
+    });
+  }
 }

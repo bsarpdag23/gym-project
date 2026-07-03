@@ -1,5 +1,6 @@
 // src/App.js  ← mevcut içeriği TAMAMEN sil, bunu yapıştır
 import React, { useState, useEffect } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 
 const API_URL = 'http://localhost:3001';
 
@@ -31,6 +32,7 @@ const api = {
     getTrainers:  ()          => api.req('/users/trainers'),
     assignTrainer:(id, trainerId) => api.req(`/users/${id}/trainer`, { method:'PATCH', body: JSON.stringify({ trainerId }) }),
     getMyMembers: () => api.req('/users/my-members'),
+    getMe: () => api.req('/users/me'),
   },
   plans: {
     getAll:  ()      => api.req('/membership-plans'),
@@ -66,6 +68,13 @@ const api = {
     generate: () => api.req('/programs/generate', { method:'POST' }),
     active:   () => api.req('/programs/active'),
     history:  () => api.req('/programs/history'),
+  },
+  checkIns: {
+    scan:    (qrToken) => api.req('/check-ins/scan', { method:'POST', body: JSON.stringify({ qrToken }) }),
+    getAll:  ()        => api.req('/check-ins'),
+  },
+  dashboard: {
+    getStats: () => api.req('/dashboard/stats'),
   },
 };
 
@@ -470,6 +479,10 @@ function AdminDashboard({ user, onLogout }) {
   const [programs, setPrograms] = useState([]);
   const [modal, setModal]       = useState(null);
   const [form, setForm]         = useState({});
+  const [scanToken, setScanToken] = useState('');
+  const [scanResult, setScanResult] = useState(null);
+  const [checkIns, setCheckIns] = useState([]);
+  const [stats, setStats] = useState(null);
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
   const load = async () => {
@@ -482,6 +495,8 @@ function AdminDashboard({ user, onLogout }) {
       if (tab === 'plans')       setPlans(await api.plans.getAll());
       if (tab === 'enrollments') setEnr(await api.enrollments.getAll());
       if (tab === 'exercises')   setExs(await api.exercises.getAll());
+      if (tab === 'checkin') setCheckIns(await api.checkIns.getAll());
+      if (tab === 'dashboard') setStats(await api.dashboard.getStats());
       if (tab === 'programs') {
         const [p, e] = await Promise.all([api.programs.getAll(), api.exercises.getAll()]);
         setPrograms(p); setExs(e);
@@ -542,9 +557,23 @@ function AdminDashboard({ user, onLogout }) {
   const addEx  = async (pid, eid) => { try { await api.programs.addExercise(pid, eid);  load(); } catch(e){ alert(e.message); } };
   const dropEx = async (pid, eid) => { try { await api.programs.dropExercise(pid, eid); load(); } catch(e){ alert(e.message); } };
 
+const doScan = async () => {
+    if (!scanToken.trim()) return;
+    try {
+      const result = await api.checkIns.scan(scanToken.trim());
+      setScanResult({ ok: true, data: result });
+      setScanToken('');
+      if (tab === 'checkin') setCheckIns(await api.checkIns.getAll()); // listeyi tazele
+    } catch (e) {
+      setScanResult({ ok: false, message: e.message });
+    }
+  };
+
   const ALL_TABS = [
+    { id:'dashboard',   label:'📊 Dashboard',           roles:['admin'] },
     { id:'users',       label:'🧑‍🤝‍🧑 Üyeler',          roles:['admin','trainer'] },
     { id:'mymembers',   label:'💪 PT Üyelerim',         roles:['trainer'] },
+    { id:'checkin',     label:'🚪 Giriş Kayıtları',      roles:['admin','trainer'] },
     { id:'plans',       label:'📦 Üyelik Paketleri',    roles:['admin'] },
     { id:'enrollments', label:'👥 Üyelikler',           roles:['admin','trainer'] },
     { id:'exercises',   label:'🏋️ Egzersizler',         roles:['admin','trainer'] },
@@ -815,6 +844,137 @@ function AdminDashboard({ user, onLogout }) {
           </div>
         )}
 
+        {tab === 'checkin' && (
+          <div>
+            <h2 style={{ margin:'0 0 16px' }}>🚪 Üye Girişi (Check-in)</h2>
+
+            {/* Okutma alanı */}
+            <Card style={{ marginBottom:20 }}>
+              <p style={{ color:'#6b7280', fontSize:13, margin:'0 0 12px' }}>
+                Üyenin QR kodunu okutun veya token'ı girin.
+              </p>
+              <div style={{ display:'flex', gap:10 }}>
+                <div style={{ flex:1 }}>
+                  <Input
+                    value={scanToken}
+                    onChange={(e) => setScanToken(e.target.value)}
+                    placeholder="QR token..."
+                  />
+                </div>
+                <Btn onClick={doScan} style={{ height:44 }}>Giriş Yap</Btn>
+              </div>
+
+              {/* Sonuç */}
+              {scanResult && (
+                <div style={{
+                  marginTop:16, padding:'14px 18px', borderRadius:10,
+                  background: scanResult.ok ? '#f0fdf4' : '#fef2f2',
+                  border: `1px solid ${scanResult.ok ? '#86efac' : '#fca5a5'}`,
+                }}>
+                  {scanResult.ok ? (
+                    <div>
+                      <div style={{ fontSize:16, fontWeight:700, color:'#16a34a' }}>
+                        ✅ {scanResult.data.message}
+                      </div>
+                      <div style={{ fontSize:13, color:'#6b7280', marginTop:6 }}>
+                        Paket: {scanResult.data.plan || '—'} · Geçerlilik: {scanResult.data.validUntil}
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ fontSize:15, fontWeight:600, color:'#dc2626' }}>
+                      ❌ {scanResult.message}
+                    </div>
+                  )}
+                </div>
+              )}
+            </Card>
+
+            {/* Son girişler */}
+            <h3 style={{ margin:'0 0 12px' }}>Son Girişler ({checkIns.length})</h3>
+            <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+              {checkIns.length === 0 && (
+                <Card style={{ textAlign:'center', padding:30, color:'#9ca3af' }}>
+                  Henüz giriş kaydı yok.
+                </Card>
+              )}
+              {checkIns.map(c => (
+                <Card key={c.id} style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                  <div style={{ fontWeight:600 }}>{c.member?.fullName || 'Bilinmeyen üye'}</div>
+                  <div style={{ color:'#9ca3af', fontSize:13 }}>
+                    {new Date(c.checkInTime).toLocaleString('tr')}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+{tab === 'dashboard' && (
+          <div>
+            <h2 style={{ margin:'0 0 20px' }}>📊 Genel Bakış</h2>
+
+            {!stats ? (
+              <Card style={{ textAlign:'center', padding:40 }}>Yükleniyor...</Card>
+            ) : (
+              <>
+                {/* Sayı kartları */}
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))', gap:16, marginBottom:24 }}>
+                  {[
+                    { label:'Toplam Üye',      value: stats.totalMembers,       icon:'👥', color:'#3b82f6' },
+                    { label:'Aktif Üyelik',    value: stats.activeEnrollments,  icon:'🎫', color:'#10b981' },
+                    { label:'Toplam Gelir',    value: `${stats.totalRevenue.toLocaleString('tr')} ₺`, icon:'💰', color:'#e94560' },
+                    { label:'Bugünkü Giriş',   value: stats.todayCheckIns,      icon:'🚪', color:'#8b5cf6' },
+                  ].map(k => (
+                    <Card key={k.label} style={{ borderLeft:`4px solid ${k.color}` }}>
+                      <div style={{ fontSize:28, marginBottom:8 }}>{k.icon}</div>
+                      <div style={{ fontSize:30, fontWeight:800, color:k.color }}>{k.value}</div>
+                      <div style={{ fontSize:13, color:'#6b7280', marginTop:4 }}>{k.label}</div>
+                    </Card>
+                  ))}
+                </div>
+
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))', gap:16 }}>
+                  {/* Popüler paketler */}
+                  <Card>
+                    <h3 style={{ margin:'0 0 14px', fontSize:16 }}>🏆 En Popüler Paketler</h3>
+                    {stats.popularPlans.length === 0 ? (
+                      <p style={{ color:'#9ca3af', fontSize:13 }}>Henüz satış yok.</p>
+                    ) : (
+                      <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+                        {stats.popularPlans.map((p, i) => (
+                          <div key={p.name} style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                            <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                              <span style={{ fontWeight:700, color:'#9ca3af' }}>{i + 1}.</span>
+                              <span style={{ fontSize:14 }}>{p.name || 'Bilinmeyen'}</span>
+                            </div>
+                            <Badge label={`${p.count} satış`} color="#3b82f6" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </Card>
+
+                  {/* Rol dağılımı */}
+                  <Card>
+                    <h3 style={{ margin:'0 0 14px', fontSize:16 }}>👤 Kullanıcı Dağılımı</h3>
+                    <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+                      {stats.roleDistribution.map(r => (
+                        <div key={r.role} style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                          <span style={{ fontSize:14 }}>
+                            {r.role === 'admin' ? '⚙️ Admin' : r.role === 'trainer' ? '🏋️ Trainer' : '🏃 Üye'}
+                          </span>
+                          <Badge
+                            label={`${r.count} kişi`}
+                            color={r.role === 'admin' ? '#e94560' : r.role === 'trainer' ? '#8b5cf6' : '#10b981'} />
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                </div>
+              </>
+            )}
+          </div>
+        )}
       {modal && (
         <Modal title={`${modal.item ? 'Düzenle' : 'Yeni Ekle'} — ${
           modal.type==='plan'?'Üyelik Paketi':modal.type==='exercise'?'Egzersiz':'Program'}`}
@@ -1132,12 +1292,14 @@ function MemberDashboard({ user, onLogout }) {
   const [plans, setPlans]   = useState([]);
   const [mine, setMine]     = useState([]);
   const [progs, setProgs]   = useState([]);
+  const [me, setMe] = useState(null);
 
   const load = async () => {
     try {
       if (tab === 'plans')    setPlans((await api.plans.getAll()).filter(p => p.isActive));
       if (tab === 'mine')     setMine(await api.enrollments.getMine());
       if (tab === 'programs') setProgs(await api.programs.getAll());
+      if (tab === 'qr') setMe(await api.users.getMe());
     } catch (e) { alert(e.message); }
   };
   useEffect(() => { load(); }, [tab]);
@@ -1165,6 +1327,7 @@ function MemberDashboard({ user, onLogout }) {
             { id:'mine',     label:'🎫 Üyeliklerim' },
             { id:'programs', label:'📋 Programlar' },
             { id:'myprogram', label:'🎯 Programım' },
+            { id:'qr', label:'🧾 QR Kodum' }          
           ].map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{
               padding:'9px 22px', borderRadius:10, border:`2px solid ${tab===t.id?BRAND.primary:'#e5e7eb'}`,
@@ -1246,6 +1409,30 @@ function MemberDashboard({ user, onLogout }) {
           </div>
         )}
         {tab === 'myprogram' && <MyProgramTab />}
+        {tab === 'qr' && (
+          <div style={{ display:'flex', justifyContent:'center' }}>
+            <Card style={{ maxWidth:380, width:'100%', textAlign:'center', padding:32 }}>
+              <h3 style={{ margin:'0 0 6px' }}>📱 Giriş QR Kodum</h3>
+              <p style={{ color:'#6b7280', fontSize:13, margin:'0 0 24px' }}>
+                Salona girerken bu kodu görevliye okutun.
+              </p>
+              {me?.qrToken ? (
+                <>
+                  <div style={{ display:'inline-block', padding:20, background:'#fff',
+                    borderRadius:16, border:'1px solid #f0f0f0', boxShadow:'0 4px 16px rgba(0,0,0,.06)' }}>
+                    <QRCodeSVG value={me.qrToken} size={200} level="M" />
+                  </div>
+                  <div style={{ marginTop:20 }}>
+                    <div style={{ fontWeight:700, fontSize:16 }}>{me.fullName}</div>
+                    <div style={{ color:'#9ca3af', fontSize:12, marginTop:4 }}>Üye No: {me.id}</div>
+                  </div>
+                </>
+              ) : (
+                <p style={{ color:'#9ca3af' }}>QR kodunuz yükleniyor...</p>
+              )}
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );

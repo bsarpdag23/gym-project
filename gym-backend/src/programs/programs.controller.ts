@@ -13,6 +13,9 @@ export class ProgramsController {
   @Post('generate')
   generate(@Request() req) { return this.service.generate(req.user.userId); }
 
+@Post('generate-ai')
+  generateAI(@Request() req) { return this.service.generateWithAI(req.user.userId); }
+
   @Get('active')
   active(@Request() req) { return this.service.findActive(req.user.userId); }
 

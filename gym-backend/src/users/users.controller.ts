@@ -26,6 +26,11 @@ export class UsersController {
     return this.service.findMyMembers(req.user.userId);
   }
 
+  @Get('me')
+  findMe(@Request() req) {
+    return this.service.findMe(req.user.userId);
+  }
+
   @Patch(':id/role')
   @UseGuards(RolesGuard) @Roles('admin')
   updateRole(@Param('id') id: string, @Body() dto: UpdateRoleDto) {
