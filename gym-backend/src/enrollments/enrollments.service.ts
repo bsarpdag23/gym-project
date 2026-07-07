@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Enrollment } from './entities/enrollment.entity';
@@ -22,6 +22,27 @@ export class EnrollmentsService {
     if (!member) throw new NotFoundException('Kullanıcı bulunamadı');
     if (!plan)   throw new NotFoundException('Plan bulunamadı');
 
+    if (member.gymId !== plan.gymId) {
+      throw new BadRequestException('Bu paket sizin salonunuza ait değil.');
+    }
+
+    // ── YENİ: Zaten aktif üyeliği var mı? ──
+    const now = new Date();
+    const existingActive = await this.enrollRepo.findOne({
+      where: {
+        member: { id: userId },
+        status: 'active',
+      },
+      order: { endDate: 'DESC' },
+    });
+
+    if (existingActive && new Date(existingActive.endDate) >= now) {
+      throw new BadRequestException(
+        `Zaten aktif bir üyeliğiniz var (bitiş: ${existingActive.endDate}). Yeni üyelik için mevcut üyeliğinizin bitmesini bekleyin.`,
+      );
+    }
+
+    // ... geri kalan kod aynı (tarih hesabı, kaydetme) ...
     const startDate = new Date();
     const endDate   = new Date();
     endDate.setMonth(endDate.getMonth() + plan.durationMonths);
@@ -30,36 +51,74 @@ export class EnrollmentsService {
       member, plan, startDate, endDate,
       amountPaid: plan.price,
       status: 'active',
+      gymId: member.gymId,
     });
     return this.enrollRepo.save(enrollment);
   }
 
-  findAll() {
-    return this.enrollRepo.find({ 
-  relations: { member: true, plan: true } 
-});
+  // Süresi geçmiş 'active' üyelikleri 'expired' yap (lazy temizlik)
+  async expireOldEnrollments() {
+    const now = new Date();
+    await this.enrollRepo
+      .createQueryBuilder()
+      .update()
+      .set({ status: 'expired' })
+      .where('status = :active', { active: 'active' })
+      .andWhere('endDate < :now', { now })
+      .execute();
   }
 
-  findByUser(userId: number) {
+  async findAll(currentUser: any) {
+    await this.expireOldEnrollments();   // ← önce temizle
+
+
+    // Süper admin → tüm salonların üyelikleri; diğerleri → kendi salonu
+    const where =
+      currentUser.role === 'super_admin' ? {} : { gymId: currentUser.gymId };
+    return this.enrollRepo.find({
+      where,
+      relations: { member: true, plan: true },
+    });
+  }
+
+  async findByUser(userId: number) {
+    await this.expireOldEnrollments();
+
+    // Kullanıcı zaten kendi üyeliklerini görüyor — salon filtresi gereksiz
     return this.enrollRepo.find({
       where: { member: { id: userId } },
-    relations: { plan: true },
+      relations: { plan: true },
     });
   }
 
   findOne(id: number) {
-    return this.enrollRepo.findOne({ 
-  where: { id }, 
-  relations: { member: true, plan: true } 
-});
+    return this.enrollRepo.findOne({
+      where: { id },
+      relations: { member: true, plan: true },
+    });
   }
 
-  async update(id: number, dto: UpdateEnrollmentDto) {
+  async update(id: number, dto: UpdateEnrollmentDto, currentUser: any) {
+    const enrollment = await this.enrollRepo.findOne({ where: { id } });
+    if (!enrollment) throw new NotFoundException('Üyelik bulunamadı');
+
+    // Güvenlik: salon sahibi sadece kendi salonundaki üyeliği düzenleyebilir
+    if (currentUser.role !== 'super_admin' && enrollment.gymId !== currentUser.gymId) {
+      throw new BadRequestException('Bu üyelik sizin salonunuza ait değil.');
+    }
+
     await this.enrollRepo.update(id, dto);
     return this.findOne(id);
   }
 
-  async remove(id: number) {
+  async remove(id: number, currentUser: any) {
+    const enrollment = await this.enrollRepo.findOne({ where: { id } });
+    if (!enrollment) throw new NotFoundException('Üyelik bulunamadı');
+
+    if (currentUser.role !== 'super_admin' && enrollment.gymId !== currentUser.gymId) {
+      throw new BadRequestException('Bu üyelik sizin salonunuza ait değil.');
+    }
+
     await this.enrollRepo.delete(id);
     return { deleted: true };
   }

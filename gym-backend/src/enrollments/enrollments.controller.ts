@@ -20,8 +20,8 @@ export class EnrollmentsController {
   }
 
   @Get()
-  @UseGuards(RolesGuard) @Roles('admin', 'trainer')   // ← trainer da görebilir artık
-  findAll() { return this.service.findAll(); }
+  @UseGuards(RolesGuard) @Roles('super_admin', 'admin', 'trainer')
+  findAll(@Request() req) { return this.service.findAll(req.user); }
 
   @Get('my-enrollments')
   findMine(@Request() req) { return this.service.findByUser(req.user.userId); }
@@ -30,12 +30,14 @@ export class EnrollmentsController {
   findOne(@Param('id') id: string) { return this.service.findOne(+id); }
 
   @Patch(':id')
-  @UseGuards(RolesGuard) @Roles('admin')
-  update(@Param('id') id: string, @Body() dto: UpdateEnrollmentDto) {
-    return this.service.update(+id, dto);
+  @UseGuards(RolesGuard) @Roles('super_admin', 'admin')
+  update(@Param('id') id: string, @Body() dto: UpdateEnrollmentDto, @Request() req) {
+    return this.service.update(+id, dto, req.user);
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard) @Roles('admin')
-  remove(@Param('id') id: string) { return this.service.remove(+id); }
+  @UseGuards(RolesGuard) @Roles('super_admin', 'admin')
+  remove(@Param('id') id: string, @Request() req) {
+    return this.service.remove(+id, req.user);
+  }
 }

@@ -1,11 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn, BeforeInsert } from 'typeorm';import { Enrollment } from '../../enrollments/entities/enrollment.entity';
 import { WorkoutProgram } from '../../workout-programs/entities/workout-program.entity';
 import { randomBytes } from 'crypto';
+import { Gym } from '../../gyms/entities/gym.entity';
 
 export enum UserRole {
-  ADMIN   = 'admin',
+  SUPER_ADMIN = 'super_admin',   // ← platform sahibi (sen)
+  ADMIN = 'admin',                // salon sahibi
   TRAINER = 'trainer',
-  MEMBER  = 'member',
+  MEMBER = 'member',
 }
 
 @Entity('users')
@@ -47,6 +49,13 @@ export class User {
 
   @Column({ nullable: true, unique: true })
   qrToken: string;
+
+  @ManyToOne(() => Gym, { nullable: true })
+  @JoinColumn({ name: 'gymId' })
+  gym: Gym;
+
+  @Column({ nullable: true, type: 'int' })
+  gymId: number | null;   // süper admin için null olabilir
 
   @BeforeInsert()
   generateQrToken() {

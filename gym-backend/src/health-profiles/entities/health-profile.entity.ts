@@ -45,4 +45,7 @@ export class HealthProfile {
     from: (v) => parseFloat(v),
   }})
   bodyFatPercentage: number;  // opsiyonel
+
+  @Column({ nullable: true, type: 'int' })
+  gymId: number | null;
 }

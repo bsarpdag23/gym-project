@@ -53,4 +53,7 @@ export class FitnessProgram {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column({ nullable: true, type: 'int' })
+  gymId: number | null;
 }

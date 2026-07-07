@@ -14,11 +14,16 @@ export class CheckInsService {
   ) {}
 
   // QR token okutulunca giriş kontrolü + kaydı
-  async checkIn(qrToken: string) {
+  async checkIn(qrToken: string, currentUser: any) {
     // 1) Token kimin?
     const member = await this.userRepo.findOne({ where: { qrToken } });
     if (!member) {
       throw new NotFoundException('Geçersiz QR kod. Üye bulunamadı.');
+    }
+
+    // Güvenlik: görevli sadece kendi salonundaki üyeyi içeri alabilir
+    if (currentUser.role !== 'super_admin' && member.gymId !== currentUser.gymId) {
+      throw new BadRequestException('Bu üye sizin salonunuza ait değil.');
     }
 
     // 2) Aktif (süresi geçmemiş) üyeliği var mı?
@@ -29,7 +34,7 @@ export class CheckInsService {
         status: 'active',
       },
       relations: { plan: true },
-      order: { endDate: 'DESC' }, // en güncel biten üyelik
+      order: { endDate: 'DESC' },
     });
 
     if (!activeEnrollment) {
@@ -38,18 +43,16 @@ export class CheckInsService {
       );
     }
 
-    // Üyelik süresi dolmuş mu? (endDate geçmiş mi)
     if (new Date(activeEnrollment.endDate) < now) {
       throw new BadRequestException(
         `${member.fullName}: Üyeliğinizin süresi dolmuş (${activeEnrollment.endDate}). Girişe izin verilmedi.`,
       );
     }
 
-    // 3) Giriş kaydı oluştur
-    const checkIn = this.checkInRepo.create({ member });
+    // 3) Giriş kaydı oluştur (salona bağlı)
+    const checkIn = this.checkInRepo.create({ member, gymId: member.gymId });
     await this.checkInRepo.save(checkIn);
 
-    // 4) Başarılı sonucu dön
     return {
       success: true,
       message: `Hoş geldin, ${member.fullName}! 🎉`,
@@ -60,15 +63,18 @@ export class CheckInsService {
     };
   }
 
-  // Tüm giriş kayıtları (admin için, en yeni önce)
-  findAll() {
+  // Giriş kayıtları — salona göre filtreli
+  findAll(currentUser: any) {
+    const where =
+      currentUser.role === 'super_admin' ? {} : { gymId: currentUser.gymId };
     return this.checkInRepo.find({
+      where,
       relations: { member: true },
       order: { checkInTime: 'DESC' },
     });
   }
 
-  // Mevcut token'sız kullanıcılara toplu token üret (bir kerelik yardımcı)
+  // Bir kerelik: eski kullanıcılara token üret
   async backfillTokens() {
     const { randomBytes } = await import('crypto');
     const usersWithoutToken = await this.userRepo.find({ where: { qrToken: IsNull() } });

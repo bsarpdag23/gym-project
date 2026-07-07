@@ -29,4 +29,7 @@ price: number;
 
   @OneToMany(() => Enrollment, (e) => e.plan)
   enrollments: Enrollment[];
+
+  @Column({ nullable: true, type: 'int' })
+  gymId: number | null;
 }

@@ -11,11 +11,17 @@ export class MembershipPlansService {
     @InjectRepository(MembershipPlan) private repo: Repository<MembershipPlan>,
   ) {}
 
-  create(dto: CreateMembershipPlanDto) {
-    return this.repo.save(this.repo.create(dto));
-  }
+  create(dto: CreateMembershipPlanDto, user: any) {
+  const plan = this.repo.create({ ...dto, gymId: user.gymId });  // ← salona bağla
+  return this.repo.save(plan);
+}
 
-  findAll() { return this.repo.find(); }
+ findAll(user: any) {
+  if (user.role === 'super_admin') {
+    return this.repo.find();   // süper admin tüm salonların paketlerini görür
+  }
+  return this.repo.find({ where: { gymId: user.gymId } });
+}
 
   findOne(id: number) { return this.repo.findOne({ where: { id } }); }
 

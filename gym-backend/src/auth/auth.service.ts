@@ -15,16 +15,17 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-  const hashed = await bcrypt.hash(dto.password, 10);
-  const user   = this.usersRepo.create({
-    ...dto,
-    password: hashed,
-    role: UserRole.MEMBER,   // kim ne gönderirse göndersin, herkes member
-  });
-  await this.usersRepo.save(user);
-  const { password, ...result } = user;
-  return result;
-}
+    const hashed = await bcrypt.hash(dto.password, 10);
+    const user = this.usersRepo.create({
+      ...dto,
+      password: hashed,
+      role: UserRole.MEMBER,   // kim ne gönderirse göndersin, herkes member
+      gymId: dto.gymId,        // üye bu salona bağlanır
+    });
+    await this.usersRepo.save(user);
+    const { password, ...result } = user;
+    return result;
+  }
 
   async login(dto: LoginDto) {
     const user = await this.usersRepo.findOne({ where: { email: dto.email } });
@@ -33,10 +34,10 @@ export class AuthService {
       throw new UnauthorizedException('Geçersiz email veya şifre');
     }
 
-    const payload = { email: user.email, sub: user.id, role: user.role };
+    const payload = { email: user.email, sub: user.id, role: user.role, gymId: user.gymId };
     return {
       access_token: this.jwtService.sign(payload),
-      user: { id: user.id, email: user.email, fullName: user.fullName, role: user.role },
+      user: { id: user.id, email: user.email, fullName: user.fullName, role: user.role, gymId: user.gymId },
     };
   }
 }

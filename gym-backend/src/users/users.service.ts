@@ -1,9 +1,10 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Not } from 'typeorm';
 import { User, UserRole } from './entities/user.entity';
 import { Enrollment } from '../enrollments/entities/enrollment.entity';
 import { FitnessProgram } from '../programs/entities/fitness-program.entity';
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -12,9 +13,15 @@ export class UsersService {
     @InjectRepository(FitnessProgram) private programRepo: Repository<FitnessProgram>,
   ) {}
 
-  async findAll() {
-    // Tüm kullanıcılar (trainer bilgisiyle)
+  async findAll(currentUser: any) {
+    // Süper admin → tüm salonların kullanıcıları; salon sahibi → sadece kendi salonu
+    const baseWhere =
+      currentUser.role === 'super_admin'
+        ? { role: Not(UserRole.SUPER_ADMIN) }
+        : { gymId: currentUser.gymId, role: Not(UserRole.SUPER_ADMIN) };
+
     const users = await this.repo.find({
+      where: baseWhere,
       select: {
         id: true, email: true, fullName: true,
         role: true, phone: true, isActive: true,
@@ -24,7 +31,7 @@ export class UsersService {
       order: { id: 'DESC' },
     });
 
-    // PT'li aktif üyeliği olan üyelerin id'lerini tek sorguda çek
+    // PT'li aktif üyeliği olan üyelerin id'lerini çek (aynı salon kapsamında)
     const ptEnrollments = await this.enrollRepo.find({
       where: {
         status: 'active',
@@ -34,52 +41,67 @@ export class UsersService {
     });
     const ptMemberIds = new Set(ptEnrollments.map((e) => e.member.id));
 
-    // Her kullanıcıya hasActivePT bilgisini ekle
     return users.map((u) => ({
       ...u,
       hasActivePT: ptMemberIds.has(u.id),
     }));
   }
 
-  // Sadece trainer rolündeki kullanıcılar (atama dropdown'u için)
-  findTrainers() {
+  // Sadece trainer rolündeki kullanıcılar — kendi salonundan
+  findTrainers(currentUser: any) {
+    const where: any = { role: UserRole.TRAINER };
+    if (currentUser.role !== 'super_admin') {
+      where.gymId = currentUser.gymId;
+    }
     return this.repo.find({
-      where: { role: UserRole.TRAINER },
+      where,
       select: { id: true, fullName: true, email: true },
     });
   }
 
-  async updateRole(userId: number, role: string) {
+  async updateRole(userId: number, role: string, currentUser: any) {
     const validRoles = Object.values(UserRole);
     if (!validRoles.includes(role as UserRole)) {
       throw new BadRequestException('Geçersiz rol.');
     }
     const user = await this.repo.findOne({ where: { id: userId } });
     if (!user) throw new BadRequestException('Kullanıcı bulunamadı.');
+
+    // Güvenlik: salon sahibi sadece kendi salonundaki kullanıcının rolünü değiştirebilir
+    if (currentUser.role !== 'super_admin' && user.gymId !== currentUser.gymId) {
+      throw new BadRequestException('Bu kullanıcı sizin salonunuza ait değil.');
+    }
+
     user.role = role as UserRole;
     await this.repo.save(user);
     return { id: user.id, role: user.role };
   }
 
-  // ── PT trainer atama (sıkı kural) ──
-  async assignTrainer(memberId: number, trainerId: number | null) {
+  async assignTrainer(memberId: number, trainerId: number | null, currentUser: any) {
     const member = await this.repo.findOne({ where: { id: memberId } });
     if (!member) throw new BadRequestException('Üye bulunamadı.');
 
-    // Atamayı kaldırma (trainerId null) → kontrole gerek yok
+    // Güvenlik: üye, çağıran kişinin salonuna ait mi?
+    if (currentUser.role !== 'super_admin' && member.gymId !== currentUser.gymId) {
+      throw new BadRequestException('Bu üye sizin salonunuza ait değil.');
+    }
+
     if (trainerId === null) {
       member.assignedTrainerId = null;
       await this.repo.save(member);
       return { id: member.id, assignedTrainerId: null };
     }
 
-    // Atanacak kişi gerçekten trainer mı?
     const trainer = await this.repo.findOne({ where: { id: trainerId } });
     if (!trainer || trainer.role !== UserRole.TRAINER) {
       throw new BadRequestException('Seçilen kişi bir trainer değil.');
     }
 
-    // ── SIKI KURAL: üyenin PT'li aktif bir üyeliği var mı? ──
+    // Güvenlik: trainer da aynı salondan olmalı
+    if (currentUser.role !== 'super_admin' && trainer.gymId !== currentUser.gymId) {
+      throw new BadRequestException('Bu trainer sizin salonunuza ait değil.');
+    }
+
     const ptEnrollment = await this.enrollRepo.findOne({
       where: {
         member: { id: memberId },
@@ -99,8 +121,10 @@ export class UsersService {
     await this.repo.save(member);
     return { id: member.id, assignedTrainerId: trainerId };
   }
-  // Bir trainer'a atanmış üyeler + her birinin aktif fitness programı
+
   async findMyMembers(trainerId: number) {
+    // trainerId zaten çağıran trainer'ın kendi id'si (controller req.user'dan verir)
+    // ve trainer kendi salonundaki üyelere atanmış olduğu için ekstra salon filtresi gerekmez
     const members = await this.repo.find({
       where: { assignedTrainerId: trainerId },
       select: {
@@ -109,7 +133,6 @@ export class UsersService {
       order: { fullName: 'ASC' },
     });
 
-    // Her üyenin aktif programını ekle
     const result: any[] = [];
     for (const m of members) {
       const activeProgram = await this.programRepo.findOne({
@@ -119,7 +142,7 @@ export class UsersService {
     }
     return result;
   }
-  // Giriş yapan kullanıcının kendi bilgisi (QR token dahil)
+
   findMe(userId: number) {
     return this.repo.findOne({
       where: { id: userId },

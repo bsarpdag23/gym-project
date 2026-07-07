@@ -12,15 +12,18 @@ export class UsersController {
   constructor(private readonly service: UsersService) {}
 
   @Get()
-  @UseGuards(RolesGuard) @Roles('admin', 'trainer')
-  findAll() { return this.service.findAll(); }
+  @UseGuards(RolesGuard) @Roles('super_admin', 'admin', 'trainer')
+  findAll(@Request() req) {
+    return this.service.findAll(req.user);
+  }
 
   @Get('trainers')
-  @UseGuards(RolesGuard) @Roles('admin')
-  findTrainers() { return this.service.findTrainers();
-   }
+  @UseGuards(RolesGuard) @Roles('super_admin', 'admin')
+  findTrainers(@Request() req) {
+    return this.service.findTrainers(req.user);
+  }
 
-   @Get('my-members')
+  @Get('my-members')
   @UseGuards(RolesGuard) @Roles('trainer')
   findMyMembers(@Request() req) {
     return this.service.findMyMembers(req.user.userId);
@@ -32,14 +35,14 @@ export class UsersController {
   }
 
   @Patch(':id/role')
-  @UseGuards(RolesGuard) @Roles('admin')
-  updateRole(@Param('id') id: string, @Body() dto: UpdateRoleDto) {
-    return this.service.updateRole(+id, dto.role);
+  @UseGuards(RolesGuard) @Roles('super_admin', 'admin')
+  updateRole(@Param('id') id: string, @Body() dto: UpdateRoleDto, @Request() req) {
+    return this.service.updateRole(+id, dto.role, req.user);
   }
 
   @Patch(':id/trainer')
-  @UseGuards(RolesGuard) @Roles('admin')
-  assignTrainer(@Param('id') id: string, @Body() dto: AssignTrainerDto) {
-    return this.service.assignTrainer(+id, dto.trainerId ?? null);
+  @UseGuards(RolesGuard) @Roles('super_admin', 'admin')
+  assignTrainer(@Param('id') id: string, @Body() dto: AssignTrainerDto, @Request() req) {
+    return this.service.assignTrainer(+id, dto.trainerId ?? null, req.user);
   }
 }

@@ -27,4 +27,7 @@ export class Enrollment {
   from: (v) => parseFloat(v),
 }})
 amountPaid: number;
+
+@Column({ nullable: true, type: 'int' })
+  gymId: number | null;
 }

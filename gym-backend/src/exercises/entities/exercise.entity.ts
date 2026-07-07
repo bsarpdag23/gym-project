@@ -35,4 +35,7 @@ export class Exercise {
 
   @ManyToMany(() => WorkoutProgram, (p) => p.exercises)
   workoutPrograms: WorkoutProgram[];
+
+  @Column({ nullable: true, type: 'int' })
+  gymId: number | null;
 }

@@ -50,6 +50,10 @@ import { DashboardService } from './dashboard/dashboard.service';
 
 import { AiProgramService } from './programs/ai-program.service';
 
+import { Gym } from './gyms/entities/gym.entity';
+import { GymsController } from './gyms/gyms.controller';
+import { GymsService } from './gyms/gyms.service';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -60,11 +64,11 @@ import { AiProgramService } from './programs/ai-program.service';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, MembershipPlan, Enrollment, Exercise, WorkoutProgram, HealthProfile, FitnessProgram, CheckIn],
+      entities: [User, MembershipPlan, Enrollment, Exercise, WorkoutProgram, HealthProfile, FitnessProgram, CheckIn, Gym],
       synchronize: true,         // Tabloları otomatik oluşturur (dev için)
       logging: false,
     }),
-    TypeOrmModule.forFeature([User, MembershipPlan, Enrollment, Exercise, WorkoutProgram, HealthProfile, FitnessProgram, CheckIn]),
+    TypeOrmModule.forFeature([User, MembershipPlan, Enrollment, Exercise, WorkoutProgram, HealthProfile, FitnessProgram, CheckIn, Gym]),
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
@@ -82,6 +86,7 @@ import { AiProgramService } from './programs/ai-program.service';
     ProgramsController,
     CheckInsController,
     DashboardController,
+    GymsController,
   ],
   providers: [
     AuthService,
@@ -96,6 +101,7 @@ import { AiProgramService } from './programs/ai-program.service';
     CheckInsService,
     DashboardService,
     AiProgramService,
+    GymsService,
   ],
 })
 export class AppModule {}
