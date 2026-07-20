@@ -27,8 +27,8 @@ services:
       DB_PASSWORD: "123"
       DB_NAME: gym_db
       JWT_SECRET: gym-secret-key-2025
-      GEMINI_API_KEY: AQ.Ab8RN6JuvDZf_Qm1iYjr43AHSAfjWFk-Q21DMaIegbSaxjgYrA
-      GROQ_API_KEY: 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
+      GEMINI_API_KEY: ${GCP_API_KEY}
+      GROQ_API_KEY: ${GROQ_API_KEY}
     ports:
       - "3001:3001"
     volumes:
