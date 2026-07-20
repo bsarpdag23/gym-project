@@ -1,4 +1,5 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import { PROGRAM_CATEGORIES } from '../program-category.util';
 
 export class CreateWorkoutProgramDto {
   @IsString()
@@ -12,4 +13,7 @@ export class CreateWorkoutProgramDto {
 
   @IsNumber() @IsOptional()
   weeksCount?: number;
+
+  @IsIn(PROGRAM_CATEGORIES)
+  category: string;
 }

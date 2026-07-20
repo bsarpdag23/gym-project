@@ -40,4 +40,10 @@ export class EnrollmentsController {
   remove(@Param('id') id: string, @Request() req) {
     return this.service.remove(+id, req.user);
   }
+
+  @Post(':id/decrement-pt')
+  @UseGuards(RolesGuard) @Roles('super_admin', 'admin', 'trainer')
+  decrementPt(@Param('id') id: string, @Request() req) {
+    return this.service.decrementPtSession(+id, req.user.userId, req.user.role);
+  }
 }

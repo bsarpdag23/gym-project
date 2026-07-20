@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaBolt, FaCheckCircle } from 'react-icons/fa';
 import { BRAND, Btn, Card, Input, Logo } from '../components/ui';
 import api from '../api';
 
@@ -29,7 +30,7 @@ export default function RegisterPage({ goLogin, goHome }) {
         <Card style={{ padding:34 }}>
           {done ? (
             <div style={{ textAlign:'center', padding:'20px 0' }}>
-              <div style={{ fontSize:52, marginBottom:14 }}>🎉</div>
+              <div style={{ marginBottom:14, display:'flex', justifyContent:'center' }}><FaCheckCircle size={52} color="#10b981" /></div>
               <h2 style={{ margin:'0 0 8px' }}>Kayıt Başarılı!</h2>
               <p style={{ color:'#6b7280', marginBottom:24 }}>Artık giriş yapabilirsiniz.</p>
               <Btn onClick={goLogin} style={{ width:'100%', justifyContent:'center' }}>Giriş Yap →</Btn>
@@ -48,7 +49,7 @@ export default function RegisterPage({ goLogin, goHome }) {
               <Input label="Şifre"    value={form.password} onChange={set('password')} type="password" placeholder="En az 6 karakter" />
 
               <Btn onClick={submit} style={{ width:'100%', justifyContent:'center' }}>
-                {loading ? 'Oluşturuluyor...' : '⚡ Kayıt Ol'}
+                {loading ? 'Oluşturuluyor...' : <><FaBolt /> Kayıt Ol</>}
               </Btn>
 
               <p style={{ textAlign:'center', marginTop:20, fontSize:14, color:'#6b7280' }}>

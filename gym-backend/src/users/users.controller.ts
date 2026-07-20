@@ -1,4 +1,7 @@
-import { Body, Controller, Get, Param, Patch, Request, UseGuards } from '@nestjs/common';
+import {
+  Body, Controller, Get, Param, Patch, Post, Request, UseGuards, UseInterceptors, UploadedFile,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -32,6 +35,22 @@ export class UsersController {
   @Get('me')
   findMe(@Request() req) {
     return this.service.findMe(req.user.userId);
+  }
+
+  @Get('me/gamification')
+  getGamification(@Request() req) {
+    return this.service.getGamification(req.user.userId);
+  }
+
+  @Patch('me/privacy')
+  updatePrivacy(@Body() dto: { hideProfile: boolean }, @Request() req) {
+    return this.service.updatePrivacy(req.user.userId, !!dto.hideProfile);
+  }
+
+  @Post('me/avatar')
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024 } }))
+  uploadAvatar(@UploadedFile() file: Express.Multer.File, @Request() req) {
+    return this.service.uploadAvatar(req.user.userId, file);
   }
 
   @Patch(':id/role')

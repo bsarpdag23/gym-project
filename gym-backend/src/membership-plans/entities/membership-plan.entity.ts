@@ -24,6 +24,9 @@ price: number;
   @Column({ default: false })
   includesPersonalTraining: boolean;
 
+  @Column({ default: 0 })
+  ptSessionsCount: number;
+
   @Column({ default: true })
   isActive: boolean;
 

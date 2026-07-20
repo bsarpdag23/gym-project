@@ -36,7 +36,7 @@ export class User {
   @OneToMany(() => Enrollment, (e) => e.member)
   enrollments: Enrollment[];
 
-  @OneToMany(() => WorkoutProgram, (p) => p.trainer)
+  @OneToMany(() => WorkoutProgram, (p) => p.author)
   workoutPrograms: WorkoutProgram[];
 
   // Bu üyeye atanmış PT trainer'ı (kendisi de bir User, rolü 'trainer')
@@ -56,6 +56,20 @@ export class User {
 
   @Column({ nullable: true, type: 'int' })
   gymId: number | null;   // süper admin için null olabilir
+
+  @Column({ default: 0, type: 'int' })
+  points: number;
+
+  @Column({ type: 'simple-array', default: '' })
+  badges: string[];
+
+  // true ise diğer üyelerin sohbet/üye listesinde görünmez, yeni sohbet başlatılamaz
+  @Column({ default: false })
+  hideProfile: boolean;
+
+  // /uploads/avatars/xxx.webp gibi statik olarak servis edilen göreli yol
+  @Column({ nullable: true, type: 'varchar' })
+  avatarUrl: string | null;
 
   @BeforeInsert()
   generateQrToken() {

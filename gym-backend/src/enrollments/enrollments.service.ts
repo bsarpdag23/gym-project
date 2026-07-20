@@ -52,6 +52,8 @@ export class EnrollmentsService {
       amountPaid: plan.price,
       status: 'active',
       gymId: member.gymId,
+      totalPtSessions: plan.ptSessionsCount || 0,
+      remainingPtSessions: plan.ptSessionsCount || 0,
     });
     return this.enrollRepo.save(enrollment);
   }
@@ -121,5 +123,26 @@ export class EnrollmentsService {
 
     await this.enrollRepo.delete(id);
     return { deleted: true };
+  }
+
+  async decrementPtSession(enrollmentId: number, trainerId: number, userRole: string) {
+    const enrollment = await this.enrollRepo.findOne({
+      where: { id: enrollmentId },
+      relations: { member: true },
+    });
+    if (!enrollment) {
+      throw new NotFoundException('Üyelik bulunamadı');
+    }
+
+    if (userRole === 'trainer' && enrollment.member.assignedTrainerId !== trainerId) {
+      throw new BadRequestException('Bu üyenin PT seansını düşme yetkiniz yok (Atanmış antrenörü değilsiniz)');
+    }
+
+    if (enrollment.remainingPtSessions <= 0) {
+      throw new BadRequestException('Üyenin kalan PT seansı kalmadı.');
+    }
+
+    enrollment.remainingPtSessions -= 1;
+    return this.enrollRepo.save(enrollment);
   }
 }

@@ -45,6 +45,11 @@ export class FitnessProgram {
   @Column({ type: 'jsonb' })
   workoutPlan: any;
 
+  // ── Diyet planı (esnek yapı, jsonb) ──
+  // Örn: { meals: [{ name: 'Kahvaltı', time: '08:00', items: [...], calories: 450, macros: {...} }] }
+  @Column({ type: 'jsonb', nullable: true })
+  dietPlan: any;
+
   @Column({ type: 'jsonb', default: [] })
   warnings: any;
 

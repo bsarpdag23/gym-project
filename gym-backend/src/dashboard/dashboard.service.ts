@@ -13,6 +13,26 @@ export class DashboardService {
     @InjectRepository(CheckIn) private checkInRepo: Repository<CheckIn>,
   ) {}
 
+  private getDayName(date: Date) {
+    const names = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
+    return names[date.getDay() === 0 ? 6 : date.getDay() - 1];
+  }
+
+  private getHourBuckets(checkIns: CheckIn[]) {
+    const buckets = new Map<string, number>();
+    for (const item of checkIns) {
+      const date = new Date(item.checkInTime);
+      const key = `${this.getDayName(date)}|${date.getHours()}`;
+      buckets.set(key, (buckets.get(key) ?? 0) + 1);
+    }
+    return Array.from(buckets.entries())
+      .map(([key, count]) => {
+        const [day, hour] = key.split('|');
+        return { day, hour: Number(hour), count };
+      })
+      .sort((a, b) => b.count - a.count);
+  }
+
   async getStats(currentUser: any) {
     const isSuper = currentUser.role === 'super_admin';
     const gymId = currentUser.gymId;
@@ -68,6 +88,10 @@ export class DashboardService {
       .addSelect('COUNT(u.id)', 'count');
     if (!isSuper) roleQuery.where('u.gymId = :gymId', { gymId });
     const roleDistribution = await roleQuery.groupBy('u.role').getRawMany();
+    const occupancyWhere = isSuper ? {} : { gymId };
+    const occupancyBuckets = this.getHourBuckets(await this.checkInRepo.find({ where: occupancyWhere, order: { checkInTime: 'ASC' }, take: 500 }));
+    const peakHours = occupancyBuckets.slice(0, 3);
+    const quietHours = [...occupancyBuckets].sort((a, b) => a.count - b.count).slice(0, 3);
 
     return {
       totalMembers,
@@ -76,6 +100,62 @@ export class DashboardService {
       todayCheckIns,
       popularPlans: popularPlans.map(p => ({ name: p.planName, count: parseInt(p.count) })),
       roleDistribution: roleDistribution.map(r => ({ role: r.role, count: parseInt(r.count) })),
+      occupancySummary: {
+        peakHours: peakHours.map((slot) => ({ day: slot.day, hour: slot.hour, checkIns: slot.count })),
+        quietHours: quietHours.map((slot) => ({ day: slot.day, hour: slot.hour, checkIns: slot.count })),
+      },
+    };
+  }
+
+  async getOccupancyPrediction(currentUser: any) {
+    const isSuper = currentUser.role === 'super_admin';
+    const gymId = currentUser.gymId;
+
+    const where = isSuper ? {} : { gymId };
+    const checkIns = await this.checkInRepo.find({
+      where,
+      order: { checkInTime: 'ASC' },
+      take: 500,
+    });
+
+    if (!checkIns.length) {
+      return {
+        message: 'Henüz yeterli check-in verisi yok, bu yüzden tahmin oluşturulamadı.',
+        busySlots: [],
+        quietSlots: [],
+        recommendation: 'Önce birkaç check-in kaydı oluşturun.',
+      };
+    }
+
+    const buckets = this.getHourBuckets(checkIns);
+    const topBusy = buckets.slice(0, 3);
+    const quietSlots = [...buckets].sort((a, b) => a.count - b.count).slice(0, 3);
+
+    const now = new Date();
+    const dayName = this.getDayName(now);
+    const currentHour = now.getHours();
+    const currentBucket = buckets.find((slot) => slot.day === dayName && slot.hour === currentHour);
+    const occupancyPercent = currentBucket ? Math.min(100, Math.round((currentBucket.count / Math.max(...buckets.map((slot) => slot.count), 1)) * 100)) : 0;
+
+    let intensity = 'düşük';
+    let recommendation = 'Bu saat salon nispeten sakin; rahat bir antrenman için uygun.';
+
+    if (occupancyPercent >= 80) {
+      intensity = 'yüksek';
+      recommendation = 'Bu saat salon oldukça yoğun; erken gelmek iyi bir seçenek olabilir.';
+    } else if (occupancyPercent >= 50) {
+      intensity = 'orta';
+      recommendation = 'Bu saat salon orta dolu; birkaç dakika erken gelmek iyi olabilir.';
+    }
+
+    return {
+      day: dayName,
+      hour: currentHour,
+      occupancyPercent,
+      intensity,
+      recommendation,
+      busySlots: topBusy.map((slot) => ({ day: slot.day, hour: slot.hour, checkIns: slot.count })),
+      quietSlots: quietSlots.map((slot) => ({ day: slot.day, hour: slot.hour, checkIns: slot.count })),
     };
   }
 }

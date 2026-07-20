@@ -8,6 +8,7 @@ import { Roles }        from '../auth/decorators/roles.decorator';
 import { WorkoutProgramsService }    from './workout-programs.service';
 import { CreateWorkoutProgramDto }   from './dto/create-workout-program.dto';
 import { UpdateWorkoutProgramDto }   from './dto/update-workout-program.dto';
+import { RateProgramDto }            from './dto/rate-program.dto';
 
 @Controller('workout-programs')
 @UseGuards(JwtAuthGuard)
@@ -46,5 +47,10 @@ export class WorkoutProgramsController {
   @UseGuards(RolesGuard) @Roles('admin', 'trainer')
   removeExercise(@Param('programId') pId: string, @Param('exerciseId') eId: string) {
     return this.service.removeExercise(+pId, +eId);
+  }
+
+  @Post(':id/ratings')
+  rate(@Param('id') id: string, @Body() dto: RateProgramDto, @Request() req) {
+    return this.service.rate(+id, req.user.userId, dto);
   }
 }

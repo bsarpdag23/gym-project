@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaLock, FaRegSmile } from 'react-icons/fa';
 import { BRAND, Btn, Card, Input, Logo } from '../components/ui';
 import api from '../api';
 
@@ -28,7 +29,7 @@ export default function LoginPage({ onLogin, goRegister, goHome }) {
         </div>
 
         <Card style={{ padding:34 }}>
-          <h2 style={{ margin:'0 0 4px', fontSize:22 }}>Tekrar Hoş Geldiniz 👋</h2>
+          <h2 style={{ margin:'0 0 4px', fontSize:22, display:'flex', alignItems:'center', gap:8 }}>Tekrar Hoş Geldiniz <FaRegSmile color={BRAND.primary} /></h2>
           <p style={{ color:'#6b7280', fontSize:14, margin:'0 0 24px' }}>Hesabınıza giriş yapın</p>
 
           {err && <div style={{ background:'#fee2e2', border:'1px solid #fca5a5', color:'#dc2626',
@@ -38,7 +39,7 @@ export default function LoginPage({ onLogin, goRegister, goHome }) {
           <Input label="Şifre" value={form.password} onChange={set('password')} type="password" placeholder="••••••••" />
 
           <Btn onClick={submit} style={{ width:'100%', justifyContent:'center', marginTop:8 }}>
-            {loading ? 'Giriş yapılıyor...' : '🔐 Giriş Yap'}
+            {loading ? 'Giriş yapılıyor...' : <><FaLock /> Giriş Yap</>}
           </Btn>
 
           <p style={{ textAlign:'center', marginTop:20, fontSize:14, color:'#6b7280' }}>

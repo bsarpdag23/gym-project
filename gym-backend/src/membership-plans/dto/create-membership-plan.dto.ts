@@ -21,4 +21,8 @@ export class CreateMembershipPlanDto {
   @IsBoolean()
   @IsOptional()
   includesPersonalTraining?: boolean;
+
+  @IsNumber()
+  @IsOptional()
+  ptSessionsCount?: number;
 }

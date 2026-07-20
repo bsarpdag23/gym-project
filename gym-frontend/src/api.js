@@ -1,4 +1,7 @@
-const API_URL = 'http://localhost:3001';
+export const API_URL = 'http://localhost:3001';
+
+// Sunucudan gelen göreli avatar yolunu (/uploads/avatars/x.webp) tam URL'e çevirir
+export const resolveAvatarUrl = (avatarUrl) => avatarUrl ? `${API_URL}${avatarUrl}` : null;
 
 // ─── Merkezi API yardımcısı ───────────────────────────────────────────────────
 const api = {
@@ -18,6 +21,23 @@ const api = {
     }
     return res.json();
   },
+  // multipart/form-data gönderir — Content-Type header'ı elle set edilmez,
+  // tarayıcı doğru boundary'i kendisi ekler
+  async upload(endpoint, file) {
+    const token = localStorage.getItem('token');
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(`${API_URL}${endpoint}`, {
+      method: 'POST',
+      headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ message: 'Yükleme başarısız oldu' }));
+      throw new Error(err.message);
+    }
+    return res.json();
+  },
   auth: {
     register: (d)    => api.req('/auth/register', { method:'POST', body: JSON.stringify(d) }),
     login:    (d)    => api.req('/auth/login',    { method:'POST', body: JSON.stringify(d) }),
@@ -29,6 +49,9 @@ const api = {
     assignTrainer:(id, trainerId) => api.req(`/users/${id}/trainer`, { method:'PATCH', body: JSON.stringify({ trainerId }) }),
     getMyMembers: () => api.req('/users/my-members'),
     getMe: () => api.req('/users/me'),
+    getGamification: () => api.req('/users/me/gamification'),
+    updatePrivacy: (hideProfile) => api.req('/users/me/privacy', { method:'PATCH', body: JSON.stringify({ hideProfile }) }),
+    uploadAvatar: (file) => api.upload('/users/me/avatar', file),
   },
   plans: {
     getAll:  ()      => api.req('/membership-plans'),
@@ -40,6 +63,7 @@ const api = {
     getAll:  ()   => api.req('/enrollments'),
     getMine: ()   => api.req('/enrollments/my-enrollments'),
     create:  (id) => api.req('/enrollments', { method:'POST', body: JSON.stringify({ planId: id }) }),
+    decrementPt: (id) => api.req(`/enrollments/${id}/decrement-pt`, { method:'POST' }),
   },
   exercises: {
     getAll:  ()      => api.req('/exercises'),
@@ -54,16 +78,21 @@ const api = {
     remove:       (id)        => api.req(`/workout-programs/${id}`, { method:'DELETE' }),
     addExercise:  (pid, eid)  => api.req(`/workout-programs/${pid}/exercises/${eid}`, { method:'POST' }),
     dropExercise: (pid, eid)  => api.req(`/workout-programs/${pid}/exercises/${eid}`, { method:'DELETE' }),
+    rate:         (id, d)     => api.req(`/workout-programs/${id}/ratings`, { method:'POST', body: JSON.stringify(d) }),
+    assignToMember: (memberId, workoutProgramId) => api.req(`/programs/assign/${memberId}/${workoutProgramId}`, { method:'POST' }),
   },
   healthProfile: {
     getMine: ()  => api.req('/health-profile/me'),
     save:    (d) => api.req('/health-profile/me', { method:'PUT', body: JSON.stringify(d) }),
   },
   fitness: {
-    preview:  () => api.req('/programs/preview'),
-    generate: () => api.req('/programs/generate', { method:'POST' }),
-    active:   () => api.req('/programs/active'),
-    history:  () => api.req('/programs/history'),
+    preview:    () => api.req('/programs/preview'),
+    generate:   () => api.req('/programs/generate', { method:'POST' }),
+    generateAI: () => api.req('/programs/generate-ai', { method:'POST' }),
+    generateDietAI: () => api.req('/programs/generate-diet-ai', { method:'POST' }),
+    active:     () => api.req('/programs/active'),
+    history:    () => api.req('/programs/history'),
+    activate:   (id) => api.req(`/programs/activate/${id}`, { method:'POST' }),
   },
   checkIns: {
     scan:    (qrToken) => api.req('/check-ins/scan', { method:'POST', body: JSON.stringify({ qrToken }) }),
@@ -71,12 +100,22 @@ const api = {
   },
   dashboard: {
     getStats: () => api.req('/dashboard/stats'),
+    getOccupancyPrediction: () => api.req('/dashboard/occupancy-prediction'),
   },
   gyms: {
     getAll: ()  => api.req('/gyms'),
     create: (d) => api.req('/gyms', { method:'POST', body: JSON.stringify(d) }),
     getDetail: (id) => api.req(`/gyms/${id}/detail`),
     getUsers:  (id) => api.req(`/gyms/${id}/users`),
+    update: (id, d) => api.req(`/gyms/${id}`, { method:'PATCH', body: JSON.stringify(d) }),
+    remove: (id) => api.req(`/gyms/${id}`, { method:'DELETE' }),
+    getGlobalStats: () => api.req('/gyms/global-stats'),
+  },
+  messages: {
+    getDirectory:     ()        => api.req('/messages/directory'),
+    getConversations: ()        => api.req('/messages/conversations'),
+    getThread:        (userId)  => api.req(`/messages/${userId}`),
+    send:             (userId, content) => api.req(`/messages/${userId}`, { method:'POST', body: JSON.stringify({ content }) }),
   },
 };
 

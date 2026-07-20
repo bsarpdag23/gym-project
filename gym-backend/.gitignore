@@ -3,6 +3,10 @@
 /node_modules
 /build
 
+# kullanıcı tarafından yüklenen dosyalar
+/uploads/*
+!/uploads/.gitkeep
+
 # Logs
 logs
 *.log

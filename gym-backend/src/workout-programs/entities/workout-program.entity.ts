@@ -1,9 +1,10 @@
 import {
   Entity, PrimaryGeneratedColumn, Column,
-  ManyToOne, ManyToMany, JoinTable,
+  ManyToOne, ManyToMany, OneToMany, JoinTable,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Exercise } from '../../exercises/entities/exercise.entity';
+import { ProgramRating } from './program-rating.entity';
 
 @Entity('workout_programs')
 export class WorkoutProgram {
@@ -25,8 +26,17 @@ export class WorkoutProgram {
   @Column({ default: true })
   isActive: boolean;
 
-  @ManyToOne(() => User, (u) => u.workoutPrograms)
-  trainer: User;
+  // bkz. PROGRAM_CATEGORIES (program-category.util.ts)
+  @Column({ default: 'full_body' })
+  category: string;
+
+  // 'trainer' (antrenör/admin elle oluşturdu) | 'ai' (üye program üretirken otomatik eklendi)
+  @Column({ default: 'trainer' })
+  source: string;
+
+  // AI kaynaklı programlarda oluşturan bir antrenör olmayabilir (üye kendi programını üretmiştir)
+  @ManyToOne(() => User, (u) => u.workoutPrograms, { nullable: true })
+  author: User | null;
 
   @ManyToMany(() => Exercise, (e) => e.workoutPrograms)
   @JoinTable({
@@ -35,4 +45,7 @@ export class WorkoutProgram {
     inverseJoinColumn: { name: 'exerciseId', referencedColumnName: 'id' },
   })
   exercises: Exercise[];
+
+  @OneToMany(() => ProgramRating, (r) => r.program)
+  ratings: ProgramRating[];
 }

@@ -1,11 +1,16 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { HealthProfile } from '../health-profiles/entities/health-profile.entity';
 import { Exercise } from '../exercises/entities/exercise.entity';
 import { FitnessProgram } from './entities/fitness-program.entity';
 import { buildSummary, buildWorkoutPlan, ProfileInput, ExerciseLite } from './fitness-calculator';
 import { AiProgramService } from './ai-program.service';
+import { WorkoutProgram } from '../workout-programs/entities/workout-program.entity';
+import { mapFocusToCategory } from '../workout-programs/program-category.util';
+import { User } from '../users/entities/user.entity';
+
+const GOAL_LABELS: Record<string, string> = { gain: 'kilo alma', lose: 'kilo verme', maintain: 'form koruma' };
 
 @Injectable()
 export class ProgramsService {
@@ -13,8 +18,34 @@ export class ProgramsService {
     @InjectRepository(HealthProfile) private profileRepo: Repository<HealthProfile>,
     @InjectRepository(Exercise) private exerciseRepo: Repository<Exercise>,
     @InjectRepository(FitnessProgram) private programRepo: Repository<FitnessProgram>,
+    @InjectRepository(WorkoutProgram) private workoutProgramRepo: Repository<WorkoutProgram>,
+    @InjectRepository(User) private userRepo: Repository<User>,
     private aiProgramService: AiProgramService,
   ) {}
+
+  // Üretilen haftalık planın her gününü, başka üyelerin görebileceği/değerlendirebileceği
+  // kategorize edilmiş kataloga (WorkoutProgram) ekler. Gerçek DB id'si olmayan
+  // egzersizler (ör. bazı AI çıktıları) sessizce atlanır.
+  private async addToCatalog(userId: number, workoutPlan: any[], durationWeeks: number, goal: string, source: 'trainer' | 'ai') {
+    for (const day of workoutPlan || []) {
+      const exerciseIds = (day.exercises || []).map((e: any) => e.id).filter((id: any) => Number.isInteger(id));
+      if (!exerciseIds.length) continue;
+      const exercises = await this.exerciseRepo.findBy({ id: In(exerciseIds) });
+      if (!exercises.length) continue;
+
+      const catalogProgram = this.workoutProgramRepo.create({
+        name: day.focus,
+        description: `Yapay zeka tarafından ${GOAL_LABELS[goal] || goal} hedefine göre oluşturuldu.`,
+        difficulty: 'orta',
+        weeksCount: durationWeeks,
+        category: mapFocusToCategory(day.focus),
+        source,
+        author: { id: userId } as any,
+        exercises,
+      });
+      await this.workoutProgramRepo.save(catalogProgram);
+    }
+  }
 
   // Profili çekip, hesaplama fonksiyonlarının beklediği tipe dönüştürür
   private async getProfileInput(userId: number): Promise<{ profile: HealthProfile; input: ProfileInput }> {
@@ -84,7 +115,15 @@ export class ProgramsService {
       warnings: summary.warnings,
       isActive: true,
     });
-    return this.programRepo.save(program);
+    const saved = await this.programRepo.save(program);
+
+    try {
+      await this.addToCatalog(userId, workoutPlan, summary.durationWeeks, summary.goal, 'ai');
+    } catch (err) {
+      console.error('🔴 Katalog ekleme hatası:', err.message);
+    }
+
+    return saved;
   }
 
   // AI ile program üret (başarısız olursa kural tabanlıya düşer)
@@ -140,7 +179,40 @@ export class ProgramsService {
       isActive: true,
     });
     const saved = await this.programRepo.save(program);
+
+    try {
+      await this.addToCatalog(userId, workoutPlan, summary.durationWeeks, summary.goal, 'ai');
+    } catch (err) {
+      console.error('🔴 Katalog ekleme hatası:', err.message);
+    }
+
     return { ...saved, source };   // source: hangi yöntemle üretildi (ai / fallback)
+  }
+
+  // AI ile detaylı diyet listesi oluştur ve kaydet
+  async generateDietPlanWithAI(userId: number) {
+    const activeProgram = await this.programRepo.findOne({
+      where: { user: { id: userId }, isActive: true },
+    });
+    if (!activeProgram) {
+      throw new BadRequestException('Aktif bir program bulunamadı. Önce antrenman/diyet hedeflerinizi oluşturmalısınız.');
+    }
+
+    const { input } = await this.getProfileInput(userId);
+
+    const dietPlan = await this.aiProgramService.generateDietPlan(
+      input,
+      activeProgram.goal,
+      activeProgram.dailyCalories,
+      {
+        proteinG: activeProgram.proteinG,
+        carbsG: activeProgram.carbsG,
+        fatG: activeProgram.fatG,
+      }
+    );
+
+    activeProgram.dietPlan = dietPlan;
+    return this.programRepo.save(activeProgram);
   }
 
   // Aktif program
@@ -156,5 +228,147 @@ export class ProgramsService {
       where: { user: { id: userId } },
       order: { createdAt: 'DESC' },
     });
+  }
+
+  async activateCatalogProgram(userId: number, workoutProgramId: number, gymId: number | null) {
+    const catalogProgram = await this.workoutProgramRepo.findOne({
+      where: { id: workoutProgramId },
+      relations: { exercises: true },
+    });
+    if (!catalogProgram) {
+      throw new NotFoundException('Katalog programı bulunamadı');
+    }
+
+    const { profile, input } = await this.getProfileInput(userId);
+    const summary = buildSummary(input);
+
+    const startDate = new Date();
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + catalogProgram.weeksCount * 7);
+
+    // Eski aktif programları pasife çek
+    await this.programRepo.update(
+      { user: { id: userId }, isActive: true },
+      { isActive: false },
+    );
+
+    // Egzersizleri ExerciseLite tipine indirge
+    const exercisesLite = (catalogProgram.exercises || []).map((e) => ({
+      id: e.id,
+      name: e.name,
+      muscleGroup: e.muscleGroup,
+      goalType: e.goalType,
+      sets: e.sets,
+      reps: e.reps,
+      equipment: e.equipment,
+    }));
+
+    const workoutPlan = [
+      {
+        day: 1,
+        focus: catalogProgram.name,
+        exercises: exercisesLite,
+      },
+    ];
+
+    // Yeni fitness programını oluştur ve kaydet
+    const fitnessProgram = this.programRepo.create({
+      user: { id: userId } as any,
+      goal: summary.goal,
+      startWeightKg: input.weightKg,
+      targetWeightKg: input.targetWeightKg,
+      durationWeeks: catalogProgram.weeksCount,
+      startDate: startDate.toISOString().slice(0, 10),
+      endDate: endDate.toISOString().slice(0, 10),
+      dailyCalories: summary.targetCalories,
+      proteinG: summary.macros.proteinG,
+      fatG: summary.macros.fatG,
+      carbsG: summary.macros.carbsG,
+      workoutPlan,
+      warnings: summary.warnings,
+      isActive: true,
+      gymId,
+    });
+
+    return this.programRepo.save(fitnessProgram);
+  }
+
+  async assignProgram(trainerId: number, memberId: number, workoutProgramId: number) {
+    const member = await this.userRepo.findOne({
+      where: { id: memberId },
+    });
+    if (!member) {
+      throw new NotFoundException('Üye bulunamadı');
+    }
+
+    const trainer = await this.userRepo.findOne({ where: { id: trainerId } });
+    if (!trainer) {
+      throw new NotFoundException('Antrenör bulunamadı');
+    }
+
+    if (trainer.role === 'trainer' && member.assignedTrainerId !== trainerId) {
+      throw new BadRequestException('Bu üyeye program atama yetkiniz yok (PT antrenörü değilsiniz)');
+    }
+
+    const catalogProgram = await this.workoutProgramRepo.findOne({
+      where: { id: workoutProgramId },
+      relations: { exercises: true },
+    });
+    if (!catalogProgram) {
+      throw new NotFoundException('Katalog programı bulunamadı');
+    }
+
+    const { profile, input } = await this.getProfileInput(memberId);
+    const summary = buildSummary(input);
+
+    const startDate = new Date();
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + catalogProgram.weeksCount * 7);
+
+    // Eski aktif programları pasife çek
+    await this.programRepo.update(
+      { user: { id: memberId }, isActive: true },
+      { isActive: false },
+    );
+
+    // Egzersizleri ExerciseLite tipine indirge
+    const exercisesLite = (catalogProgram.exercises || []).map((e) => ({
+      id: e.id,
+      name: e.name,
+      muscleGroup: e.muscleGroup,
+      goalType: e.goalType,
+      sets: e.sets,
+      reps: e.reps,
+      equipment: e.equipment,
+    }));
+
+    const workoutPlan = [
+      {
+        day: 1,
+        focus: catalogProgram.name,
+        exercises: exercisesLite,
+      },
+    ];
+
+    // Yeni fitness programını oluştur ve kaydet
+    const fitnessProgram = this.programRepo.create({
+      user: { id: memberId } as any,
+      goal: summary.goal,
+      startWeightKg: input.weightKg,
+      targetWeightKg: input.targetWeightKg,
+      durationWeeks: catalogProgram.weeksCount,
+      startDate: startDate.toISOString().slice(0, 10),
+      endDate: endDate.toISOString().slice(0, 10),
+      dailyCalories: summary.targetCalories,
+      proteinG: summary.macros.proteinG,
+      fatG: summary.macros.fatG,
+      carbsG: summary.macros.carbsG,
+      workoutPlan,
+      warnings: summary.warnings,
+      isActive: true,
+      gymId: member.gymId,
+    });
+
+    return this.programRepo.save(fitnessProgram);
   }
 }

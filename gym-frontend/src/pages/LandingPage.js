@@ -1,14 +1,15 @@
 import React from 'react';
+import { FaUsers, FaDumbbell, FaClipboardList, FaLock, FaChartBar, FaCloud, FaRocket, FaBolt, FaCheck } from 'react-icons/fa';
 import { BRAND, Btn, Card, Badge, Logo } from '../components/ui';
 
 export default function LandingPage({ goLogin, goRegister }) {
   const features = [
-    { icon:'👥', title:'Üye Yönetimi', desc:'Üyelerinizi, paketlerinizi ve üyelik sürelerini tek panelden yönetin.' },
-    { icon:'🏋️', title:'Egzersiz Kütüphanesi', desc:'Sınırsız egzersiz ekleyin, kategorilere ayırın, antrenörlerinize özel yetkiler verin.' },
-    { icon:'📋', title:'Antrenman Programları', desc:'Egzersizleri programlara bağlayın, üyelerinize özel rutinler oluşturun.' },
-    { icon:'🔐', title:'Rol Tabanlı Erişim', desc:'Admin, Trainer ve Üye rolleriyle herkesin yalnızca yetkili olduğu alanı görmesini sağlayın.' },
-    { icon:'📊', title:'Gerçek Zamanlı Takip', desc:'Üyelik durumlarını, ödemeleri ve doluluk oranlarını anlık görüntüleyin.' },
-    { icon:'☁️', title:'Bulut Tabanlı', desc:'Hiçbir kurulum derdi yok. Her cihazdan, her yerden erişim.' },
+    { icon:<FaUsers/>, title:'Üye Yönetimi', desc:'Üyelerinizi, paketlerinizi ve üyelik sürelerini tek panelden yönetin.' },
+    { icon:<FaDumbbell/>, title:'Egzersiz Kütüphanesi', desc:'Sınırsız egzersiz ekleyin, kategorilere ayırın, antrenörlerinize özel yetkiler verin.' },
+    { icon:<FaClipboardList/>, title:'Antrenman Programları', desc:'Egzersizleri programlara bağlayın, üyelerinize özel rutinler oluşturun.' },
+    { icon:<FaLock/>, title:'Rol Tabanlı Erişim', desc:'Admin, Trainer ve Üye rolleriyle herkesin yalnızca yetkili olduğu alanı görmesini sağlayın.' },
+    { icon:<FaChartBar/>, title:'Gerçek Zamanlı Takip', desc:'Üyelik durumlarını, ödemeleri ve doluluk oranlarını anlık görüntüleyin.' },
+    { icon:<FaCloud/>, title:'Bulut Tabanlı', desc:'Hiçbir kurulum derdi yok. Her cihazdan, her yerden erişim.' },
   ];
 
   const plans = [
@@ -42,7 +43,7 @@ export default function LandingPage({ goLogin, goRegister }) {
         <div style={{ position:'absolute', bottom:-150, left:-100, width:400, height:400, borderRadius:'50%',
           background:`radial-gradient(circle,${BRAND.purple}33,transparent 70%)` }} />
         <div style={{ position:'relative', maxWidth:780, margin:'0 auto' }}>
-          <Badge label="🚀 Spor Salonları İçin Yeni Nesil Yönetim" color="#fff" />
+          <Badge label={<><FaRocket/> Spor Salonları İçin Yeni Nesil Yönetim</>} color="#fff" />
           <h1 style={{ color:'#fff', fontSize:48, fontWeight:800, lineHeight:1.2, margin:'22px 0 18px' }}>
             Spor Salonunuzu <span style={{ color:BRAND.primary }}>Tek Panelden</span> Yönetin
           </h1>
@@ -51,7 +52,7 @@ export default function LandingPage({ goLogin, goRegister }) {
             Kurulum yok, donanım yok, sadece sonuç.
           </p>
           <div style={{ display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap' }}>
-            <Btn onClick={goRegister} size="lg">⚡ Ücretsiz Dene</Btn>
+            <Btn onClick={goRegister} size="lg"><FaBolt/> Ücretsiz Dene</Btn>
             <Btn onClick={goLogin} size="lg" color="#fff" outline>Giriş Yap</Btn>
           </div>
           <div style={{ display:'flex', gap:40, justifyContent:'center', marginTop:56, flexWrap:'wrap' }}>
@@ -75,7 +76,7 @@ export default function LandingPage({ goLogin, goRegister }) {
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))', gap:20 }}>
           {features.map(f => (
             <Card key={f.title} style={{ transition:'transform .15s' }}>
-              <div style={{ fontSize:32, marginBottom:14 }}>{f.icon}</div>
+              <div style={{ fontSize:32, marginBottom:14, color:BRAND.primary }}>{f.icon}</div>
               <h3 style={{ margin:'0 0 8px', fontSize:17 }}>{f.title}</h3>
               <p style={{ color:'#6b7280', fontSize:14, lineHeight:1.6, margin:0 }}>{f.desc}</p>
             </Card>
@@ -111,7 +112,7 @@ export default function LandingPage({ goLogin, goRegister }) {
                 <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:24 }}>
                   {p.features.map(f => (
                     <div key={f} style={{ display:'flex', gap:8, fontSize:14, color:'#374151' }}>
-                      <span style={{ color:BRAND.primary }}>✓</span>{f}
+                      <span style={{ color:BRAND.primary }}><FaCheck/></span>{f}
                     </div>
                   ))}
                 </div>
@@ -133,7 +134,7 @@ export default function LandingPage({ goLogin, goRegister }) {
         </h2>
         <p style={{ color:'#ffffffcc', marginBottom:28 }}>Kredi kartı gerekmez. 14 gün ücretsiz deneme.</p>
         <Btn onClick={goRegister} size="lg" color="#fff" style={{ color:BRAND.primary, background:'#fff' }}>
-          🚀 Hemen Başla
+          <FaRocket/> Hemen Başla
         </Btn>
       </div>
 

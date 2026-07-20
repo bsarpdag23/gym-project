@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaBolt } from 'react-icons/fa';
 
 export const BRAND = { primary:'#e94560', dark:'#0f0f1a', dark2:'#1a1a2e', purple:'#533483' };
 
@@ -54,11 +55,27 @@ export function Btn({ children, onClick, color = BRAND.primary, outline, size = 
   );
 }
 
-export function Card({ children, style = {} }) {
+export function Card({ children, style = {}, onClick }) {
   return (
-    <div style={{ background:'#fff', borderRadius:14, padding:20,
+    <div onClick={onClick} style={{ background:'#fff', borderRadius:14, padding:20,
       boxShadow:'0 2px 12px rgba(0,0,0,.07)', border:'1px solid #f0f0f0', ...style }}>
       {children}
+    </div>
+  );
+}
+
+export function Avatar({ src, name, size = 36 }) {
+  const initials = (name || '').trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+  return (
+    <div style={{
+      width:size, height:size, borderRadius:'50%', overflow:'hidden', flexShrink:0,
+      display:'flex', alignItems:'center', justifyContent:'center',
+      background: src ? '#e5e7eb' : `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})`,
+      color:'#fff', fontWeight:700, fontSize: size * 0.4,
+    }}>
+      {src
+        ? <img src={src} alt={name || 'avatar'} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+        : (initials || '?')}
     </div>
   );
 }
@@ -69,6 +86,24 @@ export function Badge({ label, color = BRAND.primary }) {
       borderRadius:20, padding:'2px 10px', fontSize:12, fontWeight:600 }}>
       {label}
     </span>
+  );
+}
+
+export function ProgressBar({ value, max = 100, color = BRAND.primary, label, height = 10 }) {
+  const percent = Math.max(0, Math.min(100, (value / max) * 100));
+  return (
+    <div>
+      {label && (
+        <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4, fontSize:12, color:'#6b7280' }}>
+          <span>{label}</span>
+          <span>{value}/{max}</span>
+        </div>
+      )}
+      <div style={{ width:'100%', height, borderRadius: height, background:'#f3f4f6', overflow:'hidden' }}>
+        <div style={{ width:`${percent}%`, height:'100%', borderRadius: height,
+          background: color, transition:'width .3s ease' }} />
+      </div>
+    </div>
   );
 }
 
@@ -94,7 +129,7 @@ export function Logo({ light, size = 22 }) {
     <div style={{ display:'flex', alignItems:'center', gap:9 }}>
       <div style={{ width:size+14, height:size+14, borderRadius:11,
         background:`linear-gradient(135deg,${BRAND.primary},${BRAND.purple})`,
-        display:'flex', alignItems:'center', justifyContent:'center', fontSize:size-2, flexShrink:0 }}>⚡</div>
+        display:'flex', alignItems:'center', justifyContent:'center', fontSize:size-2, flexShrink:0 }}><FaBolt color="#fff" size={size-8} /></div>
       <span style={{ fontWeight:800, fontSize:size, color: light ? '#fff' : '#111827' }}>
         FitLife <span style={{ color:BRAND.primary }}>Pro</span>
       </span>

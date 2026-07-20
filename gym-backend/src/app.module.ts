@@ -11,6 +11,7 @@ import { MembershipPlan } from './membership-plans/entities/membership-plan.enti
 import { Enrollment }     from './enrollments/entities/enrollment.entity';
 import { Exercise }       from './exercises/entities/exercise.entity';
 import { WorkoutProgram } from './workout-programs/entities/workout-program.entity';
+import { ProgramRating } from './workout-programs/entities/program-rating.entity';
 
 import { AuthController }            from './auth/auth.controller';
 import { AuthService }               from './auth/auth.service';
@@ -54,21 +55,26 @@ import { Gym } from './gyms/entities/gym.entity';
 import { GymsController } from './gyms/gyms.controller';
 import { GymsService } from './gyms/gyms.service';
 
+import { Message } from './messages/entities/message.entity';
+import { MessagesController } from './messages/messages.controller';
+import { MessagesService } from './messages/messages.service';
+import { MessagesGateway } from './messages/messages.gateway';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: process.env.DB_HOST || 'localhost',
       port: 5432,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, MembershipPlan, Enrollment, Exercise, WorkoutProgram, HealthProfile, FitnessProgram, CheckIn, Gym],
+      entities: [User, MembershipPlan, Enrollment, Exercise, WorkoutProgram, ProgramRating, HealthProfile, FitnessProgram, CheckIn, Gym, Message],
       synchronize: true,         // Tabloları otomatik oluşturur (dev için)
       logging: false,
     }),
-    TypeOrmModule.forFeature([User, MembershipPlan, Enrollment, Exercise, WorkoutProgram, HealthProfile, FitnessProgram, CheckIn, Gym]),
+    TypeOrmModule.forFeature([User, MembershipPlan, Enrollment, Exercise, WorkoutProgram, ProgramRating, HealthProfile, FitnessProgram, CheckIn, Gym, Message]),
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
@@ -87,6 +93,7 @@ import { GymsService } from './gyms/gyms.service';
     CheckInsController,
     DashboardController,
     GymsController,
+    MessagesController,
   ],
   providers: [
     AuthService,
@@ -102,6 +109,8 @@ import { GymsService } from './gyms/gyms.service';
     DashboardService,
     AiProgramService,
     GymsService,
+    MessagesService,
+    MessagesGateway,
   ],
 })
 export class AppModule {}

@@ -26,8 +26,14 @@ export class Enrollment {
   to: (v) => v,
   from: (v) => parseFloat(v),
 }})
-amountPaid: number;
+  amountPaid: number;
 
-@Column({ nullable: true, type: 'int' })
+  @Column({ default: 0 })
+  totalPtSessions: number;
+
+  @Column({ default: 0 })
+  remainingPtSessions: number;
+
+  @Column({ nullable: true, type: 'int' })
   gymId: number | null;
 }

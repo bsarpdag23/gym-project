@@ -89,4 +89,55 @@ export class GymsService {
       order: { role: 'ASC', id: 'DESC' },
     });
   }
+
+  // Salon bilgilerini ve durumunu güncelle (süper admin)
+  async update(id: number, data: { name?: string; address?: string; phone?: string; isActive?: boolean }) {
+    const gym = await this.gymRepo.findOne({ where: { id } });
+    if (!gym) throw new NotFoundException('Salon bulunamadı.');
+    Object.assign(gym, data);
+    return this.gymRepo.save(gym);
+  }
+
+  // Salon sil (süper admin)
+  async remove(id: number) {
+    const gym = await this.gymRepo.findOne({ where: { id } });
+    if (!gym) throw new NotFoundException('Salon bulunamadı.');
+    
+    // Yabancı anahtar kısıtlamalarını önlemek için bu salondaki kullanıcıların gymId değerini null yapalım
+    await this.userRepo.update({ gymId: id }, { gymId: null });
+    
+    await this.gymRepo.delete(id);
+    return { success: true };
+  }
+
+  // Platform genelindeki istatistikler (süper admin)
+  async getGlobalStats() {
+    const totalGyms = await this.gymRepo.count();
+    const totalMembers = await this.userRepo.count({
+      where: { role: UserRole.MEMBER },
+    });
+    const activeEnrollments = await this.enrollmentRepo.count({
+      where: { status: 'active' },
+    });
+
+    const revenueResult = await this.enrollmentRepo
+      .createQueryBuilder('e')
+      .select('SUM(e.amountPaid)', 'total')
+      .getRawOne();
+    const totalRevenue = parseFloat(revenueResult.total) || 0;
+
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const todayCheckIns = await this.checkInRepo.count({
+      where: { checkInTime: MoreThanOrEqual(startOfToday) },
+    });
+
+    return {
+      totalGyms,
+      totalMembers,
+      activeEnrollments,
+      totalRevenue,
+      todayCheckIns,
+    };
+  }
 }

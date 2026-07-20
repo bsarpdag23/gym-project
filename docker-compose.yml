@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: gym-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "123"
+      POSTGRES_DB: gym_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./gym-backend
+      dockerfile: Dockerfile
+    container_name: gym-backend
+    restart: always
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: "123"
+      DB_NAME: gym_db
+      JWT_SECRET: gym-secret-key-2025
+      GEMINI_API_KEY: AQ.Ab8RN6JuvDZf_Qm1iYjr43AHSAfjWFk-Q21DMaIegbSaxjgYrA
+      GROQ_API_KEY: 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
+    ports:
+      - "3001:3001"
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./gym-frontend
+      dockerfile: Dockerfile
+    container_name: gym-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  uploads_data:
