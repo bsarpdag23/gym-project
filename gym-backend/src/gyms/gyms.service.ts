@@ -22,6 +22,15 @@ export class GymsService {
     return this.gymRepo.find({ order: { createdAt: 'DESC' } });
   }
 
+  // Halka açık aktif salon listesi (kayıt olma ekranı için)
+  findPublicList() {
+    return this.gymRepo.find({
+      where: { isActive: true },
+      select: { id: true, name: true, address: true },
+      order: { name: 'ASC' },
+    });
+  }
+
   // Yeni salon oluştur + sahibini (admin) oluştur
   async create(data: {
     name: string; address?: string; phone?: string;

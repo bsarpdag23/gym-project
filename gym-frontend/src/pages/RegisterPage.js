@@ -1,19 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaBolt, FaCheckCircle } from 'react-icons/fa';
-import { BRAND, Btn, Card, Input, Logo } from '../components/ui';
+import { BRAND, Btn, Card, Input, Select, Logo } from '../components/ui';
 import api from '../api';
 
 export default function RegisterPage({ goLogin, goHome }) {
-  const [form, setForm] = useState({ email:'', password:'', fullName:'', role:'member', phone:'' });
+  const [gyms, setGyms] = useState([]);
+  const [form, setForm] = useState({ email:'', password:'', fullName:'', role:'member', phone:'', gymId:'' });
   const [err, setErr]   = useState('');
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const list = await api.gyms.getPublicList();
+        if (Array.isArray(list) && list.length > 0) {
+          setGyms(list);
+          setForm(f => ({ ...f, gymId: list[0].id }));
+        }
+      } catch (e) { console.error(e); }
+    })();
+  }, []);
+
   const submit = async () => {
     setErr(''); setLoading(true);
     try {
-      await api.auth.register(form);
+      await api.auth.register({
+        ...form,
+        gymId: form.gymId ? Number(form.gymId) : 1,
+      });
       setDone(true);
     } catch (e) { setErr(e.message); }
     setLoading(false);
@@ -45,6 +61,19 @@ export default function RegisterPage({ goLogin, goHome }) {
 
               <Input label="Ad Soyad" value={form.fullName} onChange={set('fullName')} placeholder="Ali Yılmaz" />
               <Input label="Telefon"  value={form.phone}    onChange={set('phone')} placeholder="05XX XXX XX XX" />
+              
+              {gyms.length > 0 && (
+                <Select
+                  label="Spor Salonu Seçin"
+                  value={form.gymId}
+                  onChange={set('gymId')}
+                  options={gyms.map(g => ({
+                    value: g.id,
+                    label: `${g.name}${g.address ? ` (${g.address})` : ''}`
+                  }))}
+                />
+              )}
+
               <Input label="Email"    value={form.email}    onChange={set('email')} type="email" placeholder="ornek@firma.com" />
               <Input label="Şifre"    value={form.password} onChange={set('password')} type="password" placeholder="En az 6 karakter" />
 

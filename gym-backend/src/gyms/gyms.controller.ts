@@ -6,38 +6,56 @@ import { GymsService } from './gyms.service';
 import { CreateGymDto } from './dto/create-gym.dto';
 
 @Controller('gyms')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('super_admin')   // ← sadece süper admin
 export class GymsController {
   constructor(private readonly service: GymsService) {}
 
+  // Herkesin erişebileceği halka açık aktif salon listesi (Kayıt ekranı için)
+  @Get('public')
+  findPublic() {
+    return this.service.findPublicList();
+  }
+
   @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('super_admin')
   findAll() { return this.service.findAll(); }
 
   @Get('global-stats')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('super_admin')
   getGlobalStats() {
     return this.service.getGlobalStats();
   }
 
   @Get(':id/detail')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('super_admin')
   getGymDetail(@Param('id') id: string) {
     return this.service.getGymDetail(+id);
   }
 
   @Get(':id/users')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('super_admin')
   getGymUsers(@Param('id') id: string) {
     return this.service.getGymUsers(+id);
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('super_admin')
   create(@Body() dto: CreateGymDto) { return this.service.create(dto); }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('super_admin')
   update(@Param('id') id: string, @Body() dto: { name?: string; address?: string; phone?: string; isActive?: boolean }) {
     return this.service.update(+id, dto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('super_admin')
   remove(@Param('id') id: string) {
     return this.service.remove(+id);
   }
