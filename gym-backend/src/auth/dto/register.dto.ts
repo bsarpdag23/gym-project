@@ -1,4 +1,5 @@
 import { IsEmail, IsOptional, IsString, MinLength, IsInt } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class RegisterDto {
   @IsEmail()
@@ -15,6 +16,8 @@ export class RegisterDto {
   @IsOptional()
   phone?: string;
 
+  @IsOptional()
   @IsInt()
-  gymId: number;
+  @Type(() => Number)
+  gymId?: number;
 }

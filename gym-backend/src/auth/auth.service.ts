@@ -20,7 +20,7 @@ export class AuthService {
       ...dto,
       password: hashed,
       role: UserRole.MEMBER,   // kim ne gönderirse göndersin, herkes member
-      gymId: dto.gymId,        // üye bu salona bağlanır
+      gymId: dto.gymId ?? 1,   // varsayılan olarak ilk salona bağlanır
     });
     await this.usersRepo.save(user);
     const { password, ...result } = user;
