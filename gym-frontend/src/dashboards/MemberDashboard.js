@@ -6,7 +6,7 @@ import {
   FaAppleAlt, FaUser, FaHourglassHalf, FaExclamationTriangle, FaDumbbell, FaHistory,
   FaClock, FaTrophy, FaCheckCircle, FaRobot, FaChalkboardTeacher, FaStar, FaRegStar,
   FaHome, FaBox, FaTicketAlt, FaQrcode, FaMobileAlt, FaCalendarDay, FaRegSmile,
-  FaComments, FaPaperPlane, FaEyeSlash, FaEye, FaCamera,
+  FaComments, FaPaperPlane, FaEyeSlash, FaEye, FaCamera, FaBuilding,
 } from 'react-icons/fa';
 import {
   GiBodyBalance, GiLeg, GiShoulderArmor, GiChest, GiBiceps, GiMuscularTorso, GiPull, GiPush,
@@ -1318,10 +1318,16 @@ export default function MemberDashboard({ user, onLogout }) {
   const location = useLocation();
   const activeTab = location.pathname.split('/').filter(Boolean)[1] || 'dashboard';
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [gymName, setGymName] = useState(null);
   const [checkInNotice, setCheckInNotice] = useState(null);
 
   useEffect(() => {
-    api.users.getMe().then((me) => setAvatarUrl(me?.avatarUrl || null)).catch(() => {});
+    api.users.getMe().then((me) => {
+      setAvatarUrl(me?.avatarUrl || null);
+      if (me?.gym?.name) {
+        setGymName(me.gym.name);
+      }
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -1348,7 +1354,26 @@ export default function MemberDashboard({ user, onLogout }) {
     <div style={{ minHeight:'100vh', background:'#f8fafc', fontFamily:'Segoe UI,sans-serif' }}>
       <div style={{ background:`linear-gradient(135deg,${BRAND.primary},${BRAND.purple})`, padding:'14px 28px',
         display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-        <Logo light />
+        <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+          <Logo light />
+          {gymName && (
+            <span style={{
+              background: 'rgba(255,255,255,0.18)',
+              backdropFilter: 'blur(4px)',
+              padding: '4px 14px',
+              borderRadius: 20,
+              fontSize: 13,
+              fontWeight: 600,
+              color: '#fff',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              border: '1px solid rgba(255,255,255,0.25)'
+            }}>
+              <FaBuilding style={{ fontSize: 12 }} /> {gymName}
+            </span>
+          )}
+        </div>
         <div style={{ display:'flex', gap:12, alignItems:'center', color:'#fff' }}>
           <span style={{ fontSize:14, display:'inline-flex', alignItems:'center', gap:8 }}>
             <Avatar src={resolveAvatarUrl(avatarUrl)} name={user.fullName} size={26} /> {user.fullName}

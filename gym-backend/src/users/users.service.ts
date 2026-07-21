@@ -169,8 +169,9 @@ export class UsersService {
       where: { id: userId },
       select: {
         id: true, email: true, fullName: true, role: true, qrToken: true,
-        hideProfile: true, avatarUrl: true,
+        hideProfile: true, avatarUrl: true, gymId: true,
       },
+      relations: { gym: true },
     });
   }
 
