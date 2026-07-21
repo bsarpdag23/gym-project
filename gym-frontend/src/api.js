@@ -71,6 +71,7 @@ const api = {
     getGamification: () => api.req('/users/me/gamification'),
     updatePrivacy: (hideProfile) => api.req('/users/me/privacy', { method:'PATCH', body: JSON.stringify({ hideProfile }) }),
     uploadAvatar: (file) => api.upload('/users/me/avatar', file),
+    deleteMe: () => api.req('/users/me', { method: 'DELETE' }),
   },
   plans: {
     getAll:  ()      => api.req('/membership-plans'),

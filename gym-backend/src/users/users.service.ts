@@ -234,4 +234,25 @@ export class UsersService {
       checkInCount,
     };
   }
+
+  async deleteMyAccount(userId: number) {
+    // 1) Aktif üyeliği var mı kontrol et
+    const activeEnrollment = await this.enrollRepo.findOne({
+      where: { member: { id: userId }, status: 'active' },
+    });
+
+    if (activeEnrollment) {
+      throw new BadRequestException(
+        'Aktif bir üyelik paketiniz bulunmaktadır. Hesabınızı silebilmek için aktif üyeliğinizin sona ermesi gerekmektedir.',
+      );
+    }
+
+    const user = await this.repo.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new BadRequestException('Kullanıcı bulunamadı.');
+    }
+
+    await this.repo.remove(user);
+    return { message: 'Hesabınız başarıyla silindi.' };
+  }
 }

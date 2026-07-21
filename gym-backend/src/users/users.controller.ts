@@ -1,5 +1,5 @@
 import {
-  Body, Controller, Get, Param, Patch, Post, Request, UseGuards, UseInterceptors, UploadedFile,
+  Body, Controller, Get, Param, Patch, Post, Delete, Request, UseGuards, UseInterceptors, UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -35,6 +35,11 @@ export class UsersController {
   @Get('me')
   findMe(@Request() req) {
     return this.service.findMe(req.user.userId);
+  }
+
+  @Delete('me')
+  deleteMine(@Request() req) {
+    return this.service.deleteMyAccount(req.user.userId);
   }
 
   @Get('me/gamification')

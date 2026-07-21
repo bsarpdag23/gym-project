@@ -48,7 +48,7 @@ function getTodayWorkout(program) {
 }
 
 // ─── Profilim & Diyet sekmesi (kişisel bilgiler + diyet tercihleri formu) ───
-function ProfileDietTab({ onAvatarChange }) {
+function ProfileDietTab({ onAvatarChange, onLogout }) {
   const [profile, setProfile] = useState(null);
   const [program, setProgram] = useState(null);
   const [me, setMe] = useState(null);
@@ -62,6 +62,8 @@ function ProfileDietTab({ onAvatarChange }) {
   const [hideProfile, setHideProfile] = useState(false);
   const [savingPrivacy, setSavingPrivacy] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [deletingAcc, setDeletingAcc] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const fileInputRef = useRef(null);
   const [form, setForm] = useState({
     heightCm:'', weightKg:'', age:'', gender:'male',
@@ -153,6 +155,19 @@ function ProfileDietTab({ onAvatarChange }) {
       setProgram(prog);
     } catch (e) { setErr(e.message); }
     setGenDiet(false);
+  };
+
+  const confirmDeleteAccount = async () => {
+    setErr('');
+    setDeletingAcc(true);
+    try {
+      await api.users.deleteMe();
+      if (onLogout) onLogout();
+    } catch (e) {
+      setErr(e.message);
+      setShowDeleteModal(false);
+    }
+    setDeletingAcc(false);
   };
 
   if (loading) return <Card style={{ textAlign:'center', padding:40 }}>Yükleniyor...</Card>;
@@ -347,12 +362,6 @@ function ProfileDietTab({ onAvatarChange }) {
                 </div>
               </div>
             ) : (
-              <Card style={{ textAlign: 'center', padding: '30px 20px', border: '1.5px dashed #d1d5db', background: '#f9fafb' }}>
-                <div style={{ fontSize: 32, color: BRAND.primary, marginBottom: 8 }}><FaAppleAlt /></div>
-                <h4 style={{ margin: '0 0 4px' }}>Detaylı Günlük Öğün Listesi Bulunmuyor</h4>
-                <p style={{ color: '#6b7280', fontSize: 13, margin: '0 0 16px', maxWidth: 400, marginLeft: 'auto', marginRight: 'auto' }}>
-                  Hedef kalori ve makrolarınıza uygun örnek kahvaltı, öğle, akşam yemekleri ve ara öğün listesi oluşturun.
-                </p>
                 <Btn onClick={generateDiet} disabled={generatingDiet} style={{ margin: '0 auto' }}>
                   {generatingDiet ? 'Öğünler Hesaplanıyor...' : <><FaRobot /> AI ile Diyet Listesi Oluştur</>}
                 </Btn>
@@ -360,6 +369,41 @@ function ProfileDietTab({ onAvatarChange }) {
             )}
           </div>
         </>
+      )}
+
+      {/* Hesabı Sil (Danger Zone) */}
+      <Card style={{ marginTop: 30, borderLeft: '4px solid #dc2626', background: '#fff' }}>
+        <h4 style={{ margin: '0 0 4px', color: '#dc2626', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <FaExclamationTriangle /> Hesabı Sil
+        </h4>
+        <p style={{ color: '#6b7280', fontSize: 13, margin: '0 0 14px' }}>
+          Hesabınızı ve tüm verilerinizi kalıcı olarak silebilirsiniz. (Aktif bir üyelik paketiniz varsa silme işlemi yapılamaz).
+        </p>
+        <Btn onClick={() => setShowDeleteModal(true)} color="#dc2626" outline size="sm">
+          Hesabımı Sil
+        </Btn>
+      </Card>
+
+      {showDeleteModal && (
+        <Modal title="Hesabı Sil Onayı" onClose={() => setShowDeleteModal(false)}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 42, color: '#dc2626', marginBottom: 12, display: 'flex', justifyContent: 'center' }}>
+              <FaExclamationTriangle />
+            </div>
+            <h3 style={{ margin: '0 0 8px' }}>Hesabınızı silmek istediğinize emin misiniz?</h3>
+            <p style={{ color: '#6b7280', fontSize: 13, margin: '0 0 20px' }}>
+              Bu işlem geri alınamaz. Aktif bir üyelik paketiniz varsa sistem silme işlemine izin vermeyecektir.
+            </p>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <Btn onClick={confirmDeleteAccount} disabled={deletingAcc} color="#dc2626" style={{ flex: 1, justifyContent: 'center' }}>
+                {deletingAcc ? 'Siliniyor...' : 'Evet, Hesabımı Sil'}
+              </Btn>
+              <Btn onClick={() => setShowDeleteModal(false)} color="#6b7280" outline style={{ flex: 1, justifyContent: 'center' }}>
+                İptal
+              </Btn>
+            </div>
+          </div>
+        </Modal>
       )}
     </div>
   );
@@ -1399,7 +1443,7 @@ export default function MemberDashboard({ user, onLogout }) {
           <Route path="plans" element={<PlansTab />} />
           <Route path="mine" element={<MyEnrollmentsTab />} />
           <Route path="programs" element={<ProgramsCatalogTab />} />
-          <Route path="profile" element={<ProfileDietTab onAvatarChange={setAvatarUrl} />} />
+          <Route path="profile" element={<ProfileDietTab onAvatarChange={setAvatarUrl} onLogout={onLogout} />} />
           <Route path="myprogram" element={<MyProgramTab />} />
           <Route path="achievements" element={<AchievementsTab />} />
           <Route path="chat" element={<ChatTab user={user} />} />
