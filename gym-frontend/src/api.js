@@ -1,4 +1,5 @@
-export const API_URL = 'http://localhost:3001';
+// Nginx ters proxy (reverse proxy) sayesinde üretim ortamında bağımsız port açmaya gerek yoktur.
+export const API_URL = process.env.REACT_APP_API_URL || '';
 
 // Sunucudan gelen göreli avatar yolunu (/uploads/avatars/x.webp) tam URL'e çevirir
 export const resolveAvatarUrl = (avatarUrl) => avatarUrl ? `${API_URL}${avatarUrl}` : null;
