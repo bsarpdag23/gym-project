@@ -16,11 +16,20 @@ const api = {
         ...(options.headers || {}),
       },
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ message: 'Hata oluştu' }));
-      throw new Error(err.message);
+    const text = await res.text();
+    let data = null;
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        data = { message: text };
+      }
     }
-    return res.json();
+    if (!res.ok) {
+      const msg = data?.message || `Hata oluştu (${res.status})`;
+      throw new Error(msg);
+    }
+    return data;
   },
   // multipart/form-data gönderir — Content-Type header'ı elle set edilmez,
   // tarayıcı doğru boundary'i kendisi ekler
@@ -33,11 +42,20 @@ const api = {
       headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       body: formData,
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ message: 'Yükleme başarısız oldu' }));
-      throw new Error(err.message);
+    const text = await res.text();
+    let data = null;
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        data = { message: text };
+      }
     }
-    return res.json();
+    if (!res.ok) {
+      const msg = data?.message || `Yükleme başarısız oldu (${res.status})`;
+      throw new Error(msg);
+    }
+    return data;
   },
   auth: {
     register: (d)    => api.req('/auth/register', { method:'POST', body: JSON.stringify(d) }),
