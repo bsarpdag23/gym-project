@@ -362,6 +362,12 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
                 </div>
               </div>
             ) : (
+              <Card style={{ textAlign: 'center', padding: '30px 20px', border: '1.5px dashed #d1d5db', background: '#f9fafb' }}>
+                <div style={{ fontSize: 32, color: BRAND.primary, marginBottom: 8 }}><FaAppleAlt /></div>
+                <h4 style={{ margin: '0 0 4px' }}>Detaylı Günlük Öğün Listesi Bulunmuyor</h4>
+                <p style={{ color: '#6b7280', fontSize: 13, margin: '0 0 16px', maxWidth: 400, marginLeft: 'auto', marginRight: 'auto' }}>
+                  Hedef kalori ve makrolarınıza uygun örnek kahvaltı, öğle, akşam yemekleri ve ara öğün listesi oluşturun.
+                </p>
                 <Btn onClick={generateDiet} disabled={generatingDiet} style={{ margin: '0 auto' }}>
                   {generatingDiet ? 'Öğünler Hesaplanıyor...' : <><FaRobot /> AI ile Diyet Listesi Oluştur</>}
                 </Btn>
