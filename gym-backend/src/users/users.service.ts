@@ -1,9 +1,10 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not } from 'typeorm';
 import { join } from 'path';
 import { mkdir, unlink } from 'fs/promises';
 import sharp from 'sharp';
+import * as bcrypt from 'bcrypt';
 import { User, UserRole } from './entities/user.entity';
 import { Enrollment } from '../enrollments/entities/enrollment.entity';
 import { FitnessProgram } from '../programs/entities/fitness-program.entity';
@@ -12,13 +13,30 @@ import { CheckIn } from '../check-ins/entities/check-in.entity';
 const AVATAR_DIR = join(__dirname, '..', '..', 'uploads', 'avatars');
 
 @Injectable()
-export class UsersService {
+export class UsersService implements OnModuleInit {
   constructor(
     @InjectRepository(User) private repo: Repository<User>,
     @InjectRepository(Enrollment) private enrollRepo: Repository<Enrollment>,
     @InjectRepository(FitnessProgram) private programRepo: Repository<FitnessProgram>,
     @InjectRepository(CheckIn) private checkInRepo: Repository<CheckIn>,
   ) {}
+
+  async onModuleInit() {
+    // Veritabanı yeniyse otomatik varsayılan Süper Admin hesabı oluştur
+    const superAdmin = await this.repo.findOne({ where: { role: UserRole.SUPER_ADMIN } });
+    if (!superAdmin) {
+      const hashedPassword = await bcrypt.hash('admin123', 10);
+      await this.repo.save(
+        this.repo.create({
+          email: 'admin@fitlife.com',
+          fullName: 'Süper Admin',
+          password: hashedPassword,
+          role: UserRole.SUPER_ADMIN,
+        }),
+      );
+      console.log('👑 Varsayılan Süper Admin hesabı oluşturuldu → admin@fitlife.com / admin123');
+    }
+  }
 
   async findAll(currentUser: any) {
     // Süper admin → tüm salonların kullanıcıları; salon sahibi → sadece kendi salonu
