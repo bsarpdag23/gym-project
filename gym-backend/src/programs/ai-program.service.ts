@@ -70,19 +70,45 @@ Cevabını SADECE aşağıdaki JSON formatında ver. Başka hiçbir metin, açı
                    : goal === 'lose' ? 'kilo verme (yağ yakımı)'
                    : 'formu koruma';
 
+    // Öğün bazlı kalori ve makro dağılımı (Kahvaltı %25, Öğle %35, Akşam %30, Ara %10)
+    const bfastCals = Math.round(calories * 0.25);
+    const lunchCals = Math.round(calories * 0.35);
+    const dinnerCals = Math.round(calories * 0.30);
+    const snackCals = calories - (bfastCals + lunchCals + dinnerCals);
+
+    const bfastP = Math.round(macros.proteinG * 0.25);
+    const lunchP = Math.round(macros.proteinG * 0.35);
+    const dinnerP = Math.round(macros.proteinG * 0.30);
+    const snackP = macros.proteinG - (bfastP + lunchP + dinnerP);
+
+    const bfastC = Math.round(macros.carbsG * 0.25);
+    const lunchC = Math.round(macros.carbsG * 0.35);
+    const dinnerC = Math.round(macros.carbsG * 0.30);
+    const snackC = macros.carbsG - (bfastC + lunchC + dinnerC);
+
+    const bfastF = Math.round(macros.fatG * 0.25);
+    const lunchF = Math.round(macros.fatG * 0.35);
+    const dinnerF = Math.round(macros.fatG * 0.30);
+    const snackF = macros.fatG - (bfastF + lunchF + dinnerF);
+
     const prompt = `Sen uzman bir spor diyetisyenisin. Aşağıdaki kişi için günlük örnek bir diyet ve beslenme programı hazırla.
 
 KİŞİ BİLGİLERİ:
 - Boy: ${input.heightCm} cm, Kilo: ${input.weightKg} kg, Yaş: ${input.age}
 - Cinsiyet: ${input.gender === 'male' ? 'Erkek' : 'Kadın'}
 - Hedef: ${goalText}
-- Günlük Hedef Kalori: ${calories} kcal
-- Makrolar: Protein: ${macros.proteinG}g, Karbonhidrat: ${macros.carbsG}g, Yağ: ${macros.fatG}g
+- GÜNLÜK TOPLAM HEDEF KALORİ: TAM OLARAK KESİNLİKLE ${calories} kcal
+- GÜNLÜK TOPLAM MAKROLAR: Protein: ${macros.proteinG}g, Karbonhidrat: ${macros.carbsG}g, Yağ: ${macros.fatG}g
 
-KURALLAR:
-- Günlük öğünleri böl: Kahvaltı, Öğle Yemeği, Akşam Yemeği ve en az 1 Ara Öğün.
-- Belirtilen toplam kalori (${calories} kcal) ve makrolara (Protein: ${macros.proteinG}g, Karbonhidrat: ${macros.carbsG}g, Yağ: ${macros.fatG}g) olabildiğince yakın olmasını sağla.
-- Her öğünün içerdiği kalori ve makro değerlerini belirt.
+ÖĞÜN HEDEFLERİ (ÖĞÜNLERİN KALORİSİ VE MAKROLARI KESİNLİKLE BU SAYILARA SADIK OLMALIDIR):
+1. Kahvaltı (Saat 08:00) -> Hedef: ${bfastCals} kcal (P: ${bfastP}g, K: ${bfastC}g, Y: ${bfastF}g)
+2. Öğle Yemeği (Saat 13:00) -> Hedef: ${lunchCals} kcal (P: ${lunchP}g, K: ${lunchC}g, Y: ${lunchF}g)
+3. Ara Öğün (Saat 16:00) -> Hedef: ${snackCals} kcal (P: ${snackP}g, K: ${snackC}g, Y: ${snackF}g)
+4. Akşam Yemeği (Saat 19:00) -> Hedef: ${dinnerCals} kcal (P: ${dinnerP}g, K: ${dinnerC}g, Y: ${dinnerF}g)
+
+ÇOK ÖNEMLİ KURALLAR:
+- Tüm öğünlerin kalorilerini topladığında toplam sonuç KESİNLİKLE TAM OLARAK ${calories} kcal etmelidir.
+- Her öğünün besin malzemelerini (gramaj, adet) o öğünün kalori ve makro hedefine tam uyacak miktarlarda yaz.
 - Sağlıklı, bulunabilir ve pratik malzemeler öner.
 
 ÇOK ÖNEMLİ - ÇIKTI FORMATI:
@@ -99,8 +125,29 @@ Cevabını SADECE aşağıdaki JSON formatında ver. Başka hiçbir açıklama, 
         "1 dilim tam buğday ekmeği",
         "Domates, salatalık ve yeşillik"
       ],
-      "calories": 450,
-      "macros": { "protein": 28, "carbs": 15, "fat": 20 }
+      "calories": ${bfastCals},
+      "macros": { "protein": ${bfastP}, "carbs": ${bfastC}, "fat": ${bfastF} }
+    },
+    {
+      "name": "Öğle Yemeği",
+      "time": "13:00",
+      "items": [ "..." ],
+      "calories": ${lunchCals},
+      "macros": { "protein": ${lunchP}, "carbs": ${lunchC}, "fat": ${lunchF} }
+    },
+    {
+      "name": "Ara Öğün",
+      "time": "16:00",
+      "items": [ "..." ],
+      "calories": ${snackCals},
+      "macros": { "protein": ${snackP}, "carbs": ${snackC}, "fat": ${snackF} }
+    },
+    {
+      "name": "Akşam Yemeği",
+      "time": "19:00",
+      "items": [ "..." ],
+      "calories": ${dinnerCals},
+      "macros": { "protein": ${dinnerP}, "carbs": ${dinnerC}, "fat": ${dinnerF} }
     }
   ]
 }`;
