@@ -29,9 +29,30 @@ export default function LandingPage({ goLogin, goRegister }) {
   ];
 
   const plans = [
-    { name:'Başlangıç', price:'₺499', period:'/ay', features:['50 üyeye kadar','1 Admin hesabı','Temel raporlama','Email destek'], highlight:false },
-    { name:'Profesyonel', price:'₺999', period:'/ay', features:['250 üyeye kadar','5 Trainer hesabı','Gelişmiş raporlama','Öncelikli destek','Özel marka'], highlight:true },
-    { name:'Kurumsal', price:'Özel', period:'', features:['Sınırsız üye','Sınırsız personel','API erişimi','Özel entegrasyon','7/24 destek'], highlight:false },
+    { 
+      name: 'Başlangıç', 
+      price: '₺749', 
+      originalPrice: '₺1.499',
+      period: '/ay', 
+      features: ['100 üyeye kadar', '1 Admin hesabı', 'Temel metrikler & QR giriş', 'Haftalık yedekleme', 'Email destek'], 
+      highlight: false 
+    },
+    { 
+      name: 'Profesyonel', 
+      price: '₺1.399', 
+      originalPrice: '₺2.999',
+      period: '/ay', 
+      features: ['500 üyeye kadar', 'Sınırsız Trainer hesabı', 'Üye Kayıp Önleme (Retention) Modülü', 'AI Diyet Modülü Entegrasyonu', 'Gelişmiş Gelir Analizi & Raporlama', 'Öncelikli Destek'], 
+      highlight: true 
+    },
+    { 
+      name: 'Kurumsal', 
+      price: '₺2.899', 
+      originalPrice: '₺5.999',
+      period: '/ay', 
+      features: ['Sınırsız üye & şube', 'Çoklu Şube Yönetimi', 'Sanal POS Entegrasyonu', 'Özel Domain/Microsite Desteği', 'Turnike & Donanım Entegrasyonu', '7/24 Telefon Desteği'], 
+      highlight: false 
+    },
   ];
 
   return (
@@ -153,9 +174,14 @@ export default function LandingPage({ goLogin, goRegister }) {
                   </div>
                 )}
                 <h3 style={{ margin:'8px 0 6px' }}>{p.name}</h3>
-                <div style={{ margin:'14px 0 20px' }}>
-                  <span style={{ fontSize:34, fontWeight:800 }}>{p.price}</span>
-                  <span style={{ color:'#6b7280', fontSize:14 }}>{p.period}</span>
+                <div style={{ margin:'14px 0 20px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <div style={{ textDecoration: 'line-through', color: '#9ca3af', fontSize: 13, fontWeight: 600 }}>
+                    {p.originalPrice}
+                  </div>
+                  <div>
+                    <span style={{ fontSize:34, fontWeight:800, color: BRAND.primary }}>{p.price}</span>
+                    <span style={{ color:'#6b7280', fontSize:14 }}>{p.period}</span>
+                  </div>
                 </div>
                 <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:24 }}>
                   {p.features.map(f => (
