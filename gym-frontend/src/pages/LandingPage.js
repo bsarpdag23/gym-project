@@ -1,8 +1,24 @@
-import React from 'react';
-import { FaUsers, FaDumbbell, FaClipboardList, FaLock, FaChartBar, FaCloud, FaRocket, FaBolt, FaCheck } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaUsers, FaDumbbell, FaClipboardList, FaLock, FaChartBar, FaCloud, FaRocket, FaBolt, FaCheck, FaMapMarkerAlt } from 'react-icons/fa';
 import { BRAND, Btn, Card, Badge, Logo } from '../components/ui';
+import api from '../api';
 
 export default function LandingPage({ goLogin, goRegister }) {
+  const navigate = useNavigate();
+  const [gyms, setGyms] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const list = await api.gyms.getPublicList();
+        setGyms(list || []);
+      } catch (e) {
+        console.error('Salonlar yuklenemedi', e);
+      }
+    })();
+  }, []);
+
   const features = [
     { icon:<FaUsers/>, title:'Üye Yönetimi', desc:'Üyelerinizi, paketlerinizi ve üyelik sürelerini tek panelden yönetin.' },
     { icon:<FaDumbbell/>, title:'Egzersiz Kütüphanesi', desc:'Sınırsız egzersiz ekleyin, kategorilere ayırın, antrenörlerinize özel yetkiler verin.' },
@@ -28,6 +44,7 @@ export default function LandingPage({ goLogin, goRegister }) {
           <Logo />
           <div style={{ display:'flex', gap:32, alignItems:'center' }}>
             <a href="#features" style={{ color:'#374151', textDecoration:'none', fontSize:14, fontWeight:600 }}>Özellikler</a>
+            <a href="#gyms" style={{ color:'#374151', textDecoration:'none', fontSize:14, fontWeight:600 }}>Spor Salonları</a>
             <a href="#pricing"  style={{ color:'#374151', textDecoration:'none', fontSize:14, fontWeight:600 }}>Fiyatlandırma</a>
             <Btn onClick={goLogin} color="#374151" outline size="sm">Giriş Yap</Btn>
             <Btn onClick={goRegister} size="sm">Ücretsiz Başla</Btn>
@@ -82,6 +99,37 @@ export default function LandingPage({ goLogin, goRegister }) {
             </Card>
           ))}
         </div>
+      </div>
+
+      {/* ── SPOR SALONLARIMIZ ── */}
+      <div id="gyms" style={{ maxWidth: 1180, margin: '0 auto', padding: '0 24px 90px' }}>
+        <div style={{ textAlign: 'center', marginBottom: 44 }}>
+          <Badge label="ANLAŞMALI SALONLARIMIZ" />
+          <h2 style={{ fontSize: 34, fontWeight: 800, margin: '14px 0 12px' }}>Anlaşmalı Spor Salonlarımız</h2>
+          <p style={{ color: '#6b7280', fontSize: 15, margin: 0 }}>Size en yakın salonu seçin, paketlerini inceleyin ve anında kaydolun.</p>
+        </div>
+
+        {gyms.length === 0 ? (
+          <Card style={{ textAlign: 'center', padding: 40 }}>
+            <p style={{ color: '#9ca3af', margin: 0, fontSize: 14 }}>Sistemimizde şu an kayıtlı aktif salon bulunmamaktadır.</p>
+          </Card>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 20 }}>
+            {gyms.map(g => (
+              <Card key={g.id} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: '1px solid #e5e7eb' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 10px', fontSize: 17, fontWeight: 700 }}>{g.name}</h3>
+                  <div style={{ color: '#64748b', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
+                    <FaMapMarkerAlt /> {g.address || 'Adres belirtilmemiş.'}
+                  </div>
+                </div>
+                <Btn onClick={() => navigate(`/gym/${g.id}`)} style={{ width: '100%', justifyContent: 'center' }}>
+                  Salonu İncele & Kaydol →
+                </Btn>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ── FİYATLANDIRMA ── */}
