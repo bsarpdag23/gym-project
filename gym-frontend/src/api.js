@@ -125,6 +125,7 @@ const api = {
   },
   gyms: {
     getPublicList: () => api.req('/gyms/public'),
+    getPublicDetail: (id) => api.req(`/gyms/${id}/public-detail`),
     getAll: ()  => api.req('/gyms'),
     create: (d) => api.req('/gyms', { method:'POST', body: JSON.stringify(d) }),
     getDetail: (id) => api.req(`/gyms/${id}/detail`),

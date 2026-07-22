@@ -5,6 +5,7 @@ import { Gym } from './entities/gym.entity';
 import { User, UserRole } from '../users/entities/user.entity';
 import { Enrollment } from '../enrollments/entities/enrollment.entity';
 import { CheckIn } from '../check-ins/entities/check-in.entity';
+import { MembershipPlan } from '../membership-plans/entities/membership-plan.entity';
 import { MoreThanOrEqual } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
@@ -147,6 +148,34 @@ export class GymsService {
       activeEnrollments,
       totalRevenue,
       todayCheckIns,
+    };
+  }
+
+  async findPublicDetail(gymId: number) {
+    const gym = await this.gymRepo.findOne({ where: { id: gymId, isActive: true } });
+    if (!gym) throw new NotFoundException('Salon bulunamadı.');
+
+    const plans = await this.gymRepo.manager.find(MembershipPlan, {
+      where: { gymId, isActive: true },
+      order: { price: 'ASC' },
+    });
+
+    return {
+      gym: {
+        id: gym.id,
+        name: gym.name,
+        address: gym.address,
+        phone: gym.phone,
+      },
+      plans: plans.map(p => ({
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        price: p.price,
+        durationMonths: p.durationMonths,
+        includesPersonalTraining: p.includesPersonalTraining,
+        ptSessionsCount: p.ptSessionsCount,
+      })),
     };
   }
 }

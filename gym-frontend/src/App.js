@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-route
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import GymDetailPage from './pages/GymDetailPage';
 import AdminDashboard from './dashboards/AdminDashboard';
 import MemberDashboard from './dashboards/MemberDashboard';
 import SuperAdminDashboard from './dashboards/SuperAdminDashboard';
@@ -23,6 +24,8 @@ function AppRoutes({ user, onLogin, onLogout }) {
     <Routes>
       <Route path="/" element={user ? <Navigate to={home} replace /> :
         <LandingPage goLogin={() => navigate('/login')} goRegister={() => navigate('/register')} />} />
+
+      <Route path="/gym/:gymId" element={<GymDetailPage />} />
 
       <Route path="/login" element={user ? <Navigate to={home} replace /> :
         <LoginPage onLogin={onLogin} goRegister={() => navigate('/register')} goHome={() => navigate('/')} />} />

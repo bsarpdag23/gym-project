@@ -17,7 +17,20 @@ export default function RegisterPage({ goLogin, goHome }) {
         const list = await api.gyms.getPublicList();
         if (Array.isArray(list) && list.length > 0) {
           setGyms(list);
-          setForm(f => ({ ...f, gymId: list[0].id }));
+
+          const params = new URLSearchParams(window.location.search);
+          const urlGymId = params.get('gymId');
+          const urlPlanId = params.get('planId');
+
+          if (urlPlanId) {
+            localStorage.setItem('pendingPlanId', urlPlanId);
+          }
+
+          if (urlGymId && list.some(g => g.id === Number(urlGymId))) {
+            setForm(f => ({ ...f, gymId: Number(urlGymId) }));
+          } else {
+            setForm(f => ({ ...f, gymId: list[0].id }));
+          }
         }
       } catch (e) { console.error(e); }
     })();

@@ -1315,10 +1315,21 @@ function PlansTab() {
         api.plans.getAll(),
         api.enrollments.getMine(),
       ]);
-      setPlans(allPlans.filter(p => p.isActive));
+      const activePlans = allPlans.filter(p => p.isActive);
+      setPlans(activePlans);
       const now = new Date();
       const active = myEnrollments.some(e => e.status === 'active' && new Date(e.endDate) >= now);
       setHasActiveMembership(active);
+
+      // Kayıt sonrasında bekleyen bir satın alma planı var mı kontrol et
+      const pendingPlanId = localStorage.getItem('pendingPlanId');
+      if (pendingPlanId && !active) {
+        const found = activePlans.find(p => p.id === Number(pendingPlanId));
+        if (found) {
+          setSelectedPlan(found);
+        }
+        localStorage.removeItem('pendingPlanId');
+      }
     } catch (e) { alert(e.message); }
   };
   useEffect(() => { load(); }, []);

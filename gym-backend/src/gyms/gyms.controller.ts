@@ -15,6 +15,11 @@ export class GymsController {
     return this.service.findPublicList();
   }
 
+  @Get(':id/public-detail')
+  findPublicDetail(@Param('id') id: string) {
+    return this.service.findPublicDetail(+id);
+  }
+
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('super_admin')
