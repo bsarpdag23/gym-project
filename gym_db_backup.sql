@@ -645,7 +645,7 @@ COPY public.fitness_programs (id, goal, "startWeightKg", "targetWeightKg", "dura
 
 COPY public.gyms (id, name, address, phone, "isActive", "createdAt") FROM stdin;
 1	FitLife Kadıköy	Kadıköy, İstanbul	0216 000 00 00	t	2026-07-06 11:22:00.757991
-2	FitLife Denizli	Pamıkkale,Denizli	02580000000	t	2026-07-06 16:17:20.011467
+2	FitLife Denizli	Pamukkale,Denizli	02580000000	t	2026-07-06 16:17:20.011467
 \.
 
 
