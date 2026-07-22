@@ -6,7 +6,7 @@ import {
   FaAppleAlt, FaUser, FaHourglassHalf, FaExclamationTriangle, FaDumbbell, FaHistory,
   FaClock, FaTrophy, FaCheckCircle, FaRobot, FaChalkboardTeacher, FaStar, FaRegStar,
   FaHome, FaBox, FaTicketAlt, FaQrcode, FaMobileAlt, FaCalendarDay, FaRegSmile,
-  FaComments, FaPaperPlane, FaEyeSlash, FaEye, FaCamera, FaBuilding,
+  FaComments, FaPaperPlane, FaEyeSlash, FaEye, FaCamera, FaBuilding, FaLock, FaSpinner, FaCreditCard,
 } from 'react-icons/fa';
 import {
   GiBodyBalance, GiLeg, GiShoulderArmor, GiChest, GiBiceps, GiMuscularTorso, GiPull, GiPush,
@@ -1300,6 +1300,15 @@ function PlansTab() {
   const [plans, setPlans] = useState([]);
   const [hasActiveMembership, setHasActiveMembership] = useState(false);
 
+  // Kredi Kartı Ödeme Modalı Durumları
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardName, setCardName] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState('idle'); // 'idle' | 'processing' | 'success'
+
   const load = async () => {
     try {
       const [allPlans, myEnrollments] = await Promise.all([
@@ -1314,9 +1323,124 @@ function PlansTab() {
   };
   useEffect(() => { load(); }, []);
 
-  const enroll = async (planId) => {
-    try { await api.enrollments.create(planId); alert('Üyelik başarıyla oluşturuldu!'); load(); }
-    catch (e) { alert(e.message); }
+  // Kart Numarası Formatlama (4 hanede bir boşluk)
+  const handleCardNumberChange = (e) => {
+    const val = e.target.value.replace(/\D/g, '').slice(0, 16);
+    const formatted = val.replace(/(\d{4})(?=\d)/g, '$1 ');
+    setCardNumber(formatted);
+  };
+
+  // Son Kullanma Tarihi Formatlama (AA/YY)
+  const handleExpiryChange = (e) => {
+    let val = e.target.value.replace(/\D/g, '').slice(0, 4);
+    if (val.length >= 3) {
+      val = `${val.slice(0, 2)}/${val.slice(2)}`;
+    }
+    setCardExpiry(val);
+  };
+
+  // CVV Formatlama (En fazla 3 hane)
+  const handleCvvChange = (e) => {
+    const val = e.target.value.replace(/\D/g, '').slice(0, 3);
+    setCardCvv(val);
+  };
+
+  // Kart Markası Belirleme
+  const detectCardType = (number) => {
+    const clean = number.replace(/\s?/g, '');
+    if (clean.startsWith('4')) return 'Visa';
+    if (clean.startsWith('5')) return 'Mastercard';
+    return 'Credit Card';
+  };
+
+  // Ödeme İşlemini Simüle Etme
+  const handlePayment = async (e) => {
+    e.preventDefault();
+    if (!cardNumber || !cardName || !cardExpiry || !cardCvv) {
+      alert('Lütfen tüm kart bilgilerini doldurunuz.');
+      return;
+    }
+    if (cardNumber.replace(/\s?/g, '').length < 16) {
+      alert('Kart numarası 16 hane olmalıdır.');
+      return;
+    }
+    if (cardExpiry.length < 5) {
+      alert('Son kullanma tarihi geçersiz (AA/YY).');
+      return;
+    }
+    if (cardCvv.length < 3) {
+      alert('CVV kodu 3 hane olmalıdır.');
+      return;
+    }
+
+    setPaymentStatus('processing');
+
+    setTimeout(async () => {
+      try {
+        await api.enrollments.create(selectedPlan.id);
+        setPaymentStatus('success');
+        setTimeout(() => {
+          setSelectedPlan(null);
+          setCardNumber('');
+          setCardName('');
+          setCardExpiry('');
+          setCardCvv('');
+          setIsFlipped(false);
+          setPaymentStatus('idle');
+          load();
+        }, 1500);
+      } catch (err) {
+        alert(err.message);
+        setPaymentStatus('idle');
+      }
+    }, 2000);
+  };
+
+  const cardType = detectCardType(cardNumber);
+
+  // Kredi Kartı CSS inline stilleri
+  const cardContainerStyle = {
+    width: '100%',
+    maxWidth: '290px',
+    height: '170px',
+    margin: '0 auto 24px',
+    perspective: '1000px',
+  };
+
+  const cardInnerStyle = {
+    width: '100%',
+    height: '100%',
+    position: 'relative',
+    transition: 'transform 0.6s',
+    transformStyle: 'preserve-3d',
+    transform: isFlipped ? 'rotateY(180deg)' : 'none',
+  };
+
+  const cardFaceCommon = {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backfaceVisibility: 'hidden',
+    borderRadius: '14px',
+    padding: '18px 20px',
+    color: '#fff',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    boxSizing: 'border-box',
+    boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+  };
+
+  const cardFrontStyle = {
+    ...cardFaceCommon,
+    background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', // Indigo - Violet gradyanı
+  };
+
+  const cardBackStyle = {
+    ...cardFaceCommon,
+    background: 'linear-gradient(135deg, #1e293b, #0f172a)', // Koyu premium arka plan
+    transform: 'rotateY(180deg)',
+    padding: '16px 0',
   };
 
   return (
@@ -1342,12 +1466,133 @@ function PlansTab() {
               <FaCheckCircle/> Zaten aktif üyeliğiniz var
             </div>
           ) : (
-            <Btn onClick={() => enroll(p.id)} style={{ width:'100%', justifyContent:'center' }}>
+            <Btn onClick={() => setSelectedPlan(p)} style={{ width:'100%', justifyContent:'center' }}>
               <FaBullseye/> Üye Ol
             </Btn>
           )}
         </Card>
       ))}
+
+      {selectedPlan && (
+        <Modal title="Güvenli Ödeme Yap" onClose={() => { if (paymentStatus === 'idle') setSelectedPlan(null); }}>
+          {paymentStatus === 'processing' && (
+            <div style={{ textAlign: 'center', padding: '40px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+              <FaSpinner className="spin" size={48} color="#8b5cf6" />
+              <div style={{ fontWeight: 600, fontSize: 16 }}>Ödeme Doğrulanıyor...</div>
+              <div style={{ color: '#6b7280', fontSize: 14 }}>Bankanızdan onay bekleniyor, lütfen pencereyi kapatmayın.</div>
+            </div>
+          )}
+
+          {paymentStatus === 'success' && (
+            <div style={{ textAlign: 'center', padding: '40px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+              <FaCheckCircle size={56} color="#10b981" />
+              <div style={{ fontWeight: 700, fontSize: 18, color: '#10b981' }}>Ödeme Başarılı!</div>
+              <div style={{ color: '#6b7280', fontSize: 14 }}>Üyeliğiniz aktif edilmiştir. Yönlendiriliyorsunuz...</div>
+            </div>
+          )}
+
+          {paymentStatus === 'idle' && (
+            <form onSubmit={handlePayment} style={{ padding: '4px 0' }}>
+              {/* 3D Kredi Kartı Görseli */}
+              <div style={cardContainerStyle}>
+                <div style={cardInnerStyle}>
+                  {/* Kart Ön Yüzü */}
+                  <div style={cardFrontStyle}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      {/* Kart Çipi */}
+                      <div style={{ width: 38, height: 26, background: 'linear-gradient(135deg, #ffd700, #b8860b)', borderRadius: 5 }} />
+                      <div style={{ fontStyle: 'italic', fontWeight: 'bold', fontSize: 18, letterSpacing: '1px' }}>{cardType}</div>
+                    </div>
+                    
+                    <div style={{ fontSize: 16, fontFamily: 'Courier New, monospace', letterSpacing: '2.5px', margin: '14px 0 10px', textAlign: 'center' }}>
+                      {cardNumber || '•••• •••• •••• ••••'}
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                      <div style={{ maxWidth: '70%', overflow: 'hidden' }}>
+                        <div style={{ fontSize: 9, color: '#ffffff99', textTransform: 'uppercase', marginBottom: 2 }}>KART SAHİBİ</div>
+                        <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                          {cardName || 'AD SOYAD'}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: 9, color: '#ffffff99', textTransform: 'uppercase', marginBottom: 2 }}>SON KUL.</div>
+                        <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: '1px' }}>{cardExpiry || 'AA/YY'}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Kart Arka Yüzü */}
+                  <div style={cardBackStyle}>
+                    <div style={{ height: 32, background: '#000', width: '100%', marginTop: 8 }} />
+                    <div style={{ padding: '0 20px', marginTop: 12 }}>
+                      <div style={{ fontSize: 9, color: '#ffffffaa', textAlign: 'right', marginBottom: 4, textTransform: 'uppercase', paddingRight: 4 }}>CVV</div>
+                      <div style={{ height: 28, background: '#fff', borderRadius: 4, color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 10px', fontWeight: 'bold', letterSpacing: '1px', fontSize: 13 }}>
+                        {cardCvv || '•••'}
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 9, color: '#ffffff66', textAlign: 'center', marginTop: 14 }}>
+                      🔒 GÜVENLİ MOCK ÖDEME ALTYAPISI
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Form Alanları */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <Input
+                  label="Kart Sahibi Ad Soyad"
+                  placeholder="KART SAHİBİNİN ADI"
+                  value={cardName}
+                  onChange={(e) => setCardName(e.target.value.replace(/[^a-zA-ZıİğĞüÜşŞöÖçÇ\s]/g, ''))}
+                  required
+                />
+                
+                <Input
+                  label="Kart Numarası"
+                  placeholder="0000 0000 0000 0000"
+                  value={cardNumber}
+                  onChange={handleCardNumberChange}
+                  required
+                />
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                  <Input
+                    label="Son Kullanma Tarihi"
+                    placeholder="AA/YY"
+                    value={cardExpiry}
+                    onChange={handleExpiryChange}
+                    required
+                  />
+                  <Input
+                    label="Güvenlik Kodu (CVV)"
+                    placeholder="000"
+                    value={cardCvv}
+                    onChange={handleCvvChange}
+                    onFocus={() => setIsFlipped(true)}
+                    onBlur={() => setIsFlipped(false)}
+                    required
+                  />
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#6b7280', fontSize: 12, margin: '6px 0 8px' }}>
+                  <FaLock size={12} color="#10b981" />
+                  <span>256-Bit SSL sertifikası ile güvenli şifrelenmiş sanal POS ödeme katmanı.</span>
+                </div>
+
+                <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+                  <Btn color="#6b7280" outline onClick={() => setSelectedPlan(null)} style={{ flex: 1, justifyContent: 'center' }}>
+                    İptal
+                  </Btn>
+                  <Btn type="submit" style={{ flex: 2, justifyContent: 'center', background: '#10b981', borderColor: '#10b981' }}>
+                    <FaCreditCard /> {selectedPlan.price} ₺ Güvenli Ödeme Yap
+                  </Btn>
+                </div>
+              </div>
+            </form>
+          )}
+        </Modal>
+      )}
     </div>
   );
 }
