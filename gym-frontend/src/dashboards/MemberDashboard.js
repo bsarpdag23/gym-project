@@ -791,7 +791,7 @@ function ProgramsCatalogTab() {
     if (!window.confirm('Bu antrenman programını aktif programınız olarak ayarlamak istediğinize emin misiniz?')) return;
     try {
       await api.fitness.activate(programId);
-      alert('Program başarıyla aktifleştirildi! Profil sekmesinden detayları görebilirsiniz.');
+      alert('Program başarıyla aktifleştirildi! Programım sekmesinden detayları görebilirsiniz.');
     } catch (e) {
       alert(e.message);
     }
