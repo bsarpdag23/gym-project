@@ -30,6 +30,18 @@ export default function AdminDashboard({ user, onLogout }) {
   const [checkIns, setCheckIns] = useState([]);
   const [stats, setStats] = useState(null);
   const [showScanner, setShowScanner] = useState(false);
+  const [reminderModal, setReminderModal] = useState(null);
+
+  const sendMockReminder = (member) => {
+    setReminderModal({
+      memberName: member.memberName,
+      phone: member.memberPhone || '05XX XXX XX XX',
+      email: member.memberEmail,
+      smsContent: `Sayin ${member.memberName}, FitLife salon uyeliginizin suresi ${member.daysRemaining} gun sonra (${new Date(member.endDate).toLocaleDateString('tr-TR')}) dolacaktir. Uyeliginizi yenilemek ve size ozel firsatlardan yararlanmak icin salonumuzu ziyaret edebilir veya online islemlerden paketinizi yenileyebilirsiniz. Saglikli gunler dileriz!`,
+      emailContent: `Merhaba ${member.memberName},\n\nFitLife salon üyeliğinizin süresi ${member.daysRemaining} gün sonra dolacaktır.\n\nSon Geçerlilik Tarihi: ${new Date(member.endDate).toLocaleDateString('tr-TR')}\nAktif Paket: ${member.planName}\n\nAntrenmanlarınıza ara vermeden devam etmek için üye paneliniz üzerinden üyeliğinizi hemen uzatabilirsiniz.\n\nSağlıklı Günler,\nFitLife Yönetim Paneli`,
+    });
+  };
+
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
   const load = useCallback(async () => {
@@ -716,6 +728,63 @@ export default function AdminDashboard({ user, onLogout }) {
                       </div>
                     </Card>
                   </div>
+
+                  {/* ── ÜYELİĞİ YAKINDA BİTECEK ÜYELER (RETENTION) ── */}
+                  <Card style={{ marginTop: 20 }}>
+                    <h3 style={{ margin: '0 0 16px', fontSize: 16, display: 'flex', alignItems: 'center', gap: 8, color: '#ea580c' }}>
+                      <FaClock /> Üyelik Yenileme & Kayıp Önleme (Retention)
+                    </h3>
+                    
+                    {!stats.expiringMembers || stats.expiringMembers.length === 0 ? (
+                      <p style={{ color: '#9ca3af', fontSize: 13, margin: 0, padding: '10px 0' }}>
+                        Önümüzdeki 7 gün içinde üyeliği sona erecek aktif üye bulunmuyor.
+                      </p>
+                    ) : (
+                      <div style={{ overflowX: 'auto' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: 600 }}>
+                          <thead>
+                            <tr style={{ borderBottom: '2px solid #e2e8f0', color: '#64748b', fontSize: 12 }}>
+                              <th style={{ padding: '8px 4px' }}>Üye Adı</th>
+                              <th style={{ padding: '8px 4px' }}>İletişim</th>
+                              <th style={{ padding: '8px 4px' }}>Aktif Paket</th>
+                              <th style={{ padding: '8px 4px' }}>Bitiş Tarihi</th>
+                              <th style={{ padding: '8px 4px' }}>Kalan Süre</th>
+                              <th style={{ padding: '8px 4px', textAlign: 'right' }}>İşlem</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {stats.expiringMembers.map(m => (
+                              <tr key={m.id} style={{ borderBottom: '1px solid #f1f5f9', fontSize: 13 }}>
+                                <td style={{ padding: '10px 4px', fontWeight: 600, color: '#334155' }}>{m.memberName}</td>
+                                <td style={{ padding: '10px 4px' }}>
+                                  <div style={{ fontWeight: 500, color: '#475569' }}>{m.memberPhone || '—'}</div>
+                                  <div style={{ fontSize: 11, color: '#64748b' }}>{m.memberEmail}</div>
+                                </td>
+                                <td style={{ padding: '10px 4px', color: '#475569' }}>{m.planName}</td>
+                                <td style={{ padding: '10px 4px', color: '#475569' }}>
+                                  {new Date(m.endDate).toLocaleDateString('tr-TR')}
+                                </td>
+                                <td style={{ padding: '10px 4px' }}>
+                                  <span style={{
+                                    padding: '3px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+                                    background: m.daysRemaining <= 2 ? '#fee2e2' : '#ffedd5',
+                                    color: m.daysRemaining <= 2 ? '#ef4444' : '#ea580c'
+                                  }}>
+                                    {m.daysRemaining} Gün
+                                  </span>
+                                </td>
+                                <td style={{ padding: '10px 4px', textAlign: 'right' }}>
+                                  <Btn size="sm" onClick={() => sendMockReminder(m)} style={{ background: '#f97316', borderColor: '#f97316' }}>
+                                    Hatırlatıcı Gönder
+                                  </Btn>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </Card>
                 </>
               )}
             </div>
@@ -826,6 +895,51 @@ export default function AdminDashboard({ user, onLogout }) {
               <Btn onClick={() => setModal(null)} color="#6b7280" outline style={{ flex: 1, justifyContent: 'center' }}>İptal</Btn>
             </div>
           )}
+        </Modal>
+      )}
+
+      {reminderModal && (
+        <Modal title="Hatırlatıcı SMS ve E-posta Gönder" onClose={() => setReminderModal(null)}>
+          <div style={{ padding: '4px 0' }}>
+            <p style={{ margin: '0 0 16px', fontSize: 14, color: '#4b5563', lineHeight: 1.5 }}>
+              Müşteriye gönderilecek olan hatırlatma şablonu aşağıdadır. Gerçek sistemde bu işlem entegre SMS ve E-posta servisleri üzerinden arka planda otomatik gerçekleşir.
+            </p>
+
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 6 }}>
+                Alıcı Telefon (SMS): <span style={{ color: '#6b7280', fontWeight: 400 }}>{reminderModal.phone}</span>
+              </div>
+              <div style={{
+                background: '#fff7ed', border: '1px solid #ffedd5', color: '#ea580c',
+                padding: 12, borderRadius: 8, fontSize: 13, lineHeight: 1.6, fontFamily: 'monospace'
+              }}>
+                💬 {reminderModal.smsContent}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 6 }}>
+                Alıcı E-posta: <span style={{ color: '#6b7280', fontWeight: 400 }}>{reminderModal.email}</span>
+              </div>
+              <div style={{
+                background: '#f8fafc', border: '1px solid #e2e8f0', color: '#334155',
+                padding: 12, borderRadius: 8, fontSize: 13, whiteSpace: 'pre-wrap', lineHeight: 1.6
+              }}>
+                ✉️ <strong>Konu: Üyelik Süreniz Dolmak Üzere!</strong>{"\n\n"}
+                {reminderModal.emailContent}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+              <Btn color="#6b7280" outline onClick={() => setReminderModal(null)}>Kapat</Btn>
+              <Btn onClick={() => {
+                alert('Hatırlatıcı SMS ve E-posta başarıyla sıraya alındı ve müşteriye gönderildi!');
+                setReminderModal(null);
+              }} style={{ background: '#f97316', borderColor: '#f97316' }}>
+                Gönderimi Tamamla
+              </Btn>
+            </div>
+          </div>
         </Modal>
       )}
     </div>

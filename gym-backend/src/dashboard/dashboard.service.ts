@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, MoreThanOrEqual } from 'typeorm';
+import { Repository, MoreThanOrEqual, Between } from 'typeorm';
 import { User, UserRole } from '../users/entities/user.entity';
 import { Enrollment } from '../enrollments/entities/enrollment.entity';
 import { CheckIn } from '../check-ins/entities/check-in.entity';
@@ -93,6 +93,29 @@ export class DashboardService {
     const peakHours = occupancyBuckets.slice(0, 3);
     const quietHours = [...occupancyBuckets].sort((a, b) => a.count - b.count).slice(0, 3);
 
+    // ── 7) Üyeliği yakında bitecek üyeler (son 7 gün içinde) ──
+    const startOfTodayForExp = new Date();
+    startOfTodayForExp.setHours(0, 0, 0, 0);
+
+    const endOf7Days = new Date();
+    endOf7Days.setDate(endOf7Days.getDate() + 7);
+    endOf7Days.setHours(23, 59, 59, 999);
+
+    const expiringWhere: any = {
+      status: 'active',
+      endDate: Between(startOfTodayForExp, endOf7Days),
+    };
+    if (!isSuper) {
+      expiringWhere.gymId = gymId;
+    }
+
+    const expiringEnrollments = await this.enrollRepo.find({
+      where: expiringWhere,
+      relations: { member: true, plan: true },
+      order: { endDate: 'ASC' },
+      take: 10,
+    });
+
     return {
       totalMembers,
       activeEnrollments,
@@ -104,6 +127,16 @@ export class DashboardService {
         peakHours: peakHours.map((slot) => ({ day: slot.day, hour: slot.hour, checkIns: slot.count })),
         quietHours: quietHours.map((slot) => ({ day: slot.day, hour: slot.hour, checkIns: slot.count })),
       },
+      expiringMembers: expiringEnrollments.map(e => ({
+        id: e.id,
+        memberId: e.member?.id,
+        memberName: e.member?.fullName,
+        memberEmail: e.member?.email,
+        memberPhone: e.member?.phone,
+        planName: e.plan?.name,
+        endDate: e.endDate,
+        daysRemaining: Math.max(0, Math.ceil((new Date(e.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))),
+      })),
     };
   }
 
