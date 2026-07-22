@@ -254,6 +254,9 @@ function GymListView({ user, onLogout }) {
                   {g.phone && <div style={{ color:'#9ca3af', fontSize:13, marginBottom:4, display:'flex', alignItems:'center', gap:6 }}><FaPhone/> {g.phone}</div>}
                   <div style={{ color:'#9ca3af', fontSize:12, marginTop:8, borderTop:'1px solid #f0f0f0', paddingTop:8, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                     <span>Oluşturuldu: {new Date(g.createdAt).toLocaleDateString('tr')}</span>
+                    <span onClick={(e) => { e.stopPropagation(); window.open(`/gym/${g.id}`, '_blank'); }} style={{ color: BRAND.primary, fontWeight: 700, cursor: 'pointer' }}>
+                      Microsite Git →
+                    </span>
                   </div>
 
                   {/* Actions buttons inside the card */}

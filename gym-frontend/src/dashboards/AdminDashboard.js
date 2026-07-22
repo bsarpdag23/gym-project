@@ -645,6 +645,28 @@ export default function AdminDashboard({ user, onLogout }) {
             <div>
               <h2 style={{ margin: '0 0 20px', display: 'flex', alignItems: 'center', gap: 8 }}><FaChartBar /> Genel Bakış</h2>
 
+              {user.gymId && (
+                <Card style={{ marginBottom: 20, background: '#eff6ff', border: '1.5px solid #bfdbfe', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 14 }}>
+                  <div>
+                    <h4 style={{ margin: '0 0 4px', color: '#1e3a8a', fontSize: 14, fontWeight: 700 }}>Halka Açık Kayıt & Paket Tanıtım Microsite Linkiniz</h4>
+                    <p style={{ margin: 0, color: '#3b82f6', fontSize: 13, fontWeight: 600 }}>
+                      {window.location.origin}/gym/{user.gymId}
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <Btn size="sm" onClick={() => window.open(`/gym/${user.gymId}`, '_blank')} outline style={{ borderColor: '#3b82f6', color: '#3b82f6' }}>
+                      Sayfayı Aç
+                    </Btn>
+                    <Btn size="sm" onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/gym/${user.gymId}`);
+                      alert('Salon kayıt linki panoya kopyalandı!');
+                    }} style={{ background: '#3b82f6', borderColor: '#3b82f6' }}>
+                      Linki Kopyala
+                    </Btn>
+                  </div>
+                </Card>
+              )}
+
               {!stats ? (
                 <Card style={{ textAlign: 'center', padding: 40 }}>Yükleniyor...</Card>
               ) : (
