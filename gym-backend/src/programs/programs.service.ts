@@ -239,6 +239,15 @@ export class ProgramsService {
       throw new NotFoundException('Katalog programı bulunamadı');
     }
 
+    // Şu an aktif olan programın aynısı olup olmadığını kontrol et
+    const activeProgram = await this.programRepo.findOne({
+      where: { user: { id: userId }, isActive: true },
+    });
+
+    if (activeProgram && activeProgram.workoutPlan && activeProgram.workoutPlan[0]?.focus === catalogProgram.name) {
+      throw new BadRequestException('Bu program zaten şu anda aktif olarak kullanılmaktadır.');
+    }
+
     const { profile, input } = await this.getProfileInput(userId);
     const summary = buildSummary(input);
 
