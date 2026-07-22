@@ -69,4 +69,10 @@ export class UsersController {
   assignTrainer(@Param('id') id: string, @Body() dto: AssignTrainerDto, @Request() req) {
     return this.service.assignTrainer(+id, dto.trainerId ?? null, req.user);
   }
+
+  @Delete(':id')
+  @UseGuards(RolesGuard) @Roles('super_admin', 'admin')
+  remove(@Param('id') id: string, @Request() req) {
+    return this.service.remove(+id, req.user);
+  }
 }

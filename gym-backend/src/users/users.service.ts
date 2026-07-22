@@ -9,6 +9,7 @@ import { User, UserRole } from './entities/user.entity';
 import { Enrollment } from '../enrollments/entities/enrollment.entity';
 import { FitnessProgram } from '../programs/entities/fitness-program.entity';
 import { CheckIn } from '../check-ins/entities/check-in.entity';
+import { Message } from '../messages/entities/message.entity';
 
 const AVATAR_DIR = join(__dirname, '..', '..', 'uploads', 'avatars');
 
@@ -254,5 +255,32 @@ export class UsersService {
 
     await this.repo.remove(user);
     return { message: 'Hesabınız başarıyla silindi.' };
+  }
+
+  async remove(id: number, currentUser: any) {
+    const user = await this.repo.findOne({ where: { id } });
+    if (!user) {
+      throw new BadRequestException('Kullanıcı bulunamadı.');
+    }
+
+    // Salon sahibi ise sadece kendi salonundaki üyeyi silebilir
+    if (currentUser.role === UserRole.ADMIN) {
+      if (user.gymId !== currentUser.gymId) {
+        throw new BadRequestException('Bu kullanıcıyı silme yetkiniz yok (farklı bir salonda).');
+      }
+      if (user.role !== UserRole.MEMBER) {
+        throw new BadRequestException('Salon sahibi sadece üyeleri silebilir.');
+      }
+    }
+
+    // İlişkili kayıtları temizle
+    await this.repo.manager.delete(Enrollment, { member: { id } });
+    await this.repo.manager.delete(CheckIn, { member: { id } });
+    await this.repo.manager.delete(FitnessProgram, { user: { id } });
+    await this.repo.manager.delete(Message, { senderId: id });
+    await this.repo.manager.delete(Message, { recipientId: id });
+
+    await this.repo.remove(user);
+    return { message: 'Kullanıcı başarıyla silindi.' };
   }
 }

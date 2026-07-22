@@ -12,9 +12,13 @@ export class HealthProfilesService {
     @InjectRepository(User) private userRepo: Repository<User>,
   ) {}
 
-  // Kullanıcının profilini getir (yoksa null)
-  findByUser(userId: number) {
-    return this.repo.findOne({ where: { user: { id: userId } } });
+  // Kullanıcının profilini getir (yoksa NotFoundException)
+  async findByUser(userId: number) {
+    const profile = await this.repo.findOne({ where: { user: { id: userId } } });
+    if (!profile) {
+      throw new NotFoundException('Lütfen profil bilgilerinizi giriniz');
+    }
+    return profile;
   }
 
   // Profili oluştur ya da güncelle (upsert)

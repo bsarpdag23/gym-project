@@ -145,6 +145,7 @@ export default function AdminDashboard({ user, onLogout }) {
       if (type === 'plan') await api.plans.remove(id);
       if (type === 'exercise') await api.exercises.remove(id);
       if (type === 'program') await api.programs.remove(id);
+      if (type === 'user') await api.users.remove(id);
       load();
     } catch (e) { alert(e.message); }
   };
@@ -261,6 +262,12 @@ export default function AdminDashboard({ user, onLogout }) {
                       )}
 
                       <Badge label={u.isActive ? 'Aktif' : 'Pasif'} color={u.isActive ? '#10b981' : '#6b7280'} />
+
+                      {user.role === 'admin' && u.role === 'member' && (
+                        <Btn size="sm" color={BRAND.primary} outline onClick={() => del('user', u.id)} title="Üyeyi Sil">
+                          <FaTrash />
+                        </Btn>
+                      )}
                     </div>
                   </Card>
                 ))}

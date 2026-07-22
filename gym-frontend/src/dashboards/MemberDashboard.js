@@ -74,6 +74,13 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
   const load = async () => {
     setLoading(true);
     try {
+      const meData = await api.users.getMe();
+      setMe(meData);
+      setHideProfile(!!meData?.hideProfile);
+    } catch (e) {
+      setErr(e.message);
+    }
+    try {
       const p = await api.healthProfile.getMine();
       setProfile(p);
       if (p) {
@@ -84,10 +91,13 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
         });
         setProgram(await api.fitness.active());
       }
-      const meData = await api.users.getMe();
-      setMe(meData);
-      setHideProfile(!!meData?.hideProfile);
-    } catch (e) { setErr(e.message); }
+    } catch (e) {
+      if (e.message?.includes('profil')) {
+        setErr('Lütfen profil bilgilerinizi giriniz.');
+      } else {
+        setErr(e.message);
+      }
+    }
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
@@ -174,8 +184,16 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
 
   return (
     <div>
-      {err && <div style={{ background:'#fee2e2', border:'1px solid #fca5a5', color:'#dc2626',
-        borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14 }}>{err}</div>}
+      {err && (
+        <div style={{
+          background: err.includes('profil') ? '#eff6ff' : '#fee2e2',
+          border: `1px solid ${err.includes('profil') ? '#bfdbfe' : '#fca5a5'}`,
+          color: err.includes('profil') ? '#1e40af' : '#dc2626',
+          borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 14
+        }}>
+          {err}
+        </div>
+      )}
 
       <Card style={{ marginBottom:20, display:'flex', alignItems:'center', gap:16 }}>
         <div style={{ position:'relative' }}>
@@ -435,7 +453,13 @@ function MyProgramTab() {
         const hist = await api.fitness.history();
         setHistory(hist);
       }
-    } catch (e) { setErr(e.message); }
+    } catch (e) {
+      if (e.message?.includes('profil')) {
+        setErr('Lütfen profil bilgilerinizi giriniz.');
+      } else {
+        setErr(e.message);
+      }
+    }
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
@@ -1058,17 +1082,37 @@ function DashboardOverviewTab({ user, onNavigate }) {
       setLoading(true);
       try {
         const [myEnrollments, myProfile, gamificationData, occupancyData] = await Promise.all([
-          api.enrollments.getMine(),
-          api.healthProfile.getMine(),
-          api.users.getGamification(),
-          api.dashboard.getOccupancyPrediction(),
+          api.enrollments.getMine().catch(err => {
+            console.error('Enrollments error:', err);
+            return [];
+          }),
+          api.healthProfile.getMine().catch(err => {
+            console.warn('Profile not found/error:', err.message);
+            return null;
+          }),
+          api.users.getGamification().catch(err => {
+            console.error('Gamification error:', err);
+            return null;
+          }),
+          api.dashboard.getOccupancyPrediction().catch(err => {
+            console.error('Occupancy prediction error:', err);
+            return null;
+          }),
         ]);
         setEnrollments(myEnrollments);
         setProfile(myProfile);
         setGamification(gamificationData);
         setOccupancy(occupancyData);
-        if (myProfile) setProgram(await api.fitness.active());
-      } catch (e) { alert(e.message); }
+        if (myProfile) {
+          try {
+            setProgram(await api.fitness.active());
+          } catch (err) {
+            console.error('Active program error:', err);
+          }
+        }
+      } catch (e) {
+        console.error('Overview tab initialization error:', e);
+      }
       setLoading(false);
     })();
   }, []);
@@ -1086,6 +1130,31 @@ function DashboardOverviewTab({ user, onNavigate }) {
         <h2 style={{ margin:'0 0 4px', color:'#fff', display:'flex', alignItems:'center', gap:10 }}>Hoş geldin, {user.fullName?.split(' ')[0]} <FaRegSmile/></h2>
         <p style={{ color:'#ffffffcc', margin:0, fontSize:14 }}>İşte bugünkü genel durumun.</p>
       </Card>
+
+      {!profile && (
+        <Card style={{
+          marginBottom: 20,
+          border: '1px solid #bfdbfe',
+          background: '#eff6ff',
+          color: '#1e40af',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 16,
+          padding: '16px 20px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <FaInfoCircle size={20} color="#3b82f6" />
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 15 }}>Profil Bilgileriniz Eksik</div>
+              <div style={{ fontSize: 13, color: '#1e40af', marginTop: 2 }}>
+                Lütfen diyet ve antrenman programı oluşturabilmemiz için profil bilgilerinizi giriniz.
+              </div>
+            </div>
+          </div>
+          <Btn size="sm" color="#3b82f6" onClick={() => onNavigate('profile')}>Profili Tamamla</Btn>
+        </Card>
+      )}
 
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(360px, 1fr))', gap:16, alignItems:'start' }}>
 

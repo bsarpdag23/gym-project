@@ -72,6 +72,7 @@ const api = {
     updatePrivacy: (hideProfile) => api.req('/users/me/privacy', { method:'PATCH', body: JSON.stringify({ hideProfile }) }),
     uploadAvatar: (file) => api.upload('/users/me/avatar', file),
     deleteMe: () => api.req('/users/me', { method: 'DELETE' }),
+    remove: (id) => api.req(`/users/${id}`, { method: 'DELETE' }),
   },
   plans: {
     getAll:  ()      => api.req('/membership-plans'),
