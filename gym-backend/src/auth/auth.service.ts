@@ -20,6 +20,14 @@ export class AuthService {
       throw new BadRequestException('Bu e-posta adresi zaten kullanılmaktadır.');
     }
 
+    if (dto.phone && dto.phone.trim()) {
+      const cleanPhone = dto.phone.trim();
+      const existingPhone = await this.usersRepo.findOne({ where: { phone: cleanPhone } });
+      if (existingPhone) {
+        throw new BadRequestException('Bu telefon numarası zaten kullanılmaktadır.');
+      }
+    }
+
     const hashed = await bcrypt.hash(dto.password, 10);
     const user = this.usersRepo.create({
       ...dto,
