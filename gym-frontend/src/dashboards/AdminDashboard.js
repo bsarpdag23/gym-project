@@ -205,42 +205,43 @@ export default function AdminDashboard({ user, onLogout }) {
   const color = { users: '#e94560', plans: '#3b82f6', enrollments: '#10b981', exercises: '#f59e0b', programs: '#8b5cf6', dashboard: '#8b5cf6', mymembers: '#8b5cf6', checkin: '#10b981', chat: '#ec4899' };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#090d16', fontFamily: 'Segoe UI,sans-serif', color: '#f3f4f6' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'Segoe UI,sans-serif', color: '#1e293b' }}>
       <div style={{
-        background: 'rgba(17, 24, 39, 0.75)', backdropFilter: 'blur(12px)', padding: '14px 28px',
+        background: `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})`, padding: '14px 28px',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        borderBottom: '1px solid rgba(255,255,255,0.06)', position: 'sticky', top: 0, zIndex: 100
+        boxShadow: '0 4px 20px rgba(0,0,0,0.08)', position: 'sticky', top: 0, zIndex: 100
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <Logo light />
-          <Badge label={user.role === 'admin' ? 'Admin' : 'Trainer'} color={BRAND.primary} />
+          <Badge label={user.role === 'admin' ? 'Admin' : 'Trainer'} color="#fff" />
         </div>
         <div style={{ position: 'relative' }}>
           <div
             onClick={() => setShowUserMenu(!showUserMenu)}
-            style={{ display: 'flex', gap: 10, alignItems: 'center', color: '#fff', cursor: 'pointer', padding: '6px 12px', borderRadius: 20, background: 'rgba(255,255,255,0.04)', transition: 'background .15s' }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
-            onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
+            style={{ display: 'flex', gap: 10, alignItems: 'center', color: '#fff', cursor: 'pointer', padding: '6px 12px', borderRadius: 20, background: 'rgba(255,255,255,0.12)', transition: 'background .15s' }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.18)'}
+            onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = 'rgba(255,255,255,0.12)' }}
           >
             <Avatar name={user.fullName} size={28} />
             <span style={{ fontSize: 14, fontWeight: 600 }}>{user.fullName}</span>
-            <span style={{ fontSize: 10, color: '#9ca3af' }}>▼</span>
+            <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>▼</span>
           </div>
 
           {showUserMenu && (
             <>
               <div onClick={() => setShowUserMenu(false)} style={{ position: 'fixed', inset: 0, zIndex: 998 }} />
               <div style={{
-                position: 'absolute', top: 48, right: 0, background: '#111827',
-                border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14,
-                boxShadow: '0 10px 30px rgba(0,0,0,0.5)', zIndex: 999, padding: '6px 0',
+                position: 'absolute', top: 48, right: 0, background: '#fff',
+                border: '1px solid #e2e8f0', borderRadius: 14,
+                boxShadow: '0 10px 30px rgba(0,0,0,0.08)', zIndex: 999, padding: '6px 0',
                 width: 150, display: 'flex', flexDirection: 'column',
                 animation: 'slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
               }}>
                 <button onClick={() => { setShowUserMenu(false); onLogout(); }} style={{
                   background: 'none', border: 'none', padding: '10px 16px', color: '#ef4444',
-                  textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'background .15s'
-                }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                  textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'background .15s',
+                  borderTop: '1px solid #f1f5f9'
+                }} onMouseEnter={e => e.target.style.background = 'rgba(0,0,0,0.03)'}
                    onMouseLeave={e => e.target.style.background = 'none'}>
                   🚪 Çıkış Yap
                 </button>
@@ -252,8 +253,8 @@ export default function AdminDashboard({ user, onLogout }) {
 
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '28px 20px' }}>
         <div style={{
-          background: 'rgba(17,24,39,0.6)', borderRadius: 20, padding: 6,
-          display: 'inline-flex', gap: 4, border: '1px solid rgba(255,255,255,0.04)',
+          background: '#f1f5f9', borderRadius: 20, padding: 6,
+          display: 'inline-flex', gap: 4, border: '1px solid #e2e8f0',
           marginBottom: 28, flexWrap: 'wrap'
         }}>
           {TABS.map(t => {
@@ -268,15 +269,15 @@ export default function AdminDashboard({ user, onLogout }) {
                   borderRadius: 14,
                   border: 'none',
                   background: isActive ? `linear-gradient(135deg, ${tabColor}, ${BRAND.purple})` : 'transparent',
-                  color: isActive ? '#fff' : '#9ca3af',
+                  color: isActive ? '#fff' : '#64748b',
                   fontWeight: 600,
                   fontSize: 14,
                   cursor: 'pointer',
-                  boxShadow: isActive ? `0 4px 12px ${tabColor}35` : 'none',
+                  boxShadow: isActive ? `0 4px 12px ${tabColor}30` : 'none',
                   transition: 'background .15s, color .15s, transform .1s'
                 }}
-                onMouseEnter={e => { if(!isActive) e.target.style.color = '#fff'; }}
-                onMouseLeave={e => { if(!isActive) e.target.style.color = '#9ca3af'; }}
+                onMouseEnter={e => { if(!isActive) e.target.style.color = '#1e293b'; }}
+                onMouseLeave={e => { if(!isActive) e.target.style.color = '#64748b'; }}
               >
                 {t.label}
               </button>

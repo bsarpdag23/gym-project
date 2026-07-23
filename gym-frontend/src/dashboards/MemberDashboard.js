@@ -1776,17 +1776,17 @@ export default function MemberDashboard({ user, onLogout }) {
   const goTab = (id) => navigate(`/member/${id}`);
 
   return (
-    <div style={{ minHeight:'100vh', background:'#090d16', fontFamily:'Segoe UI,sans-serif', color:'#f3f4f6' }}>
+    <div style={{ minHeight:'100vh', background:'#f8fafc', fontFamily:'Segoe UI,sans-serif', color:'#1e293b' }}>
       <div style={{
-        background:'rgba(17, 24, 39, 0.75)', backdropFilter:'blur(12px)', padding:'14px 28px',
+        background:`linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})`, padding:'14px 28px',
         display:'flex', justifyContent:'space-between', alignItems:'center',
-        borderBottom:'1px solid rgba(255,255,255,0.06)', position:'sticky', top:0, zIndex:100
+        boxShadow: '0 4px 20px rgba(0,0,0,0.08)', position:'sticky', top:0, zIndex:100
       }}>
         <div style={{ display:'flex', alignItems:'center', gap:14 }}>
           <Logo light />
           {gymName && (
             <span style={{
-              background: 'rgba(255,255,255,0.05)',
+              background: 'rgba(255,255,255,0.18)',
               padding: '4px 14px',
               borderRadius: 20,
               fontSize: 13,
@@ -1795,60 +1795,60 @@ export default function MemberDashboard({ user, onLogout }) {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 6,
-              border: '1px solid rgba(255,255,255,0.1)'
+              border: '1px solid rgba(255,255,255,0.25)'
             }}>
-              <FaBuilding style={{ fontSize: 12, color: BRAND.primary }} /> {gymName}
+              <FaBuilding style={{ fontSize: 12 }} /> {gymName}
             </span>
           )}
         </div>
         <div style={{ position:'relative' }}>
           <div
             onClick={() => setShowUserMenu(!showUserMenu)}
-            style={{ display:'flex', gap:10, alignItems:'center', color:'#fff', cursor:'pointer', padding:'6px 12px', borderRadius:20, background:'rgba(255,255,255,0.04)', transition:'background .15s' }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
-            onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
+            style={{ display:'flex', gap:10, alignItems:'center', color:'#fff', cursor:'pointer', padding:'6px 12px', borderRadius:20, background:'rgba(255,255,255,0.12)', transition:'background .15s' }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.18)'}
+            onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = 'rgba(255,255,255,0.12)' }}
           >
             <Avatar src={resolveAvatarUrl(avatarUrl)} name={user.fullName} size={28} />
             <span style={{ fontSize:14, fontWeight:600 }}>{user.fullName}</span>
-            <span style={{ fontSize:10, color:'#9ca3af' }}>▼</span>
+            <span style={{ fontSize:10, color:'rgba(255,255,255,0.7)' }}>▼</span>
           </div>
 
           {showUserMenu && (
             <>
               <div onClick={() => setShowUserMenu(false)} style={{ position:'fixed', inset:0, zIndex:998 }} />
               <div style={{
-                position: 'absolute', top: 48, right: 0, background: '#111827',
-                border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14,
-                boxShadow: '0 10px 30px rgba(0,0,0,0.5)', zIndex: 999, padding: '6px 0',
+                position: 'absolute', top: 48, right: 0, background: '#fff',
+                border: '1px solid #e2e8f0', borderRadius: 14,
+                boxShadow: '0 10px 30px rgba(0,0,0,0.08)', zIndex: 999, padding: '6px 0',
                 width: 170, display: 'flex', flexDirection: 'column',
                 animation: 'slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
               }}>
                 <button onClick={() => { setShowUserMenu(false); goTab('profile'); }} style={{
-                  background: 'none', border: 'none', padding: '10px 16px', color: '#f3f4f6',
+                  background: 'none', border: 'none', padding: '10px 16px', color: '#1e293b',
                   textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition:'background .15s'
-                }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                }} onMouseEnter={e => e.target.style.background = 'rgba(0,0,0,0.03)'}
                    onMouseLeave={e => e.target.style.background = 'none'}>
                   👤 Profil & Diyet
                 </button>
                 <button onClick={() => { setShowUserMenu(false); goTab('chat'); }} style={{
-                  background: 'none', border: 'none', padding: '10px 16px', color: '#f3f4f6',
+                  background: 'none', border: 'none', padding: '10px 16px', color: '#1e293b',
                   textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition:'background .15s'
-                }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                }} onMouseEnter={e => e.target.style.background = 'rgba(0,0,0,0.03)'}
                    onMouseLeave={e => e.target.style.background = 'none'}>
                   💬 Sohbet
                 </button>
                 <button onClick={() => { setShowUserMenu(false); goTab('qr'); }} style={{
-                  background: 'none', border: 'none', padding: '10px 16px', color: '#f3f4f6',
+                  background: 'none', border: 'none', padding: '10px 16px', color: '#1e293b',
                   textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition:'background .15s'
-                }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                }} onMouseEnter={e => e.target.style.background = 'rgba(0,0,0,0.03)'}
                    onMouseLeave={e => e.target.style.background = 'none'}>
                   📱 Giriş QR Kodum
                 </button>
                 <button onClick={() => { setShowUserMenu(false); onLogout(); }} style={{
                   background: 'none', border: 'none', padding: '10px 16px', color: '#ef4444',
                   textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-                  borderTop: '1px solid rgba(255,255,255,0.06)', transition:'background .15s'
-                }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                  borderTop: '1px solid #f1f5f9', transition:'background .15s'
+                }} onMouseEnter={e => e.target.style.background = 'rgba(0,0,0,0.03)'}
                    onMouseLeave={e => e.target.style.background = 'none'}>
                   🚪 Çıkış Yap
                 </button>
@@ -1860,8 +1860,8 @@ export default function MemberDashboard({ user, onLogout }) {
 
       <div style={{ maxWidth:1100, margin:'0 auto', padding:'28px 20px' }}>
         <div style={{
-          background: 'rgba(17,24,39,0.6)', borderRadius: 20, padding: 6,
-          display: 'inline-flex', gap: 4, border: '1px solid rgba(255,255,255,0.04)',
+          background: '#f1f5f9', borderRadius: 20, padding: 6,
+          display: 'inline-flex', gap: 4, border: '1px solid #e2e8f0',
           marginBottom: 28, flexWrap: 'wrap'
         }}>
           {MEMBER_TABS.map(t => {
@@ -1875,15 +1875,15 @@ export default function MemberDashboard({ user, onLogout }) {
                   borderRadius: 14,
                   border: 'none',
                   background: isActive ? `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})` : 'transparent',
-                  color: isActive ? '#fff' : '#9ca3af',
+                  color: isActive ? '#fff' : '#64748b',
                   fontWeight: 600,
                   fontSize: 14,
                   cursor: 'pointer',
-                  boxShadow: isActive ? `0 4px 12px ${BRAND.primary}35` : 'none',
+                  boxShadow: isActive ? `0 4px 12px ${BRAND.primary}30` : 'none',
                   transition: 'background .15s, color .15s, transform .1s'
                 }}
-                onMouseEnter={e => { if(!isActive) e.target.style.color = '#fff'; }}
-                onMouseLeave={e => { if(!isActive) e.target.style.color = '#9ca3af'; }}
+                onMouseEnter={e => { if(!isActive) e.target.style.color = '#1e293b'; }}
+                onMouseLeave={e => { if(!isActive) e.target.style.color = '#64748b'; }}
               >
                 {t.label}
               </button>
@@ -1910,16 +1910,16 @@ export default function MemberDashboard({ user, onLogout }) {
           <div style={{ textAlign:'center' }}>
             <div style={{ fontSize:52, marginBottom:10 }}>🏆</div>
             <h3 style={{ margin:'0 0 6px', color:'#10b981', fontWeight:700 }}>{checkInNotice.message}</h3>
-            <p style={{ fontSize:14, color:'#9ca3af', margin:'0 0 20px' }}>
+            <p style={{ fontSize:14, color:'#64748b', margin:'0 0 20px' }}>
               Plan: {checkInNotice.plan || '—'} · Geçerlilik: {checkInNotice.validUntil}
             </p>
-            <div style={{ background:'rgba(255,255,255,0.03)', borderRadius:12, padding:16, border:'1px solid rgba(255,255,255,0.08)', display:'inline-block', minWidth:200 }}>
+            <div style={{ background:'#fcf8ff', borderRadius:12, padding:16, border:'1px solid #f3e8ff', display:'inline-block', minWidth:200 }}>
               <div style={{ fontSize:13, color:BRAND.primary, fontWeight:600 }}>Kazanılan Puan: +{checkInNotice.pointsEarned} Puan</div>
-              <div style={{ fontSize:14, fontWeight:700, marginTop:4, color:'#fff' }}>Toplam Puanınız: {checkInNotice.totalPoints}</div>
+              <div style={{ fontSize:14, fontWeight:700, marginTop:4, color:'#1e293b' }}>Toplam Puanınız: {checkInNotice.totalPoints}</div>
             </div>
             {checkInNotice.newBadges?.length > 0 && (
               <div style={{ marginTop:20 }}>
-                <div style={{ fontSize:13, fontWeight:600, color:'#e5c158', marginBottom:8 }}>Yeni Kazanılan Rozet(ler)! 🏅</div>
+                <div style={{ fontSize:13, fontWeight:600, color:'#b45309', marginBottom:8 }}>Yeni Kazanılan Rozet(ler)! 🏅</div>
                 <div style={{ display:'flex', gap:6, justifyContent:'center', flexWrap:'wrap' }}>
                   {checkInNotice.newBadges.map(b => (
                     <Badge key={b} label={b} color="#d97706" />

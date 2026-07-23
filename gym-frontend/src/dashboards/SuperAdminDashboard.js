@@ -23,40 +23,41 @@ function Header({ user, onLogout }) {
   const [showUserMenu, setShowUserMenu] = useState(false);
   return (
     <div style={{
-      background: 'rgba(17, 24, 39, 0.75)', backdropFilter: 'blur(12px)', padding: '14px 28px',
+      background: `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})`, padding: '14px 28px',
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-      borderBottom: '1px solid rgba(255,255,255,0.06)', position: 'sticky', top: 0, zIndex: 100
+      boxShadow: '0 4px 20px rgba(0,0,0,0.08)', position: 'sticky', top: 0, zIndex: 100
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         <Logo light />
-        <Badge label={<><FaBolt/> Süper Admin</>} color={BRAND.primary} />
+        <Badge label={<><FaBolt/> Süper Admin</>} color="#fff" />
       </div>
       <div style={{ position: 'relative' }}>
         <div
           onClick={() => setShowUserMenu(!showUserMenu)}
-          style={{ display: 'flex', gap: 10, alignItems: 'center', color: '#fff', cursor: 'pointer', padding: '6px 12px', borderRadius: 20, background: 'rgba(255,255,255,0.04)', transition: 'background .15s' }}
-          onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
-          onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
+          style={{ display: 'flex', gap: 10, alignItems: 'center', color: '#fff', cursor: 'pointer', padding: '6px 12px', borderRadius: 20, background: 'rgba(255,255,255,0.12)', transition: 'background .15s' }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.18)'}
+          onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = 'rgba(255,255,255,0.12)' }}
         >
           <Avatar name={user.fullName} size={28} />
           <span style={{ fontSize: 14, fontWeight: 600 }}><FaCrown style={{ marginRight: 4, verticalAlign: '-1px' }} /> {user.fullName}</span>
-          <span style={{ fontSize: 10, color: '#9ca3af' }}>▼</span>
+          <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>▼</span>
         </div>
 
         {showUserMenu && (
           <>
             <div onClick={() => setShowUserMenu(false)} style={{ position: 'fixed', inset: 0, zIndex: 998 }} />
             <div style={{
-              position: 'absolute', top: 48, right: 0, background: '#111827',
-              border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14,
-              boxShadow: '0 10px 30px rgba(0,0,0,0.5)', zIndex: 999, padding: '6px 0',
+              position: 'absolute', top: 48, right: 0, background: '#fff',
+              border: '1px solid #e2e8f0', borderRadius: 14,
+              boxShadow: '0 10px 30px rgba(0,0,0,0.08)', zIndex: 999, padding: '6px 0',
               width: 150, display: 'flex', flexDirection: 'column',
               animation: 'slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
             }}>
               <button onClick={() => { setShowUserMenu(false); onLogout(); }} style={{
                 background: 'none', border: 'none', padding: '10px 16px', color: '#ef4444',
-                textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'background .15s'
-              }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'background .15s',
+                borderTop: '1px solid #f1f5f9'
+              }} onMouseEnter={e => e.target.style.background = 'rgba(0,0,0,0.03)'}
                  onMouseLeave={e => e.target.style.background = 'none'}>
                 🚪 Çıkış Yap
               </button>

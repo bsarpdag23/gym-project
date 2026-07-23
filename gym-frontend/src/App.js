@@ -121,7 +121,7 @@ export default function App() {
       <div style={{ position:'fixed', top:24, right:24, zIndex:10000, display:'flex', flexDirection:'column', gap:10, maxWidth:360, width:'calc(100% - 48px)' }}>
         {toasts.map(t => (
           <div key={t.id} className="slide-in" style={{
-            background: t.type === 'success' ? '#10b981' : '#3b82f6',
+            background: t.type === 'success' ? '#10b981' : '#e94560',
             color: '#fff',
             padding: '14px 22px',
             borderRadius: 14,
