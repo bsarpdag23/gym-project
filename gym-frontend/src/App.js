@@ -59,12 +59,48 @@ function AppRoutes({ user, onLogin, onLogout }) {
 export default function App() {
   const [user, setUser] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const [toasts, setToasts] = useState([]);
 
   useEffect(() => {
     const u = localStorage.getItem('user');
     const t = localStorage.getItem('token');
     if (u && t) setUser(JSON.parse(u));
     setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    const handleToastEvent = (e) => {
+      const newToast = { id: Date.now(), message: e.detail.message, type: e.detail.type || 'info' };
+      setToasts((prev) => [...prev, newToast]);
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== newToast.id));
+      }, 4000);
+    };
+
+    window.addEventListener('show-toast', handleToastEvent);
+    
+    // Override window.alert
+    window.alert = (msg) => {
+      if (msg === null || msg === undefined) return;
+      let text = typeof msg === 'object' ? JSON.stringify(msg) : String(msg);
+      
+      const lower = text.toLowerCase();
+      const isSuccess = lower.includes('başarıyla') || 
+                        lower.includes('başarılı') || 
+                        lower.includes('kopyalandı') || 
+                        lower.includes('güncellendi') || 
+                        lower.includes('sıfırlandı') ||
+                        lower.includes('temizlendi') ||
+                        lower.includes('kaydedildi');
+
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: { message: text, type: isSuccess ? 'success' : 'info' }
+      }));
+    };
+
+    return () => {
+      window.removeEventListener('show-toast', handleToastEvent);
+    };
   }, []);
 
   const handleLogin = (u) => setUser(u);
@@ -80,6 +116,30 @@ export default function App() {
   return (
     <BrowserRouter>
       <AppRoutes user={user} onLogin={handleLogin} onLogout={logout} />
+      
+      {/* Global Toast Container */}
+      <div style={{ position:'fixed', top:24, right:24, zIndex:10000, display:'flex', flexDirection:'column', gap:10, maxWidth:360, width:'calc(100% - 48px)' }}>
+        {toasts.map(t => (
+          <div key={t.id} className="slide-in" style={{
+            background: t.type === 'success' ? '#10b981' : '#3b82f6',
+            color: '#fff',
+            padding: '14px 22px',
+            borderRadius: 14,
+            boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)',
+            fontFamily: 'Segoe UI, sans-serif',
+            fontSize: 14,
+            fontWeight: 600,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            border: '1px solid rgba(255,255,255,0.15)',
+            boxSizing: 'border-box',
+          }}>
+            <span style={{ fontSize: 18 }}>{t.type === 'success' ? '✓' : 'ℹ'}</span>
+            <span>{t.message}</span>
+          </div>
+        ))}
+      </div>
     </BrowserRouter>
   );
 }

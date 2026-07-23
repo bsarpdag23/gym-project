@@ -4,20 +4,65 @@ import {
   FaBolt, FaCrown, FaBuilding, FaUsers, FaTicketAlt, FaMoneyBillWave,
   FaDoorOpen, FaUser, FaMapMarkerAlt, FaPhone, FaSave, FaEdit, FaTrash,
 } from 'react-icons/fa';
-import { BRAND, Btn, Card, Badge, Input, Modal, Logo } from '../components/ui';
+import { BRAND, Btn, Card, Badge, Input, Modal, Logo, Avatar } from '../components/ui';
 import api from '../api';
 
-function Header({ user, onLogout }) {
+function SkeletonCard({ height = 150, style = {} }) {
   return (
-    <div style={{ background:`linear-gradient(135deg,${BRAND.dark},${BRAND.purple})`, padding:'14px 28px',
-      display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-      <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+    <div className="skeleton" style={{
+      height, width: '100%', borderRadius: 16,
+      border: '1px solid rgba(255,255,255,0.06)',
+      boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+      boxSizing: 'border-box',
+      ...style
+    }} />
+  );
+}
+
+function Header({ user, onLogout }) {
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  return (
+    <div style={{
+      background: 'rgba(17, 24, 39, 0.75)', backdropFilter: 'blur(12px)', padding: '14px 28px',
+      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+      borderBottom: '1px solid rgba(255,255,255,0.06)', position: 'sticky', top: 0, zIndex: 100
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         <Logo light />
-        <Badge label={<><FaBolt/> Süper Admin</>} color="#fff" />
+        <Badge label={<><FaBolt/> Süper Admin</>} color={BRAND.primary} />
       </div>
-      <div style={{ display:'flex', alignItems:'center', gap:14, color:'#fff' }}>
-        <span style={{ fontSize:14, display:'inline-flex', alignItems:'center', gap:6 }}><FaCrown/> {user.fullName}</span>
-        <Btn onClick={onLogout} color="#fff" outline size="sm">Çıkış</Btn>
+      <div style={{ position: 'relative' }}>
+        <div
+          onClick={() => setShowUserMenu(!showUserMenu)}
+          style={{ display: 'flex', gap: 10, alignItems: 'center', color: '#fff', cursor: 'pointer', padding: '6px 12px', borderRadius: 20, background: 'rgba(255,255,255,0.04)', transition: 'background .15s' }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+          onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
+        >
+          <Avatar name={user.fullName} size={28} />
+          <span style={{ fontSize: 14, fontWeight: 600 }}><FaCrown style={{ marginRight: 4, verticalAlign: '-1px' }} /> {user.fullName}</span>
+          <span style={{ fontSize: 10, color: '#9ca3af' }}>▼</span>
+        </div>
+
+        {showUserMenu && (
+          <>
+            <div onClick={() => setShowUserMenu(false)} style={{ position: 'fixed', inset: 0, zIndex: 998 }} />
+            <div style={{
+              position: 'absolute', top: 48, right: 0, background: '#111827',
+              border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14,
+              boxShadow: '0 10px 30px rgba(0,0,0,0.5)', zIndex: 999, padding: '6px 0',
+              width: 150, display: 'flex', flexDirection: 'column',
+              animation: 'slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+            }}>
+              <button onClick={() => { setShowUserMenu(false); onLogout(); }} style={{
+                background: 'none', border: 'none', padding: '10px 16px', color: '#ef4444',
+                textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'background .15s'
+              }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                 onMouseLeave={e => e.target.style.background = 'none'}>
+                🚪 Çıkış Yap
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
@@ -47,7 +92,7 @@ function GymDetailView({ user, onLogout }) {
   }, [gymId]);
 
   return (
-    <div style={{ minHeight:'100vh', background:'#f8fafc', fontFamily:'Segoe UI,sans-serif' }}>
+    <div style={{ minHeight:'100vh', background:'#090d16', fontFamily:'Segoe UI,sans-serif', color:'#f3f4f6' }}>
       <Header user={user} onLogout={onLogout} />
 
       <div style={{ maxWidth:1100, margin:'0 auto', padding:'28px 20px' }}>
@@ -57,7 +102,10 @@ function GymDetailView({ user, onLogout }) {
         </button>
 
         {detailLoading ? (
-          <Card style={{ textAlign:'center', padding:40 }}>Yükleniyor...</Card>
+          <div style={{ display:'grid', gap:20 }}>
+            <SkeletonCard height={120} />
+            <SkeletonCard height={240} />
+          </div>
         ) : detail ? (
           <>
             <div style={{ marginBottom:24 }}>
@@ -199,7 +247,7 @@ function GymListView({ user, onLogout }) {
   };
 
   return (
-    <div style={{ minHeight:'100vh', background:'#f8fafc', fontFamily:'Segoe UI,sans-serif' }}>
+    <div style={{ minHeight:'100vh', background:'#090d16', fontFamily:'Segoe UI,sans-serif', color:'#f3f4f6' }}>
       <Header user={user} onLogout={onLogout} />
 
       <div style={{ maxWidth:1100, margin:'0 auto', padding:'28px 20px' }}>
@@ -232,7 +280,11 @@ function GymListView({ user, onLogout }) {
         </div>
 
         {loading ? (
-          <Card style={{ textAlign:'center', padding:40 }}>Yükleniyor...</Card>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:16 }}>
+            {[1, 2, 3].map(n => (
+              <SkeletonCard key={n} height={180} />
+            ))}
+          </div>
         ) : gyms.length === 0 ? (
           <Card style={{ textAlign:'center', padding:50 }}>
             <div style={{ fontSize:48, marginBottom:12, display:'flex', justifyContent:'center' }}><FaBuilding/></div>

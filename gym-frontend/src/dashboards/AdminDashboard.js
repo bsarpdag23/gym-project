@@ -12,10 +12,23 @@ import { getSocket } from '../socket';
 import { PROGRAM_CATEGORIES, PROGRAM_CATEGORY_LABELS } from '../programCategories';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 
+function SkeletonCard({ height = 150, style = {} }) {
+  return (
+    <div className="skeleton" style={{
+      height, width: '100%', borderRadius: 16,
+      border: '1px solid rgba(255,255,255,0.06)',
+      boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+      boxSizing: 'border-box',
+      ...style
+    }} />
+  );
+}
+
 export default function AdminDashboard({ user, onLogout }) {
   const navigate = useNavigate();
   const location = useLocation();
   const tab = location.pathname.split('/').filter(Boolean)[1] || '';
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const [users, setUsers] = useState([]);
   const [trainers, setTrainers] = useState([]);
   const [myMembers, setMyMembers] = useState([]);
@@ -192,31 +205,83 @@ export default function AdminDashboard({ user, onLogout }) {
   const color = { users: '#e94560', plans: '#3b82f6', enrollments: '#10b981', exercises: '#f59e0b', programs: '#8b5cf6', dashboard: '#8b5cf6', mymembers: '#8b5cf6', checkin: '#10b981', chat: '#ec4899' };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'Segoe UI,sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: '#090d16', fontFamily: 'Segoe UI,sans-serif', color: '#f3f4f6' }}>
       <div style={{
-        background: `linear-gradient(135deg,${BRAND.primary},${BRAND.purple})`, padding: '14px 28px',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 2px 10px rgba(233,69,96,.3)'
+        background: 'rgba(17, 24, 39, 0.75)', backdropFilter: 'blur(12px)', padding: '14px 28px',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        borderBottom: '1px solid rgba(255,255,255,0.06)', position: 'sticky', top: 0, zIndex: 100
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <Logo light />
-          <Badge label={user.role === 'admin' ? 'Admin' : 'Trainer'} color="#fff" />
+          <Badge label={user.role === 'admin' ? 'Admin' : 'Trainer'} color={BRAND.primary} />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, color: '#fff' }}>
-          <span style={{ fontSize: 14, display: 'inline-flex', alignItems: 'center', gap: 6 }}><FaUser /> {user.fullName}</span>
-          <Btn onClick={onLogout} color="#fff" outline size="sm">Çıkış</Btn>
+        <div style={{ position: 'relative' }}>
+          <div
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            style={{ display: 'flex', gap: 10, alignItems: 'center', color: '#fff', cursor: 'pointer', padding: '6px 12px', borderRadius: 20, background: 'rgba(255,255,255,0.04)', transition: 'background .15s' }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+            onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
+          >
+            <Avatar name={user.fullName} size={28} />
+            <span style={{ fontSize: 14, fontWeight: 600 }}>{user.fullName}</span>
+            <span style={{ fontSize: 10, color: '#9ca3af' }}>▼</span>
+          </div>
+
+          {showUserMenu && (
+            <>
+              <div onClick={() => setShowUserMenu(false)} style={{ position: 'fixed', inset: 0, zIndex: 998 }} />
+              <div style={{
+                position: 'absolute', top: 48, right: 0, background: '#111827',
+                border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14,
+                boxShadow: '0 10px 30px rgba(0,0,0,0.5)', zIndex: 999, padding: '6px 0',
+                width: 150, display: 'flex', flexDirection: 'column',
+                animation: 'slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+              }}>
+                <button onClick={() => { setShowUserMenu(false); onLogout(); }} style={{
+                  background: 'none', border: 'none', padding: '10px 16px', color: '#ef4444',
+                  textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'background .15s'
+                }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                   onMouseLeave={e => e.target.style.background = 'none'}>
+                  🚪 Çıkış Yap
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '28px 20px' }}>
-        <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
-          {TABS.map(t => (
-            <button key={t.id} onClick={() => navigate(`/admin/${t.id}`)} style={{
-              padding: '9px 20px', borderRadius: 10, border: `2px solid ${tab === t.id ? (color[t.id] || BRAND.primary) : '#e5e7eb'}`,
-              background: tab === t.id ? (color[t.id] || BRAND.primary) : '#fff',
-              color: tab === t.id ? '#fff' : '#374151',
-              fontWeight: 600, fontSize: 14, cursor: 'pointer',
-            }}>{t.label}</button>
-          ))}
+        <div style={{
+          background: 'rgba(17,24,39,0.6)', borderRadius: 20, padding: 6,
+          display: 'inline-flex', gap: 4, border: '1px solid rgba(255,255,255,0.04)',
+          marginBottom: 28, flexWrap: 'wrap'
+        }}>
+          {TABS.map(t => {
+            const isActive = tab === t.id;
+            const tabColor = color[t.id] || BRAND.primary;
+            return (
+              <button
+                key={t.id}
+                onClick={() => navigate(`/admin/${t.id}`)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: 14,
+                  border: 'none',
+                  background: isActive ? `linear-gradient(135deg, ${tabColor}, ${BRAND.purple})` : 'transparent',
+                  color: isActive ? '#fff' : '#9ca3af',
+                  fontWeight: 600,
+                  fontSize: 14,
+                  cursor: 'pointer',
+                  boxShadow: isActive ? `0 4px 12px ${tabColor}35` : 'none',
+                  transition: 'background .15s, color .15s, transform .1s'
+                }}
+                onMouseEnter={e => { if(!isActive) e.target.style.color = '#fff'; }}
+                onMouseLeave={e => { if(!isActive) e.target.style.color = '#9ca3af'; }}
+              >
+                {t.label}
+              </button>
+            );
+          })}
         </div>
 
         <Routes>
@@ -668,7 +733,11 @@ export default function AdminDashboard({ user, onLogout }) {
               )}
 
               {!stats ? (
-                <Card style={{ textAlign: 'center', padding: 40 }}>Yükleniyor...</Card>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 16, marginBottom: 24 }}>
+                  {[1, 2, 3, 4].map(n => (
+                    <SkeletonCard key={n} height={120} />
+                  ))}
+                </div>
               ) : (
                 <>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 16, marginBottom: 24 }}>

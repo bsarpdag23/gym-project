@@ -18,6 +18,18 @@ import api, { resolveAvatarUrl } from '../api';
 import { getSocket } from '../socket';
 import { PROGRAM_CATEGORIES, PROGRAM_CATEGORY_LABELS } from '../programCategories';
 
+function SkeletonCard({ height = 150, style = {} }) {
+  return (
+    <div className="skeleton" style={{
+      height, width: '100%', borderRadius: 16,
+      border: '1px solid rgba(255,255,255,0.06)',
+      boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+      boxSizing: 'border-box',
+      ...style
+    }} />
+  );
+}
+
 const CATEGORY_ICONS = {
   full_body: <GiBodyBalance/>,
   push: <GiPush/>,
@@ -180,7 +192,14 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
     setDeletingAcc(false);
   };
 
-  if (loading) return <Card style={{ textAlign:'center', padding:40 }}>Yükleniyor...</Card>;
+  if (loading) {
+    return (
+      <div style={{ display:'grid', gap:20 }}>
+        <SkeletonCard height={120} />
+        <SkeletonCard height={240} />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -464,7 +483,15 @@ function MyProgramTab() {
   };
   useEffect(() => { load(); }, []);
 
-  if (loading) return <Card style={{ textAlign:'center', padding:40 }}>Yükleniyor...</Card>;
+  if (loading) {
+    return (
+      <div style={{ display:'grid', gap:16 }}>
+        <SkeletonCard height={80} />
+        <SkeletonCard height={150} />
+        <SkeletonCard height={150} />
+      </div>
+    );
+  }
 
   const goalLabel = { gain:'Kilo Alma', lose:'Kilo Verme', maintain:'Koruma' };
 
@@ -645,7 +672,13 @@ function AchievementsTab() {
     })();
   }, []);
 
-  if (loading) return <Card style={{ textAlign:'center', padding:40 }}>Yükleniyor...</Card>;
+  if (loading) {
+    return (
+      <div style={{ display:'flex', justifyContent:'center' }}>
+        <SkeletonCard height={320} style={{ maxWidth: 320 }} />
+      </div>
+    );
+  }
 
   const checkInCount = gamification?.checkInCount || 0;
   const achievements = [
@@ -771,7 +804,15 @@ function ProgramsCatalogTab() {
   };
   useEffect(() => { load(); }, []);
 
-  if (loading) return <Card style={{ textAlign:'center', padding:40 }}>Yükleniyor...</Card>;
+  if (loading) {
+    return (
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))', gap:20 }}>
+        <SkeletonCard height={180} />
+        <SkeletonCard height={180} />
+        <SkeletonCard height={180} />
+      </div>
+    );
+  }
 
   const countFor = (cat) => programs.filter((p) => p.category === cat).length;
 
@@ -1117,7 +1158,15 @@ function DashboardOverviewTab({ user, onNavigate }) {
     })();
   }, []);
 
-  if (loading) return <Card style={{ textAlign:'center', padding:40 }}>Yükleniyor...</Card>;
+  if (loading) {
+    return (
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(200px, 1fr))', gap:16 }}>
+        <SkeletonCard height={120} />
+        <SkeletonCard height={120} />
+        <SkeletonCard height={120} />
+      </div>
+    );
+  }
 
   const now = new Date();
   const activeEnrollment = enrollments.find((e) => e.status === 'active' && new Date(e.endDate) >= now);
@@ -1695,6 +1744,7 @@ export default function MemberDashboard({ user, onLogout }) {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [gymName, setGymName] = useState(null);
   const [checkInNotice, setCheckInNotice] = useState(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   useEffect(() => {
     api.users.getMe().then((me) => {
@@ -1726,15 +1776,17 @@ export default function MemberDashboard({ user, onLogout }) {
   const goTab = (id) => navigate(`/member/${id}`);
 
   return (
-    <div style={{ minHeight:'100vh', background:'#f8fafc', fontFamily:'Segoe UI,sans-serif' }}>
-      <div style={{ background:`linear-gradient(135deg,${BRAND.primary},${BRAND.purple})`, padding:'14px 28px',
-        display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+    <div style={{ minHeight:'100vh', background:'#090d16', fontFamily:'Segoe UI,sans-serif', color:'#f3f4f6' }}>
+      <div style={{
+        background:'rgba(17, 24, 39, 0.75)', backdropFilter:'blur(12px)', padding:'14px 28px',
+        display:'flex', justifyContent:'space-between', alignItems:'center',
+        borderBottom:'1px solid rgba(255,255,255,0.06)', position:'sticky', top:0, zIndex:100
+      }}>
         <div style={{ display:'flex', alignItems:'center', gap:14 }}>
           <Logo light />
           {gymName && (
             <span style={{
-              background: 'rgba(255,255,255,0.18)',
-              backdropFilter: 'blur(4px)',
+              background: 'rgba(255,255,255,0.05)',
               padding: '4px 14px',
               borderRadius: 20,
               fontSize: 13,
@@ -1743,30 +1795,100 @@ export default function MemberDashboard({ user, onLogout }) {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 6,
-              border: '1px solid rgba(255,255,255,0.25)'
+              border: '1px solid rgba(255,255,255,0.1)'
             }}>
-              <FaBuilding style={{ fontSize: 12 }} /> {gymName}
+              <FaBuilding style={{ fontSize: 12, color: BRAND.primary }} /> {gymName}
             </span>
           )}
         </div>
-        <div style={{ display:'flex', gap:12, alignItems:'center', color:'#fff' }}>
-          <span style={{ fontSize:14, display:'inline-flex', alignItems:'center', gap:8 }}>
-            <Avatar src={resolveAvatarUrl(avatarUrl)} name={user.fullName} size={26} /> {user.fullName}
-          </span>
-          <Btn onClick={onLogout} color="#fff" outline size="sm">Çıkış</Btn>
+        <div style={{ position:'relative' }}>
+          <div
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            style={{ display:'flex', gap:10, alignItems:'center', color:'#fff', cursor:'pointer', padding:'6px 12px', borderRadius:20, background:'rgba(255,255,255,0.04)', transition:'background .15s' }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+            onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
+          >
+            <Avatar src={resolveAvatarUrl(avatarUrl)} name={user.fullName} size={28} />
+            <span style={{ fontSize:14, fontWeight:600 }}>{user.fullName}</span>
+            <span style={{ fontSize:10, color:'#9ca3af' }}>▼</span>
+          </div>
+
+          {showUserMenu && (
+            <>
+              <div onClick={() => setShowUserMenu(false)} style={{ position:'fixed', inset:0, zIndex:998 }} />
+              <div style={{
+                position: 'absolute', top: 48, right: 0, background: '#111827',
+                border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14,
+                boxShadow: '0 10px 30px rgba(0,0,0,0.5)', zIndex: 999, padding: '6px 0',
+                width: 170, display: 'flex', flexDirection: 'column',
+                animation: 'slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+              }}>
+                <button onClick={() => { setShowUserMenu(false); goTab('profile'); }} style={{
+                  background: 'none', border: 'none', padding: '10px 16px', color: '#f3f4f6',
+                  textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition:'background .15s'
+                }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                   onMouseLeave={e => e.target.style.background = 'none'}>
+                  👤 Profil & Diyet
+                </button>
+                <button onClick={() => { setShowUserMenu(false); goTab('chat'); }} style={{
+                  background: 'none', border: 'none', padding: '10px 16px', color: '#f3f4f6',
+                  textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition:'background .15s'
+                }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                   onMouseLeave={e => e.target.style.background = 'none'}>
+                  💬 Sohbet
+                </button>
+                <button onClick={() => { setShowUserMenu(false); goTab('qr'); }} style={{
+                  background: 'none', border: 'none', padding: '10px 16px', color: '#f3f4f6',
+                  textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition:'background .15s'
+                }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                   onMouseLeave={e => e.target.style.background = 'none'}>
+                  📱 Giriş QR Kodum
+                </button>
+                <button onClick={() => { setShowUserMenu(false); onLogout(); }} style={{
+                  background: 'none', border: 'none', padding: '10px 16px', color: '#ef4444',
+                  textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600,
+                  borderTop: '1px solid rgba(255,255,255,0.06)', transition:'background .15s'
+                }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                   onMouseLeave={e => e.target.style.background = 'none'}>
+                  🚪 Çıkış Yap
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
       <div style={{ maxWidth:1100, margin:'0 auto', padding:'28px 20px' }}>
-        <div style={{ display:'flex', gap:8, marginBottom:24, flexWrap:'wrap' }}>
-          {MEMBER_TABS.map(t => (
-            <button key={t.id} onClick={() => goTab(t.id)} style={{
-              padding:'9px 22px', borderRadius:10, border:`2px solid ${activeTab===t.id?BRAND.primary:'#e5e7eb'}`,
-              background: activeTab===t.id ? BRAND.primary : '#fff',
-              color: activeTab===t.id ? '#fff' : '#374151',
-              fontWeight:600, fontSize:14, cursor:'pointer',
-            }}>{t.label}</button>
-          ))}
+        <div style={{
+          background: 'rgba(17,24,39,0.6)', borderRadius: 20, padding: 6,
+          display: 'inline-flex', gap: 4, border: '1px solid rgba(255,255,255,0.04)',
+          marginBottom: 28, flexWrap: 'wrap'
+        }}>
+          {MEMBER_TABS.map(t => {
+            const isActive = activeTab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => goTab(t.id)}
+                style={{
+                  padding: '10px 22px',
+                  borderRadius: 14,
+                  border: 'none',
+                  background: isActive ? `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})` : 'transparent',
+                  color: isActive ? '#fff' : '#9ca3af',
+                  fontWeight: 600,
+                  fontSize: 14,
+                  cursor: 'pointer',
+                  boxShadow: isActive ? `0 4px 12px ${BRAND.primary}35` : 'none',
+                  transition: 'background .15s, color .15s, transform .1s'
+                }}
+                onMouseEnter={e => { if(!isActive) e.target.style.color = '#fff'; }}
+                onMouseLeave={e => { if(!isActive) e.target.style.color = '#9ca3af'; }}
+              >
+                {t.label}
+              </button>
+            );
+          })}
         </div>
 
         <Routes>
@@ -1787,17 +1909,17 @@ export default function MemberDashboard({ user, onLogout }) {
         <Modal title="Salona Giriş Başarılı! 🎉" onClose={() => setCheckInNotice(null)}>
           <div style={{ textAlign:'center' }}>
             <div style={{ fontSize:52, marginBottom:10 }}>🏆</div>
-            <h3 style={{ margin:'0 0 6px', color:'#10b981' }}>{checkInNotice.message}</h3>
-            <p style={{ fontSize:14, color:'#6b7280', margin:'0 0 20px' }}>
+            <h3 style={{ margin:'0 0 6px', color:'#10b981', fontWeight:700 }}>{checkInNotice.message}</h3>
+            <p style={{ fontSize:14, color:'#9ca3af', margin:'0 0 20px' }}>
               Plan: {checkInNotice.plan || '—'} · Geçerlilik: {checkInNotice.validUntil}
             </p>
-            <div style={{ background:'#faf5ff', borderRadius:12, padding:16, border:'1px solid #f3e8ff', display:'inline-block', minWidth:200 }}>
-              <div style={{ fontSize:13, color:'#7c3aed', fontWeight:600 }}>Kazanılan Puan: +{checkInNotice.pointsEarned} Puan</div>
-              <div style={{ fontSize:14, fontWeight:700, marginTop:4, color:'#4b5563' }}>Toplam Puanınız: {checkInNotice.totalPoints}</div>
+            <div style={{ background:'rgba(255,255,255,0.03)', borderRadius:12, padding:16, border:'1px solid rgba(255,255,255,0.08)', display:'inline-block', minWidth:200 }}>
+              <div style={{ fontSize:13, color:BRAND.primary, fontWeight:600 }}>Kazanılan Puan: +{checkInNotice.pointsEarned} Puan</div>
+              <div style={{ fontSize:14, fontWeight:700, marginTop:4, color:'#fff' }}>Toplam Puanınız: {checkInNotice.totalPoints}</div>
             </div>
             {checkInNotice.newBadges?.length > 0 && (
               <div style={{ marginTop:20 }}>
-                <div style={{ fontSize:13, fontWeight:600, color:'#b45309', marginBottom:8 }}>Yeni Kazanılan Rozet(ler)! 🏅</div>
+                <div style={{ fontSize:13, fontWeight:600, color:'#e5c158', marginBottom:8 }}>Yeni Kazanılan Rozet(ler)! 🏅</div>
                 <div style={{ display:'flex', gap:6, justifyContent:'center', flexWrap:'wrap' }}>
                   {checkInNotice.newBadges.map(b => (
                     <Badge key={b} label={b} color="#d97706" />
