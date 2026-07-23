@@ -229,7 +229,7 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
         </div>
         <div>
           <div style={{ fontWeight:700, fontSize:16 }}>{me?.fullName}</div>
-          <div style={{ color:'#6b7280', fontSize:13 }}>{me?.email}</div>
+          <div style={{ color:'#9ca3af', fontSize:13 }}>{me?.email}</div>
           <button onClick={() => fileInputRef.current?.click()} disabled={uploadingAvatar}
             style={{ background:'none', border:'none', color:BRAND.primary, fontSize:12, fontWeight:600,
               cursor:'pointer', padding:0, marginTop:6 }}>
@@ -242,7 +242,7 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
         <h3 style={{ margin:'0 0 4px', display:'flex', alignItems:'center', gap:8 }}>
           {profile ? <><FaClipboardList/> Sağlık Bilgilerim</> : <><FaInfoCircle/> Önce Bilgilerini Gir</>}
         </h3>
-        <p style={{ color:'#6b7280', fontSize:13, margin:'0 0 18px' }}>
+        <p style={{ color:'#9ca3af', fontSize:13, margin:'0 0 18px' }}>
           {profile ? 'Bilgilerini güncelleyip aşağıdan programını yeniden oluşturabilirsin.' : 'Sana özel program için bu bilgiler gerekli.'}
         </p>
         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
@@ -280,10 +280,10 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
 
       <Card style={{ marginTop:20, display:'flex', justifyContent:'space-between', alignItems:'center', gap:16 }}>
         <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-          {hideProfile ? <FaEyeSlash size={20} color="#6b7280"/> : <FaEye size={20} color="#8b5cf6"/>}
+          {hideProfile ? <FaEyeSlash size={20} color='#9ca3af'/> : <FaEye size={20} color="#8b5cf6"/>}
           <div>
             <div style={{ fontWeight:700, fontSize:14 }}>Profilimi gizle</div>
-            <div style={{ fontSize:12, color:'#6b7280' }}>
+            <div style={{ fontSize:12, color:'#9ca3af' }}>
               {hideProfile
                 ? 'Diğer üyeler seni sohbet listesinde göremez, yeni sohbet başlatamaz.'
                 : 'Diğer üyeler seni sohbet listesinde görüp mesaj atabilir.'}
@@ -304,7 +304,7 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
       {profile && (
         <Card style={{ marginTop:20 }}>
           <h3 style={{ margin:'0 0 4px', display:'flex', alignItems:'center', gap:8 }}><FaBullseye/> Antrenman & Diyet Programı</h3>
-          <p style={{ color:'#6b7280', fontSize:13, margin:'0 0 16px' }}>
+          <p style={{ color:'#9ca3af', fontSize:13, margin:'0 0 16px' }}>
             {program ? 'Yeni oluşturursan mevcut program geçmişe taşınır.' : 'Bilgilerine göre kişisel programını oluştur.'}
           </p>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(220px, 1fr))', gap:14 }}>
@@ -318,7 +318,7 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
               <div style={{ display:'flex', alignItems:'center', gap:8, color:'#8b5cf6', fontWeight:700, fontSize:15 }}>
                 <FaBolt/> Hızlı Oluştur
               </div>
-              <div style={{ fontSize:12, color:'#6b7280' }}>Kurallara dayalı hesaplama, anında sonuç.</div>
+              <div style={{ fontSize:12, color:'#9ca3af' }}>Kurallara dayalı hesaplama, anında sonuç.</div>
               {generating && <div style={{ fontSize:12, color:'#8b5cf6', fontWeight:600 }}>Oluşturuluyor...</div>}
               {!generating && program && <div style={{ fontSize:12, color:'#8b5cf6', fontWeight:600, display:'flex', alignItems:'center', gap:4 }}><FaSyncAlt/> Yeniden oluştur</div>}
             </button>
@@ -345,7 +345,7 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
         <>
           <Card style={{ marginTop:20 }}>
             <h3 style={{ margin:'0 0 4px', display:'flex', alignItems:'center', gap:8 }}><FaAppleAlt/> Günlük Beslenme Hedefi</h3>
-            <p style={{ color:'#6b7280', fontSize:13, margin:'0 0 16px' }}>
+            <p style={{ color:'#9ca3af', fontSize:13, margin:'0 0 16px' }}>
               Aktif programına göre hesaplanan günlük hedeflerin.
             </p>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12 }}>
@@ -357,7 +357,7 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
               ].map(([label, val, unit, c]) => (
                 <div key={label} style={{ background:c+'10', border:`1px solid ${c}33`, borderRadius:10, padding:'14px 10px', textAlign:'center' }}>
                   <div style={{ fontSize:22, fontWeight:800, color:c }}>{val}</div>
-                  <div style={{ fontSize:12, color:'#6b7280' }}>{label} ({unit})</div>
+                  <div style={{ fontSize:12, color:'#9ca3af' }}>{label} ({unit})</div>
                 </div>
               ))}
             </div>
@@ -376,7 +376,7 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, flexWrap: 'wrap', gap: 10 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <span style={{ fontWeight: 700, fontSize: 15, color: BRAND.dark }}>{meal.name}</span>
-                          <Badge label={meal.time} color="#6b7280" />
+                          <Badge label={meal.time} color='#9ca3af' />
                         </div>
                         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                           <Badge label={`${meal.calories} kcal`} color="#e94560" />
@@ -389,7 +389,7 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
                           )}
                         </div>
                       </div>
-                      <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: '#374151', lineHeight: 1.6 }}>
+                      <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: '#cbd5e1', lineHeight: 1.6 }}>
                         {meal.items.map((item, idx) => (
                           <li key={idx} style={{ marginBottom: 4 }}>{item}</li>
                         ))}
@@ -402,7 +402,7 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
               <Card style={{ textAlign: 'center', padding: '30px 20px', border: '1.5px dashed #d1d5db', background: '#f9fafb' }}>
                 <div style={{ fontSize: 32, color: BRAND.primary, marginBottom: 8 }}><FaAppleAlt /></div>
                 <h4 style={{ margin: '0 0 4px' }}>Detaylı Günlük Öğün Listesi Bulunmuyor</h4>
-                <p style={{ color: '#6b7280', fontSize: 13, margin: '0 0 16px', maxWidth: 400, marginLeft: 'auto', marginRight: 'auto' }}>
+                <p style={{ color: '#9ca3af', fontSize: 13, margin: '0 0 16px', maxWidth: 400, marginLeft: 'auto', marginRight: 'auto' }}>
                   Hedef kalori ve makrolarınıza uygun örnek kahvaltı, öğle, akşam yemekleri ve ara öğün listesi oluşturun.
                 </p>
                 <Btn onClick={generateDiet} disabled={generatingDiet} style={{ margin: '0 auto' }}>
@@ -419,7 +419,7 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
         <h4 style={{ margin: '0 0 4px', color: '#dc2626', display: 'flex', alignItems: 'center', gap: 8 }}>
           <FaExclamationTriangle /> Hesabı Sil
         </h4>
-        <p style={{ color: '#6b7280', fontSize: 13, margin: '0 0 14px' }}>
+        <p style={{ color: '#9ca3af', fontSize: 13, margin: '0 0 14px' }}>
           Hesabınızı ve tüm verilerinizi kalıcı olarak silebilirsiniz. (Aktif bir üyelik paketiniz varsa silme işlemi yapılamaz).
         </p>
         <Btn onClick={() => setShowDeleteModal(true)} color="#dc2626" outline size="sm">
@@ -434,14 +434,14 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
               <FaExclamationTriangle />
             </div>
             <h3 style={{ margin: '0 0 8px' }}>Hesabınızı silmek istediğinize emin misiniz?</h3>
-            <p style={{ color: '#6b7280', fontSize: 13, margin: '0 0 20px' }}>
+            <p style={{ color: '#9ca3af', fontSize: 13, margin: '0 0 20px' }}>
               Bu işlem geri alınamaz. Aktif bir üyelik paketiniz varsa sistem silme işlemine izin vermeyecektir.
             </p>
             <div style={{ display: 'flex', gap: 10 }}>
               <Btn onClick={confirmDeleteAccount} disabled={deletingAcc} color="#dc2626" style={{ flex: 1, justifyContent: 'center' }}>
                 {deletingAcc ? 'Siliniyor...' : 'Evet, Hesabımı Sil'}
               </Btn>
-              <Btn onClick={() => setShowDeleteModal(false)} color="#6b7280" outline style={{ flex: 1, justifyContent: 'center' }}>
+              <Btn onClick={() => setShowDeleteModal(false)} color='#9ca3af' outline style={{ flex: 1, justifyContent: 'center' }}>
                 İptal
               </Btn>
             </div>
@@ -510,7 +510,7 @@ function MyProgramTab() {
         <Card style={{ marginBottom:20, textAlign:'center', padding:40 }}>
           <div style={{ fontSize:48, marginBottom:12, display:'flex', justifyContent:'center' }}><FaInfoCircle/></div>
           <h3 style={{ margin:'0 0 6px' }}>Önce bilgilerini gir</h3>
-          <p style={{ color:'#6b7280', margin:0 }}>
+          <p style={{ color:'#9ca3af', margin:0 }}>
             Sana özel bir antrenman programı oluşturmak için <FaUser style={{ verticalAlign:'-2px' }}/> Profilim &amp; Diyet sekmesinden bilgilerini tamamla.
           </p>
         </Card>
@@ -521,7 +521,7 @@ function MyProgramTab() {
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:12, flexWrap:'wrap' }}>
             <div>
               <h3 style={{ margin:'0 0 6px', color:'#4c1d95', display:'flex', alignItems:'center', gap:8 }}><FaCalendarDay/> Bugün Yapman Gerekenler</h3>
-              <p style={{ color:'#6b7280', fontSize:13, margin:0 }}>{todayWorkout.focus}</p>
+              <p style={{ color:'#9ca3af', fontSize:13, margin:0 }}>{todayWorkout.focus}</p>
             </div>
             <Badge label={`Gün ${todayWorkout.day}/${program.workoutPlan.length}`} color="#8b5cf6" />
           </div>
@@ -547,7 +547,7 @@ function MyProgramTab() {
         <Card style={{ marginBottom:20, textAlign:'center', padding:40 }}>
           <div style={{ fontSize:48, marginBottom:12, display:'flex', justifyContent:'center' }}><FaBullseye/></div>
           <h3 style={{ margin:'0 0 6px' }}>Henüz bir programın yok</h3>
-          <p style={{ color:'#6b7280', margin:0 }}>
+          <p style={{ color:'#9ca3af', margin:0 }}>
             Bilgilerine göre program oluşturmak için <FaUser style={{ verticalAlign:'-2px' }}/> Profilim &amp; Diyet sekmesine git.
           </p>
         </Card>
@@ -560,7 +560,7 @@ function MyProgramTab() {
               <Badge label={goalLabel[program.goal] || program.goal} color="#8b5cf6" />
               <Badge label={`${program.startWeightKg} → ${program.targetWeightKg} kg`} color="#3b82f6" />
               <Badge label={`${program.durationWeeks} hafta`} color="#10b981" />
-              <Badge label={`${program.startDate} → ${program.endDate}`} color="#6b7280" />
+              <Badge label={`${program.startDate} → ${program.endDate}`} color='#9ca3af' />
               <Badge label={<><FaHourglassHalf/> {daysLeft} gün kaldı</>} color="#e94560" />
             </div>
             {program.warnings && program.warnings.length > 0 && (
@@ -709,7 +709,7 @@ function AchievementsTab() {
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:12, flexWrap:'wrap' }}>
             <div>
               <h3 style={{ margin:'0 0 6px', color:'#9a2c00', display:'flex', alignItems:'center', gap:8 }}><FaClock/> Bugün salon doluluk tahmini</h3>
-              <p style={{ color:'#6b7280', fontSize:13, margin:0 }}>
+              <p style={{ color:'#9ca3af', fontSize:13, margin:0 }}>
                 {occupancy.recommendation || 'Bu saat için tahmin hazırlanıyor.'}
               </p>
             </div>
@@ -717,15 +717,15 @@ function AchievementsTab() {
           </div>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:12, marginTop:16 }}>
             <div style={{ background:'#fff', borderRadius:10, padding:'12px 14px', boxShadow:'0 1px 3px rgba(0,0,0,0.05)' }}>
-              <div style={{ fontSize:12, color:'#6b7280' }}>Bu saat</div>
+              <div style={{ fontSize:12, color:'#9ca3af' }}>Bu saat</div>
               <div style={{ fontSize:20, fontWeight:800 }}>{occupancy.day} {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</div>
             </div>
             <div style={{ background:'#fff', borderRadius:10, padding:'12px 14px', boxShadow:'0 1px 3px rgba(0,0,0,0.05)' }}>
-              <div style={{ fontSize:12, color:'#6b7280' }}>Yoğunluk</div>
+              <div style={{ fontSize:12, color:'#9ca3af' }}>Yoğunluk</div>
               <div style={{ fontSize:20, fontWeight:800 }}>{occupancy.intensity}</div>
             </div>
             <div style={{ background:'#fff', borderRadius:10, padding:'12px 14px', boxShadow:'0 1px 3px rgba(0,0,0,0.05)' }}>
-              <div style={{ fontSize:12, color:'#6b7280' }}>En sakin saatler</div>
+              <div style={{ fontSize:12, color:'#9ca3af' }}>En sakin saatler</div>
               <div style={{ fontSize:14, fontWeight:700 }}>{(occupancy.quietSlots || []).slice(0, 2).map((slot) => `${slot.day} ${slot.hour}:00`).join(' · ') || 'Veri yok'}</div>
             </div>
           </div>
@@ -737,7 +737,7 @@ function AchievementsTab() {
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:12, flexWrap:'wrap' }}>
             <div>
               <h3 style={{ margin:'0 0 6px', display:'flex', alignItems:'center', gap:8 }}><FaTrophy/> Başarılar</h3>
-              <p style={{ color:'#6b7280', fontSize:13, margin:0 }}>
+              <p style={{ color:'#9ca3af', fontSize:13, margin:0 }}>
                 Toplam {gamification.points} puan ve {gamification.badges?.length || 0} başarın var.
               </p>
             </div>
@@ -754,7 +754,7 @@ function AchievementsTab() {
           <div style={{ marginTop:14, overflowX:'auto' }}>
             <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
               <thead>
-                <tr style={{ textAlign:'left', color:'#6b7280' }}>
+                <tr style={{ textAlign:'left', color:'#9ca3af' }}>
                   <th style={{ padding:'8px 10px', borderBottom:'1px solid #e5e7eb' }}>Başarı</th>
                   <th style={{ padding:'8px 10px', borderBottom:'1px solid #e5e7eb' }}>Durum</th>
                   <th style={{ padding:'8px 10px', borderBottom:'1px solid #e5e7eb', minWidth:160 }}>İlerleme</th>
@@ -776,7 +776,7 @@ function AchievementsTab() {
                         height={8}
                       />
                     </td>
-                    <td style={{ padding:'10px', borderBottom:'1px solid #f3f4f6', color:'#6b7280' }}>{achievement.description}</td>
+                    <td style={{ padding:'10px', borderBottom:'1px solid #f3f4f6', color:'#9ca3af' }}>{achievement.description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -846,7 +846,7 @@ function ProgramsCatalogTab() {
             onClick={() => setCategory(c.value)}>
             <div style={{ fontSize:32, marginBottom:8 }}>{CATEGORY_ICONS[c.value]}</div>
             <h3 style={{ margin:'0 0 4px' }}>{c.label}</h3>
-            <p style={{ color:'#6b7280', fontSize:13, margin:0 }}>{countFor(c.value)} program</p>
+            <p style={{ color:'#9ca3af', fontSize:13, margin:0 }}>{countFor(c.value)} program</p>
           </Card>
         ))}
       </div>
@@ -864,7 +864,7 @@ function ProgramsCatalogTab() {
 
       {list.length === 0 && (
         <Card style={{ textAlign:'center', padding:40 }}>
-          <p style={{ color:'#6b7280', margin:0 }}>Bu kategoride henüz program yok.</p>
+          <p style={{ color:'#9ca3af', margin:0 }}>Bu kategoride henüz program yok.</p>
         </Card>
       )}
 
@@ -880,11 +880,11 @@ function ProgramsCatalogTab() {
                   <FaBolt/> Aktifleştir
                 </Btn>
               </div>
-              <p style={{ color:'#6b7280', fontSize:13, margin:'0 0 12px' }}>{p.description}</p>
+              <p style={{ color:'#9ca3af', fontSize:13, margin:'0 0 12px' }}>{p.description}</p>
               <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:14 }}>
                 <Badge label={p.difficulty} color="#8b5cf6" />
                 <Badge label={`${p.weeksCount} Hafta`} color="#10b981" />
-                <Badge label={p.source === 'ai' ? <><FaRobot/> AI</> : <><FaChalkboardTeacher/> Antrenör</>} color={p.source === 'ai' ? '#f59e0b' : '#6b7280'} />
+                <Badge label={p.source === 'ai' ? <><FaRobot/> AI</> : <><FaChalkboardTeacher/> Antrenör</>} color={p.source === 'ai' ? '#f59e0b' : '#9ca3af'} />
                 {p.ratingCount > 0 && <Badge label={<><FaStar/> {p.avgRating} ({p.ratingCount})</>} color="#ec4899" />}
               </div>
 
@@ -902,7 +902,7 @@ function ProgramsCatalogTab() {
               </div>
 
               <div style={{ marginTop:16, paddingTop:14, borderTop:'1px solid #f0f0f0' }}>
-                <div style={{ fontSize:13, color:'#6b7280', marginBottom:8 }}>Bu programı değerlendir</div>
+                <div style={{ fontSize:13, color:'#9ca3af', marginBottom:8 }}>Bu programı değerlendir</div>
                 <div style={{ display:'flex', gap:4, marginBottom:8 }}>
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button key={star}
@@ -934,9 +934,9 @@ function ProgramsCatalogTab() {
                               ? <FaStar key={star} color="#f59e0b" size={12}/>
                               : <FaRegStar key={star} color="#e5e7eb" size={12}/>
                           ))}
-                          <span style={{ color:'#6b7280', fontWeight:400, marginLeft:4 }}> · {r.user?.fullName}</span>
+                          <span style={{ color:'#9ca3af', fontWeight:400, marginLeft:4 }}> · {r.user?.fullName}</span>
                         </div>
-                        <div style={{ color:'#374151', marginTop:2 }}>{r.comment}</div>
+                        <div style={{ color:'#cbd5e1', marginTop:2 }}>{r.comment}</div>
                       </div>
                     ))}
                   </div>
@@ -1054,7 +1054,7 @@ function ChatTab({ user }) {
                     <span style={{ fontWeight:600, fontSize:14 }}>{c.user.fullName}</span>
                     {c.unreadCount > 0 && <Badge label={c.unreadCount} color="#e94560" />}
                   </div>
-                  <div style={{ fontSize:12, color:'#6b7280', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
+                  <div style={{ fontSize:12, color:'#9ca3af', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
                     {c.lastMessage.senderId === user.id ? 'Sen: ' : ''}{c.lastMessage.content}
                   </div>
                 </div>
@@ -1117,12 +1117,13 @@ function DashboardOverviewTab({ user, onNavigate }) {
   const [program, setProgram] = useState(null);
   const [gamification, setGamification] = useState(null);
   const [occupancy, setOccupancy] = useState(null);
+  const [plans, setPlans] = useState([]);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       try {
-        const [myEnrollments, myProfile, gamificationData, occupancyData] = await Promise.all([
+        const [myEnrollments, myProfile, gamificationData, occupancyData, allPlans] = await Promise.all([
           api.enrollments.getMine().catch(err => {
             console.error('Enrollments error:', err);
             return [];
@@ -1139,11 +1140,16 @@ function DashboardOverviewTab({ user, onNavigate }) {
             console.error('Occupancy prediction error:', err);
             return null;
           }),
+          api.plans.getAll().catch(err => {
+            console.error('Plans error:', err);
+            return [];
+          }),
         ]);
         setEnrollments(myEnrollments);
         setProfile(myProfile);
         setGamification(gamificationData);
         setOccupancy(occupancyData);
+        setPlans(allPlans || []);
         if (myProfile) {
           try {
             setProgram(await api.fitness.active());
@@ -1313,29 +1319,30 @@ function DashboardOverviewTab({ user, onNavigate }) {
         <Card style={{ background: '#1c202a', border: '1px solid rgba(255,255,255,0.08)', color: '#fff', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <h3 style={{ margin: '0 0 16px', fontSize: 18, fontWeight: 800 }}>Salon Üyelik Paketleri</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
-              <div style={{ background: '#0c0d10', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: 12, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 120, boxSizing: 'border-box' }}>
-                <div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: '#9ca3af' }}>Günlük</div>
-                  <div style={{ fontSize: 20, fontWeight: 800, marginTop: 4, color: '#fff' }}>100 ₺</div>
-                </div>
-                <div style={{ fontSize: 10, color: '#64748b' }}>Tek Girişlik</div>
+            {plans && plans.length > 0 ? (
+              <div style={{ display: 'grid', gridTemplateColumns: plans.slice(0, 3).length === 1 ? '1fr' : plans.slice(0, 3).length === 2 ? '1fr 1fr' : '1fr 1fr 1fr', gap: 10 }}>
+                {plans.slice(0, 3).map((p, idx) => {
+                  const backgrounds = ['#0c0d10', '#7c3aed', '#e11d48'];
+                  const bg = backgrounds[idx % backgrounds.length];
+                  const isBlack = bg === '#0c0d10';
+                  return (
+                    <div key={p.id} style={{
+                      background: bg, border: isBlack ? '1px solid rgba(255,255,255,0.08)' : 'none',
+                      borderRadius: 12, padding: 12, display: 'flex', flexDirection: 'column',
+                      justifyContent: 'space-between', height: 120, boxSizing: 'border-box'
+                    }}>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.8)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
+                        <div style={{ fontSize: 20, fontWeight: 800, marginTop: 4, color: '#fff' }}>{p.price} ₺</div>
+                      </div>
+                      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>{p.period} Gün Geçerli</div>
+                    </div>
+                  );
+                })}
               </div>
-              <div style={{ background: '#7c3aed', borderRadius: 12, padding: 12, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 120, boxSizing: 'border-box' }}>
-                <div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.8)' }}>Aylık Standart</div>
-                  <div style={{ fontSize: 20, fontWeight: 800, marginTop: 4, color: '#fff' }}>900 ₺</div>
-                </div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>30 Gün Geçerli</div>
-              </div>
-              <div style={{ background: '#e11d48', borderRadius: 12, padding: 12, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 120, boxSizing: 'border-box' }}>
-                <div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.8)' }}>Yıllık Gold</div>
-                  <div style={{ fontSize: 20, fontWeight: 800, marginTop: 4, color: '#fff' }}>8400 ₺</div>
-                </div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>En Popüler</div>
-              </div>
-            </div>
+            ) : (
+              <p style={{ color: '#9ca3af', fontSize: 14, margin: 0 }}>Henüz üyelik paketi oluşturulmadı.</p>
+            )}
           </div>
           <Btn size="sm" color={BRAND.primary} style={{ marginTop: 16 }} onClick={() => onNavigate('plans')}>Tüm Paketleri İncele →</Btn>
         </Card>
@@ -1520,14 +1527,14 @@ function PlansTab() {
       {plans.length === 0 && (
         <Card style={{ textAlign:'center', padding:40, gridColumn:'1 / -1' }}>
           <div style={{ fontSize:48, marginBottom:12, display:'flex', justifyContent:'center' }}><FaBox/></div>
-          <p style={{ color:'#6b7280', margin:0 }}>Şu anda satışta paket bulunmuyor.</p>
+          <p style={{ color:'#9ca3af', margin:0 }}>Şu anda satışta paket bulunmuyor.</p>
         </Card>
       )}
 
       {plans.map(p => (
         <Card key={p.id} style={{ display:'flex', flexDirection:'column', gap:12 }}>
           <h3 style={{ margin:0 }}>{p.name}</h3>
-          <p style={{ color:'#6b7280', fontSize:13, margin:0 }}>{p.description}</p>
+          <p style={{ color:'#9ca3af', fontSize:13, margin:0 }}>{p.description}</p>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', borderTop:'1px solid #f0f0f0', paddingTop:12 }}>
             <Badge label={`${p.durationMonths} Ay`} color="#3b82f6" />
             <span style={{ fontSize:24, fontWeight:800, color:BRAND.primary }}>{p.price} ₺</span>
@@ -1551,7 +1558,7 @@ function PlansTab() {
             <div style={{ textAlign: 'center', padding: '40px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
               <FaSpinner className="spin" size={48} color="#8b5cf6" />
               <div style={{ fontWeight: 600, fontSize: 16 }}>Ödeme Doğrulanıyor...</div>
-              <div style={{ color: '#6b7280', fontSize: 14 }}>Bankanızdan onay bekleniyor, lütfen pencereyi kapatmayın.</div>
+              <div style={{ color: '#9ca3af', fontSize: 14 }}>Bankanızdan onay bekleniyor, lütfen pencereyi kapatmayın.</div>
             </div>
           )}
 
@@ -1559,7 +1566,7 @@ function PlansTab() {
             <div style={{ textAlign: 'center', padding: '40px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
               <FaCheckCircle size={56} color="#10b981" />
               <div style={{ fontWeight: 700, fontSize: 18, color: '#10b981' }}>Ödeme Başarılı!</div>
-              <div style={{ color: '#6b7280', fontSize: 14 }}>Üyeliğiniz aktif edilmiştir. Yönlendiriliyorsunuz...</div>
+              <div style={{ color: '#9ca3af', fontSize: 14 }}>Üyeliğiniz aktif edilmiştir. Yönlendiriliyorsunuz...</div>
             </div>
           )}
 
@@ -1647,13 +1654,13 @@ function PlansTab() {
                   />
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#6b7280', fontSize: 12, margin: '6px 0 8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#9ca3af', fontSize: 12, margin: '6px 0 8px' }}>
                   <FaLock size={12} color="#10b981" />
                   <span>256-Bit SSL sertifikası ile güvenli şifrelenmiş sanal POS ödeme katmanı.</span>
                 </div>
 
                 <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
-                  <Btn color="#6b7280" outline onClick={() => setSelectedPlan(null)} style={{ flex: 1, justifyContent: 'center' }}>
+                  <Btn color='#9ca3af' outline onClick={() => setSelectedPlan(null)} style={{ flex: 1, justifyContent: 'center' }}>
                     İptal
                   </Btn>
                   <Btn type="submit" style={{ flex: 2, justifyContent: 'center', background: '#10b981', borderColor: '#10b981' }}>
@@ -1685,14 +1692,14 @@ function MyEnrollmentsTab() {
       {mine.length === 0 && (
         <Card style={{ textAlign:'center', padding:40 }}>
           <div style={{ fontSize:48, marginBottom:12, display:'flex', justifyContent:'center' }}><FaTicketAlt/></div>
-          <p style={{ color:'#6b7280', margin:0 }}>Henüz üyeliğiniz bulunmuyor.</p>
+          <p style={{ color:'#9ca3af', margin:0 }}>Henüz üyeliğiniz bulunmuyor.</p>
         </Card>
       )}
       {mine.map(e => (
         <Card key={e.id} style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
           <div>
             <h4 style={{ margin:'0 0 4px' }}>{e.plan?.name}</h4>
-            <div style={{ color:'#6b7280', fontSize:13 }}>
+            <div style={{ color:'#9ca3af', fontSize:13 }}>
               {new Date(e.startDate).toLocaleDateString('tr')} → {new Date(e.endDate).toLocaleDateString('tr')}
             </div>
             {e.totalPtSessions > 0 && (
@@ -1703,7 +1710,7 @@ function MyEnrollmentsTab() {
           </div>
           <div style={{ textAlign:'right' }}>
             <div style={{ fontSize:20, fontWeight:700, color:'#10b981' }}>{e.amountPaid} ₺</div>
-            <Badge label={e.status === 'active' ? 'Aktif' : 'Pasif'} color={e.status === 'active' ? '#10b981' : '#6b7280'} />
+            <Badge label={e.status === 'active' ? 'Aktif' : 'Pasif'} color={e.status === 'active' ? '#10b981' : '#9ca3af'} />
           </div>
         </Card>
       ))}
@@ -1726,7 +1733,7 @@ function MyQrTab({ user }) {
     <div style={{ display:'flex', justifyContent:'center' }}>
       <Card style={{ maxWidth:380, width:'100%', textAlign:'center', padding:32 }}>
         <h3 style={{ margin:'0 0 6px', display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}><FaMobileAlt/> Giriş QR Kodum</h3>
-        <p style={{ color:'#6b7280', fontSize:13, margin:'0 0 24px' }}>
+        <p style={{ color:'#9ca3af', fontSize:13, margin:'0 0 24px' }}>
           Salona girerken bu kodu görevliye okutun.
         </p>
         {me?.qrToken ? (

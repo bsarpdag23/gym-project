@@ -111,7 +111,7 @@ function GymDetailView({ user, onLogout }) {
           <>
             <div style={{ marginBottom:24 }}>
               <h2 style={{ margin:'0 0 4px', display:'flex', alignItems:'center', gap:8 }}><FaBuilding/> {detail.gym.name}</h2>
-              <p style={{ color:'#6b7280', fontSize:14, margin:0 }}>
+              <p style={{ color:'#9ca3af', fontSize:14, margin:0 }}>
                 {detail.gym.address || 'Adres belirtilmemiş'} · Destek görünümü
               </p>
             </div>
@@ -126,7 +126,7 @@ function GymDetailView({ user, onLogout }) {
                 <Card key={k.label} style={{ borderLeft:`4px solid ${k.color}` }}>
                   <div style={{ fontSize:24, marginBottom:6, color:k.color }}>{k.icon}</div>
                   <div style={{ fontSize:26, fontWeight:800, color:k.color }}>{k.value}</div>
-                  <div style={{ fontSize:12, color:'#6b7280', marginTop:4 }}>{k.label}</div>
+                  <div style={{ fontSize:12, color:'#9ca3af', marginTop:4 }}>{k.label}</div>
                 </Card>
               ))}
             </div>
@@ -141,7 +141,7 @@ function GymDetailView({ user, onLogout }) {
                 <Card key={u.id} style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                   <div>
                     <div style={{ fontWeight:600 }}>{u.fullName}</div>
-                    <div style={{ color:'#6b7280', fontSize:13 }}>{u.email}</div>
+                    <div style={{ color:'#9ca3af', fontSize:13 }}>{u.email}</div>
                     {u.phone && <div style={{ color:'#9ca3af', fontSize:12 }}>{u.phone}</div>}
                   </div>
                   <Badge
@@ -266,7 +266,7 @@ function GymListView({ user, onLogout }) {
               <Card key={k.label} style={{ borderLeft:`4px solid ${k.color}`, display:'flex', flexDirection:'column', justifyContent:'center' }}>
                 <div style={{ fontSize:20, marginBottom:6, color:k.color }}>{k.icon}</div>
                 <div style={{ fontSize:24, fontWeight:800, color:k.color }}>{k.value}</div>
-                <div style={{ fontSize:12, color:'#6b7280', marginTop:4 }}>{k.label}</div>
+                <div style={{ fontSize:12, color:'#9ca3af', marginTop:4 }}>{k.label}</div>
               </Card>
             ))}
           </div>
@@ -275,7 +275,7 @@ function GymListView({ user, onLogout }) {
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24 }}>
           <div>
             <h2 style={{ margin:'0 0 4px', display:'flex', alignItems:'center', gap:8 }}><FaBuilding/> Salonlar ({gyms.length})</h2>
-            <p style={{ color:'#6b7280', fontSize:14, margin:0 }}>Platformdaki tüm spor salonlarını yönetin.</p>
+            <p style={{ color:'#9ca3af', fontSize:14, margin:0 }}>Platformdaki tüm spor salonlarını yönetin.</p>
           </div>
           <Btn onClick={openAdd} color={BRAND.purple}>+ Yeni Salon</Btn>
         </div>
@@ -289,7 +289,7 @@ function GymListView({ user, onLogout }) {
         ) : gyms.length === 0 ? (
           <Card style={{ textAlign:'center', padding:50 }}>
             <div style={{ fontSize:48, marginBottom:12, display:'flex', justifyContent:'center' }}><FaBuilding/></div>
-            <p style={{ color:'#6b7280', margin:0 }}>Henüz salon yok. İlk salonu oluşturun.</p>
+            <p style={{ color:'#9ca3af', margin:0 }}>Henüz salon yok. İlk salonu oluşturun.</p>
           </Card>
         ) : (
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:16 }}>
@@ -301,9 +301,9 @@ function GymListView({ user, onLogout }) {
                 >
                   <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:10 }}>
                     <h3 style={{ margin:0, fontSize:17 }}>{g.name}</h3>
-                    <Badge label={g.isActive ? 'Aktif' : 'Pasif (Askıda)'} color={g.isActive ? '#10b981' : '#6b7280'} />
+                    <Badge label={g.isActive ? 'Aktif' : 'Pasif (Askıda)'} color={g.isActive ? '#10b981' : '#9ca3af'} />
                   </div>
-                  {g.address && <div style={{ color:'#6b7280', fontSize:13, marginBottom:4, display:'flex', alignItems:'center', gap:6 }}><FaMapMarkerAlt/> {g.address}</div>}
+                  {g.address && <div style={{ color:'#9ca3af', fontSize:13, marginBottom:4, display:'flex', alignItems:'center', gap:6 }}><FaMapMarkerAlt/> {g.address}</div>}
                   {g.phone && <div style={{ color:'#9ca3af', fontSize:13, marginBottom:4, display:'flex', alignItems:'center', gap:6 }}><FaPhone/> {g.phone}</div>}
                   <div style={{ color:'#9ca3af', fontSize:12, marginTop:8, borderTop:'1px solid #f0f0f0', paddingTop:8, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                     <span>Oluşturuldu: {new Date(g.createdAt).toLocaleDateString('tr')}</span>
@@ -314,10 +314,10 @@ function GymListView({ user, onLogout }) {
 
                   {/* Actions buttons inside the card */}
                   <div style={{ display:'flex', gap:6, marginTop:12, borderTop:'1px solid #f0f0f0', paddingTop:10 }} onClick={e => e.stopPropagation()}>
-                    <button onClick={() => openEdit(g)} style={{ flex:1, padding:'7px 8px', fontSize:12, borderRadius:6, border:'1px solid #d1d5db', background:'#fff', color:'#374151', cursor:'pointer', fontWeight:600, display:'flex', alignItems:'center', justifyContent:'center', gap:4, transition:'background .1s' }}>
+                    <button onClick={() => openEdit(g)} style={{ flex:1, padding:'7px 8px', fontSize:12, borderRadius:6, border:'1px solid #d1d5db', background:'#fff', color:'#cbd5e1', cursor:'pointer', fontWeight:600, display:'flex', alignItems:'center', justifyContent:'center', gap:4, transition:'background .1s' }}>
                       <FaEdit style={{ fontSize:10 }} /> Düzenle
                     </button>
-                    <button onClick={() => toggleStatus(g)} style={{ flex:1, padding:'7px 8px', fontSize:12, borderRadius:6, border:'none', background: g.isActive ? '#6b7280' : '#10b981', color:'#fff', cursor:'pointer', fontWeight:600, display:'flex', alignItems:'center', justifyContent:'center', gap:4 }}>
+                    <button onClick={() => toggleStatus(g)} style={{ flex:1, padding:'7px 8px', fontSize:12, borderRadius:6, border:'none', background: g.isActive ? '#9ca3af' : '#10b981', color:'#fff', cursor:'pointer', fontWeight:600, display:'flex', alignItems:'center', justifyContent:'center', gap:4 }}>
                       {g.isActive ? 'Askıya Al' : 'Etkinleştir'}
                     </button>
                     <button onClick={() => confirmDelete(g.id)} style={{ flex:1, padding:'7px 8px', fontSize:12, borderRadius:6, border:'none', background:'#e94560', color:'#fff', cursor:'pointer', fontWeight:600, display:'flex', alignItems:'center', justifyContent:'center', gap:4 }}>
@@ -336,14 +336,14 @@ function GymListView({ user, onLogout }) {
           {err && <div style={{ background:'#fee2e2', border:'1px solid #fca5a5', color:'#dc2626',
             borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14 }}>{err}</div>}
 
-          <div style={{ fontSize:13, fontWeight:700, color:'#6b7280', marginBottom:8 }}>SALON BİLGİLERİ</div>
+          <div style={{ fontSize:13, fontWeight:700, color:'#9ca3af', marginBottom:8 }}>SALON BİLGİLERİ</div>
           <Input label="Salon Adı" value={form.name} onChange={set('name')} placeholder="FitLife Kadıköy" />
           <Input label="Adres" value={form.address} onChange={set('address')} placeholder="Kadıköy, İstanbul" />
           <Input label="Telefon" value={form.phone} onChange={set('phone')} placeholder="0216 000 00 00" />
 
           {modalType === 'add' && (
             <>
-              <div style={{ fontSize:13, fontWeight:700, color:'#6b7280', margin:'16px 0 8px' }}>SALON SAHİBİ (ADMIN)</div>
+              <div style={{ fontSize:13, fontWeight:700, color:'#9ca3af', margin:'16px 0 8px' }}>SALON SAHİBİ (ADMIN)</div>
               <Input label="Ad Soyad" value={form.ownerName} onChange={set('ownerName')} placeholder="Ahmet Yılmaz" />
               <Input label="Email" value={form.ownerEmail} onChange={set('ownerEmail')} type="email" placeholder="ahmet@salon.com" />
               <Input label="Şifre" value={form.ownerPassword} onChange={set('ownerPassword')} type="password" placeholder="En az 6 karakter" />
@@ -356,7 +356,7 @@ function GymListView({ user, onLogout }) {
                 ? (modalType === 'add' ? 'Oluşturuluyor...' : 'Kaydediliyor...') 
                 : <><FaSave/> {modalType === 'add' ? 'Oluştur' : 'Kaydet'}</>}
             </Btn>
-            <Btn onClick={() => setModalType(null)} color="#6b7280" outline style={{ flex:1, justifyContent:'center' }}>İptal</Btn>
+            <Btn onClick={() => setModalType(null)} color='#9ca3af' outline style={{ flex:1, justifyContent:'center' }}>İptal</Btn>
           </div>
         </Modal>
       )}

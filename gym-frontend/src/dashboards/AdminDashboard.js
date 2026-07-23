@@ -294,7 +294,7 @@ export default function AdminDashboard({ user, onLogout }) {
                 {users.length === 0 && (
                   <Card style={{ textAlign: 'center', padding: 40 }}>
                     <div style={{ fontSize: 48, marginBottom: 12, display: 'flex', justifyContent: 'center' }}><FaUsers /></div>
-                    <p style={{ color: '#6b7280', margin: 0 }}>Henüz kayıtlı kullanıcı yok.</p>
+                    <p style={{ color: '#9ca3af', margin: 0 }}>Henüz kayıtlı kullanıcı yok.</p>
                   </Card>
                 )}
 
@@ -302,7 +302,7 @@ export default function AdminDashboard({ user, onLogout }) {
                   <Card key={u.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                       <div style={{ fontWeight: 600 }}>{u.fullName}</div>
-                      <div style={{ color: '#6b7280', fontSize: 13 }}>{u.email}</div>
+                      <div style={{ color: '#9ca3af', fontSize: 13 }}>{u.email}</div>
                       {u.phone && <div style={{ color: '#9ca3af', fontSize: 12 }}>{u.phone}</div>}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -339,7 +339,7 @@ export default function AdminDashboard({ user, onLogout }) {
                         )
                       )}
 
-                      <Badge label={u.isActive ? 'Aktif' : 'Pasif'} color={u.isActive ? '#10b981' : '#6b7280'} />
+                      <Badge label={u.isActive ? 'Aktif' : 'Pasif'} color={u.isActive ? '#10b981' : '#9ca3af'} />
 
                       {user.role === 'admin' && u.role === 'member' && (
                         <Btn size="sm" color={BRAND.primary} outline onClick={() => del('user', u.id)} title="Üyeyi Sil">
@@ -363,7 +363,7 @@ export default function AdminDashboard({ user, onLogout }) {
                 {plans.length === 0 && (
                   <Card style={{ textAlign: 'center', padding: 40, gridColumn: '1 / -1' }}>
                     <div style={{ fontSize: 48, marginBottom: 12, display: 'flex', justifyContent: 'center' }}><FaBox /></div>
-                    <p style={{ color: '#6b7280', margin: 0 }}>Henüz üyelik paketi yok. "+ Yeni Paket" ile ekleyin.</p>
+                    <p style={{ color: '#9ca3af', margin: 0 }}>Henüz üyelik paketi yok. "+ Yeni Paket" ile ekleyin.</p>
                   </Card>
                 )}
 
@@ -372,11 +372,11 @@ export default function AdminDashboard({ user, onLogout }) {
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
                       <h3 style={{ margin: 0, fontSize: 16 }}>{p.name}</h3>
                       <div style={{ display: 'flex', gap: 6 }}>
-                        <Btn size="sm" color="#6b7280" outline onClick={() => openEdit('plan', p)}><FaEdit /></Btn>
+                        <Btn size="sm" color='#9ca3af' outline onClick={() => openEdit('plan', p)}><FaEdit /></Btn>
                         <Btn size="sm" color={BRAND.primary} outline onClick={() => del('plan', p.id)}><FaTrash /></Btn>
                       </div>
                     </div>
-                    <p style={{ color: '#6b7280', fontSize: 13, margin: '0 0 12px' }}>{p.description}</p>
+                    <p style={{ color: '#9ca3af', fontSize: 13, margin: '0 0 12px' }}>{p.description}</p>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                         <Badge label={`${p.durationMonths} Ay`} color="#3b82f6" />
@@ -399,7 +399,7 @@ export default function AdminDashboard({ user, onLogout }) {
                 {enrollments.length === 0 && (
                   <Card style={{ textAlign: 'center', padding: 40 }}>
                     <div style={{ fontSize: 48, marginBottom: 12, display: 'flex', justifyContent: 'center' }}><FaTicketAlt /></div>
-                    <p style={{ color: '#6b7280', margin: 0 }}>Henüz üyelik satın alınmamış.</p>
+                    <p style={{ color: '#9ca3af', margin: 0 }}>Henüz üyelik satın alınmamış.</p>
                   </Card>
                 )}
 
@@ -407,7 +407,7 @@ export default function AdminDashboard({ user, onLogout }) {
                   <Card key={e.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                       <div style={{ fontWeight: 600 }}>{e.member?.fullName}</div>
-                      <div style={{ color: '#6b7280', fontSize: 13 }}>{e.plan?.name}</div>
+                      <div style={{ color: '#9ca3af', fontSize: 13 }}>{e.plan?.name}</div>
                       <div style={{ color: '#9ca3af', fontSize: 12 }}>
                         {new Date(e.startDate).toLocaleDateString('tr')} → {new Date(e.endDate).toLocaleDateString('tr')}
                       </div>
@@ -415,7 +415,7 @@ export default function AdminDashboard({ user, onLogout }) {
                     <div style={{ textAlign: 'right' }}>
                       <div style={{ fontSize: 18, fontWeight: 700, color: '#10b981' }}>{e.amountPaid} ₺</div>
                       <Badge label={e.status === 'active' ? 'Aktif' : 'Pasif'}
-                        color={e.status === 'active' ? '#10b981' : '#6b7280'} />
+                        color={e.status === 'active' ? '#10b981' : '#9ca3af'} />
                     </div>
                   </Card>
                 ))}
@@ -433,7 +433,7 @@ export default function AdminDashboard({ user, onLogout }) {
                 {exercises.length === 0 && (
                   <Card style={{ textAlign: 'center', padding: 40, gridColumn: '1 / -1' }}>
                     <div style={{ fontSize: 48, marginBottom: 12, display: 'flex', justifyContent: 'center' }}><FaDumbbell /></div>
-                    <p style={{ color: '#6b7280', margin: 0 }}>Henüz egzersiz yok. "+ Yeni Egzersiz" ile ekleyin.</p>
+                    <p style={{ color: '#9ca3af', margin: 0 }}>Henüz egzersiz yok. "+ Yeni Egzersiz" ile ekleyin.</p>
                   </Card>
                 )}
 
@@ -442,14 +442,14 @@ export default function AdminDashboard({ user, onLogout }) {
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                       <div style={{ fontWeight: 600 }}>{e.name}</div>
                       <div style={{ display: 'flex', gap: 6 }}>
-                        <Btn size="sm" color="#6b7280" outline onClick={() => openEdit('exercise', e)}><FaEdit /></Btn>
+                        <Btn size="sm" color='#9ca3af' outline onClick={() => openEdit('exercise', e)}><FaEdit /></Btn>
                         <Btn size="sm" color={BRAND.primary} outline onClick={() => del('exercise', e.id)}><FaTrash /></Btn>
                       </div>
                     </div>
-                    <p style={{ color: '#6b7280', fontSize: 13, margin: '0 0 10px' }}>{e.description}</p>
+                    <p style={{ color: '#9ca3af', fontSize: 13, margin: '0 0 10px' }}>{e.description}</p>
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                       <Badge label={e.category} color="#f59e0b" />
-                      {e.equipment && <Badge label={e.equipment} color="#6b7280" />}
+                      {e.equipment && <Badge label={e.equipment} color='#9ca3af' />}
                       <Badge label={`${e.sets}×${e.reps}`} color="#3b82f6" />
                     </div>
                   </Card>
@@ -468,7 +468,7 @@ export default function AdminDashboard({ user, onLogout }) {
                 {programs.length === 0 && (
                   <Card style={{ textAlign: 'center', padding: 40 }}>
                     <div style={{ fontSize: 48, marginBottom: 12, display: 'flex', justifyContent: 'center' }}><FaClipboardList /></div>
-                    <p style={{ color: '#6b7280', margin: 0 }}>Henüz antrenman programı yok. "+ Yeni Program" ile ekleyin.</p>
+                    <p style={{ color: '#9ca3af', margin: 0 }}>Henüz antrenman programı yok. "+ Yeni Program" ile ekleyin.</p>
                   </Card>
                 )}
 
@@ -477,12 +477,12 @@ export default function AdminDashboard({ user, onLogout }) {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
                       <div>
                         <h3 style={{ margin: '0 0 6px', fontSize: 17 }}>{p.name}</h3>
-                        <p style={{ color: '#6b7280', fontSize: 13, margin: '0 0 10px' }}>{p.description}</p>
+                        <p style={{ color: '#9ca3af', fontSize: 13, margin: '0 0 10px' }}>{p.description}</p>
                         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                           <Badge label={PROGRAM_CATEGORY_LABELS[p.category] || p.category} color="#3b82f6" />
                           <Badge label={p.difficulty} color="#8b5cf6" />
                           <Badge label={`${p.weeksCount} Hafta`} color="#10b981" />
-                          <Badge label={p.source === 'ai' ? <><FaRobot /> AI</> : <><FaChalkboardTeacher /> Antrenör</>} color={p.source === 'ai' ? '#f59e0b' : '#6b7280'} />
+                          <Badge label={p.source === 'ai' ? <><FaRobot /> AI</> : <><FaChalkboardTeacher /> Antrenör</>} color={p.source === 'ai' ? '#f59e0b' : '#9ca3af'} />
                           {p.ratingCount > 0 && (
                             <button onClick={() => setModal({ type: 'ratings', item: p })} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'inline-flex' }}>
                               <Badge label={<><FaStar /> {p.avgRating} ({p.ratingCount} Yorum)</>} color="#ec4899" />
@@ -491,7 +491,7 @@ export default function AdminDashboard({ user, onLogout }) {
                         </div>
                       </div>
                       <div style={{ display: 'flex', gap: 6 }}>
-                        <Btn size="sm" color="#6b7280" outline onClick={() => openEdit('program', p)}><FaEdit /></Btn>
+                        <Btn size="sm" color='#9ca3af' outline onClick={() => openEdit('program', p)}><FaEdit /></Btn>
                         <Btn size="sm" color={BRAND.primary} outline onClick={() => del('program', p.id)}><FaTrash /></Btn>
                       </div>
                     </div>
@@ -530,7 +530,7 @@ export default function AdminDashboard({ user, onLogout }) {
               {myMembers.length === 0 && (
                 <Card style={{ textAlign: 'center', padding: 40 }}>
                   <div style={{ fontSize: 48, marginBottom: 12, display: 'flex', justifyContent: 'center' }}><FaUserFriends /></div>
-                  <p style={{ color: '#6b7280', margin: 0 }}>Henüz size atanmış bir üye yok.</p>
+                  <p style={{ color: '#9ca3af', margin: 0 }}>Henüz size atanmış bir üye yok.</p>
                 </Card>
               )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -539,7 +539,7 @@ export default function AdminDashboard({ user, onLogout }) {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
                       <div>
                         <h3 style={{ margin: '0 0 4px', fontSize: 17 }}>{m.fullName}</h3>
-                        <div style={{ color: '#6b7280', fontSize: 13 }}>{m.email}</div>
+                        <div style={{ color: '#9ca3af', fontSize: 13 }}>{m.email}</div>
                         {m.phone && <div style={{ color: '#9ca3af', fontSize: 12 }}>{m.phone}</div>}
                       </div>
                       {m.activeProgram && (
@@ -581,14 +581,14 @@ export default function AdminDashboard({ user, onLogout }) {
                           <Badge label={`${m.activeProgram.durationWeeks} hafta`} color="#10b981" />
                           <Badge label={`${m.activeProgram.dailyCalories} kcal`} color="#e94560" />
                         </div>
-                        <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 10 }}>
+                        <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 10 }}>
                           Protein {m.activeProgram.proteinG}g · Karbonhidrat {m.activeProgram.carbsG}g · Yağ {m.activeProgram.fatG}g
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                           {(m.activeProgram.workoutPlan || []).map(day => (
                             <div key={day.day} style={{ fontSize: 13 }}>
                               <span style={{ fontWeight: 600 }}>Gün {day.day} — {day.focus}:</span>{' '}
-                              <span style={{ color: '#6b7280' }}>
+                              <span style={{ color: '#9ca3af' }}>
                                 {(day.exercises || []).map(e => e.name).join(', ')}
                               </span>
                             </div>
@@ -600,7 +600,7 @@ export default function AdminDashboard({ user, onLogout }) {
                     )}
 
                     <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #f0f0f0', display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: '#4b5563', display: 'flex', alignItems: 'center', gap: 5 }}><FaClipboardList /> Program Ata:</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: '#d1d5db', display: 'flex', alignItems: 'center', gap: 5 }}><FaClipboardList /> Program Ata:</span>
                       <select
                         defaultValue=""
                         onChange={async (e) => {
@@ -636,7 +636,7 @@ export default function AdminDashboard({ user, onLogout }) {
               <h2 style={{ margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}><FaDoorOpen /> Üye Girişi (Check-in)</h2>
 
               <Card style={{ marginBottom: 20 }}>
-                <p style={{ color: '#6b7280', fontSize: 13, margin: '0 0 12px' }}>
+                <p style={{ color: '#9ca3af', fontSize: 13, margin: '0 0 12px' }}>
                   Üyenin QR kodunu okutun veya token'ı girin.
                 </p>
                 <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
@@ -655,7 +655,7 @@ export default function AdminDashboard({ user, onLogout }) {
                   {showScanner ? (
                     <div>
                       <div id="qr-reader" style={{ maxWidth: 350, margin: '0 auto 12px', borderRadius: 12, overflow: 'hidden', border: '1px solid #e5e7eb' }}></div>
-                      <Btn size="sm" color="#6b7280" outline onClick={() => setShowScanner(false)}>Taramayı Kapat</Btn>
+                      <Btn size="sm" color='#9ca3af' outline onClick={() => setShowScanner(false)}>Taramayı Kapat</Btn>
                     </div>
                   ) : (
                     <Btn outline onClick={() => { setShowScanner(true); setScanResult(null); }}>
@@ -675,7 +675,7 @@ export default function AdminDashboard({ user, onLogout }) {
                         <div style={{ fontSize: 16, fontWeight: 700, color: '#16a34a', display: 'flex', alignItems: 'center', gap: 8 }}>
                           <FaCheckCircle /> {scanResult.data.message}
                         </div>
-                        <div style={{ fontSize: 13, color: '#6b7280', marginTop: 6 }}>
+                        <div style={{ fontSize: 13, color: '#9ca3af', marginTop: 6 }}>
                           Paket: {scanResult.data.plan || '—'} · Geçerlilik: {scanResult.data.validUntil}
                         </div>
                       </div>
@@ -751,7 +751,7 @@ export default function AdminDashboard({ user, onLogout }) {
                       <Card key={k.label} style={{ borderLeft: `4px solid ${k.color}` }}>
                         <div style={{ fontSize: 28, marginBottom: 8, color: k.color }}>{k.icon}</div>
                         <div style={{ fontSize: 30, fontWeight: 800, color: k.color }}>{k.value}</div>
-                        <div style={{ fontSize: 13, color: '#6b7280', marginTop: 4 }}>{k.label}</div>
+                        <div style={{ fontSize: 13, color: '#9ca3af', marginTop: 4 }}>{k.label}</div>
                       </Card>
                     ))}
                   </div>
@@ -761,7 +761,7 @@ export default function AdminDashboard({ user, onLogout }) {
                       <h3 style={{ margin: '0 0 14px', fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}><FaClock /> Salon Doluluk Özetı</h3>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                         <div>
-                          <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>En yoğun saatler</div>
+                          <div style={{ fontSize: 12, color: '#9ca3af', marginBottom: 6 }}>En yoğun saatler</div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                             {(stats.occupancySummary?.peakHours || []).slice(0, 3).map((slot, i) => (
                               <div key={`${slot.day}-${slot.hour}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff7ed', borderRadius: 8, padding: '8px 10px' }}>
@@ -772,7 +772,7 @@ export default function AdminDashboard({ user, onLogout }) {
                           </div>
                         </div>
                         <div>
-                          <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 6 }}>En sakin saatler</div>
+                          <div style={{ fontSize: 12, color: '#9ca3af', marginBottom: 6 }}>En sakin saatler</div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                             {(stats.occupancySummary?.quietHours || []).slice(0, 3).map((slot, i) => (
                               <div key={`${slot.day}-${slot.hour}-quiet`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f0fdf4', borderRadius: 8, padding: '8px 10px' }}>
@@ -907,7 +907,7 @@ export default function AdminDashboard({ user, onLogout }) {
                 style={{ width: 18, height: 18, cursor: 'pointer', accentColor: '#8b5cf6' }}
               />
               <div>
-                <div style={{ fontSize: 12, color: '#6b7280' }}>Bu paketi alan üyelere trainer atanabilir</div>
+                <div style={{ fontSize: 12, color: '#9ca3af' }}>Bu paketi alan üyelere trainer atanabilir</div>
               </div>
             </label>
             {form.includesPersonalTraining && (
@@ -984,7 +984,7 @@ export default function AdminDashboard({ user, onLogout }) {
           {modal.type !== 'ratings' && (
             <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
               <Btn onClick={save} style={{ flex: 1, justifyContent: 'center' }}><FaSave /> Kaydet</Btn>
-              <Btn onClick={() => setModal(null)} color="#6b7280" outline style={{ flex: 1, justifyContent: 'center' }}>İptal</Btn>
+              <Btn onClick={() => setModal(null)} color='#9ca3af' outline style={{ flex: 1, justifyContent: 'center' }}>İptal</Btn>
             </div>
           )}
         </Modal>
@@ -993,13 +993,13 @@ export default function AdminDashboard({ user, onLogout }) {
       {reminderModal && (
         <Modal title="Hatırlatıcı SMS ve E-posta Gönder" onClose={() => setReminderModal(null)}>
           <div style={{ padding: '4px 0' }}>
-            <p style={{ margin: '0 0 16px', fontSize: 14, color: '#4b5563', lineHeight: 1.5 }}>
+            <p style={{ margin: '0 0 16px', fontSize: 14, color: '#d1d5db', lineHeight: 1.5 }}>
               Müşteriye gönderilecek olan hatırlatma şablonu aşağıdadır. Gerçek sistemde bu işlem entegre SMS ve E-posta servisleri üzerinden arka planda otomatik gerçekleşir.
             </p>
 
             <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 6 }}>
-                Alıcı Telefon (SMS): <span style={{ color: '#6b7280', fontWeight: 400 }}>{reminderModal.phone}</span>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#cbd5e1', marginBottom: 6 }}>
+                Alıcı Telefon (SMS): <span style={{ color: '#9ca3af', fontWeight: 400 }}>{reminderModal.phone}</span>
               </div>
               <div style={{
                 background: '#fff7ed', border: '1px solid #ffedd5', color: '#ea580c',
@@ -1010,8 +1010,8 @@ export default function AdminDashboard({ user, onLogout }) {
             </div>
 
             <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 6 }}>
-                Alıcı E-posta: <span style={{ color: '#6b7280', fontWeight: 400 }}>{reminderModal.email}</span>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#cbd5e1', marginBottom: 6 }}>
+                Alıcı E-posta: <span style={{ color: '#9ca3af', fontWeight: 400 }}>{reminderModal.email}</span>
               </div>
               <div style={{
                 background: '#f8fafc', border: '1px solid #e2e8f0', color: '#334155',
@@ -1023,7 +1023,7 @@ export default function AdminDashboard({ user, onLogout }) {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-              <Btn color="#6b7280" outline onClick={() => setReminderModal(null)}>Kapat</Btn>
+              <Btn color='#9ca3af' outline onClick={() => setReminderModal(null)}>Kapat</Btn>
               <Btn onClick={() => {
                 alert('Hatırlatıcı SMS ve E-posta başarıyla sıraya alındı ve müşteriye gönderildi!');
                 setReminderModal(null);
@@ -1151,7 +1151,7 @@ function ChatTab({ user }) {
                     <span style={{ fontWeight: 600, fontSize: 14 }}>{c.user.fullName}</span>
                     {c.unreadCount > 0 && <Badge label={c.unreadCount} color="#e94560" />}
                   </div>
-                  <div style={{ fontSize: 12, color: '#6b7280', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <div style={{ fontSize: 12, color: '#9ca3af', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {c.lastMessage.senderId === user.id ? 'Sen: ' : ''}{c.lastMessage.content}
                   </div>
                 </div>
