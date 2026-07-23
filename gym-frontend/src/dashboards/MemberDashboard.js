@@ -1368,6 +1368,40 @@ function DashboardOverviewTab({ user, onNavigate }) {
         <p style={{ color: '#64748b', margin: 0, fontSize: 14 }}>İşte bugün salonundaki genel durumun ve üyelik özetin.</p>
       </Card>
 
+      {todayWorkout ? (
+        <Card style={{ border: `1.5px solid ${BRAND.purple}`, background: 'linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%)', padding: 22 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap', borderBottom: '1px solid #e9d5ff', paddingBottom: 12, marginBottom: 14 }}>
+            <div>
+              <h3 style={{ margin: '0 0 4px', color: '#4c1d95', fontSize: 16, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+                🏋️ Bugünkü Antrenmanınız
+              </h3>
+              <p style={{ color: '#6b21a8', fontSize: 13, fontWeight: 600, margin: 0 }}>Odak: {todayWorkout.focus}</p>
+            </div>
+            <Btn size="sm" color="#8b5cf6" onClick={() => onNavigate('myprogram')}>Antrenmana Git →</Btn>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
+            {todayWorkout.exercises.map((ex, i) => (
+              <div key={i} style={{ background: '#ffffff', border: '1px solid #e9d5ff', borderRadius: 10, padding: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: '#1e293b' }}>{ex.name}</div>
+                  <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>{ex.equipment}</div>
+                </div>
+                <Badge label={`${ex.sets}x${ex.reps}`} color="#8b5cf6" />
+              </div>
+            ))}
+          </div>
+        </Card>
+      ) : program ? (
+        <Card style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: 20 }}>
+          <h3 style={{ margin: '0 0 4px', color: '#475569', fontSize: 15, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+            🛌 Bugün Dinlenme Günü!
+          </h3>
+          <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>
+            Kaslarınızın toparlanması ve büyümesi için dinlenmek de antrenman kadar önemlidir. İyi dinlenmeler! 😊
+          </p>
+        </Card>
+      ) : null}
+
       {!profile && (
         <Card style={{
           border: '1px solid #bfdbfe',
