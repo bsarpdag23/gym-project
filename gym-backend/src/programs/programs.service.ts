@@ -399,4 +399,49 @@ export class ProgramsService {
 
     return this.programRepo.save(fitnessProgram);
   }
+
+  async cleanCatalogDuplicates() {
+    const allPrograms = await this.workoutProgramRepo.find({
+      relations: { exercises: true, ratings: true },
+      order: { id: 'ASC' },
+    });
+
+    const signatures = new Map<string, WorkoutProgram[]>();
+
+    for (const prog of allPrograms) {
+      const exerciseIds = (prog.exercises || []).map(e => e.id).sort().join(',');
+      const signature = `${prog.name}|${prog.weeksCount}|${exerciseIds}`;
+      
+      if (!signatures.has(signature)) {
+        signatures.set(signature, []);
+      }
+      signatures.get(signature)!.push(prog);
+    }
+
+    let deletedCount = 0;
+    const deletedList: any[] = [];
+
+    for (const [sig, progs] of signatures.entries()) {
+      if (progs.length > 1) {
+        // Keep the first one, delete the rest
+        const toKeep = progs[0];
+        const toDelete = progs.slice(1);
+
+        for (const p of toDelete) {
+          if (p.ratings && p.ratings.length > 0) {
+            await this.workoutProgramRepo.manager.remove(p.ratings);
+          }
+          await this.workoutProgramRepo.remove(p);
+          deletedCount++;
+          deletedList.push({ id: p.id, name: p.name });
+        }
+      }
+    }
+
+    return {
+      message: 'Mükerrer programlar başarıyla temizlendi.',
+      deletedCount,
+      deletedList,
+    };
+  }
 }
