@@ -26,6 +26,11 @@ const api = {
       }
     }
     if (!res.ok) {
+      if (res.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
       const msg = data?.message || `Hata oluştu (${res.status})`;
       throw new Error(msg);
     }
@@ -52,6 +57,11 @@ const api = {
       }
     }
     if (!res.ok) {
+      if (res.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
       const msg = data?.message || `Yükleme başarısız oldu (${res.status})`;
       throw new Error(msg);
     }
