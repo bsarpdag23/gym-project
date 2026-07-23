@@ -532,6 +532,8 @@ function MyProgramTab() {
   const [history, setHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
   const [err, setErr]           = useState('');
+  const [completedEx, setCompletedEx] = useState({});
+  const [selectedEx, setSelectedEx] = useState(null);
 
   const load = async () => {
     setLoading(true);
@@ -555,6 +557,30 @@ function MyProgramTab() {
   };
   useEffect(() => { load(); }, []);
 
+  const todayWorkout = getTodayWorkout(program);
+
+  useEffect(() => {
+    const activeWorkout = getTodayWorkout(program);
+    if (activeWorkout) {
+      const todayStr = new Date().toDateString();
+      const saved = localStorage.getItem(`completed_workout_${todayStr}`);
+      if (saved) {
+        try {
+          setCompletedEx(JSON.parse(saved));
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+  }, [program]);
+
+  const toggleExercise = (name) => {
+    const next = { ...completedEx, [name]: !completedEx[name] };
+    setCompletedEx(next);
+    const todayStr = new Date().toDateString();
+    localStorage.setItem(`completed_workout_${todayStr}`, JSON.stringify(next));
+  };
+
   if (loading) {
     return (
       <div style={{ display:'grid', gap:16 }}>
@@ -571,7 +597,9 @@ function MyProgramTab() {
     ? Math.ceil((new Date(program.endDate) - new Date()) / (1000 * 60 * 60 * 24))
     : 0;
 
-  const todayWorkout = getTodayWorkout(program);
+  const totalExercises = todayWorkout ? todayWorkout.exercises.length : 0;
+  const completedCount = todayWorkout ? todayWorkout.exercises.filter(ex => completedEx[ex.name]).length : 0;
+  const completionPercent = totalExercises > 0 ? Math.round((completedCount / totalExercises) * 100) : 0;
 
   return (
     <div>
@@ -597,20 +625,73 @@ function MyProgramTab() {
             </div>
             <Badge label={`Gün ${todayWorkout.day}/${program.workoutPlan.length}`} color="#8b5cf6" />
           </div>
-          <div style={{ display:'grid', gap:8, marginTop:16 }}>
-            {todayWorkout.exercises.map((ex, i) => (
-              <div key={ex.id ?? `${ex.name}-${i}`} style={{ display:'flex', justifyContent:'space-between', alignItems:'center',
-                background:'#fff', borderRadius:8, padding:'10px 14px', boxShadow:'0 1px 3px rgba(0,0,0,0.05)' }}>
-                <div>
-                  <span style={{ fontWeight:600, fontSize:14 }}>{ex.name}</span>
-                  <span style={{ color:'#64748b', fontSize:12, marginLeft:8 }}>{ex.equipment}</span>
-                </div>
-                <div style={{ display:'flex', gap:6 }}>
-                  <Badge label={ex.muscleGroup} color="#f59e0b" />
-                  <Badge label={`${ex.sets}×${ex.reps}`} color="#3b82f6" />
-                </div>
+
+          {/* Progress Section */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, margin: '14px 0 20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700, color: '#475569' }}>
+              <span>Bugünkü Antrenman İlerlemesi</span>
+              <span>{completedCount} / {totalExercises} Egzersiz (%{completionPercent})</span>
+            </div>
+            <div style={{ width: '100%', height: 8, background: '#e2e8f0', borderRadius: 4, overflow: 'hidden' }}>
+              <div style={{
+                width: `${completionPercent}%`, height: '100%',
+                background: `linear-gradient(90deg, #10b981, #059669)`,
+                transition: 'width 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+              }} />
+            </div>
+            {completionPercent === 100 && (
+              <div style={{
+                background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#065f46',
+                borderRadius: 10, padding: '10px 14px', fontSize: 13, fontWeight: 700,
+                textAlign: 'center', marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6
+              }}>
+                🏆 Tebrikler! Bugünün antrenmanını başarıyla tamamladınız! Harika iş çıkardınız. 💪
               </div>
-            ))}
+            )}
+          </div>
+
+          <div style={{ display:'grid', gap:8, marginTop:16 }}>
+            {todayWorkout.exercises.map((ex, i) => {
+              const isChecked = !!completedEx[ex.name];
+              return (
+                <div key={ex.id ?? `${ex.name}-${i}`} style={{
+                  display:'flex', justifyContent:'space-between', alignItems:'center',
+                  background: isChecked ? '#f0fdf4' : '#fff',
+                  border: isChecked ? '1px solid #bbf7d0' : '1px solid #f1f5f9',
+                  borderRadius:12, padding:'12px 16px', transition: 'all 0.2s',
+                  boxShadow:'0 2px 4px rgba(0,0,0,0.02)'
+                }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => toggleExercise(ex.name)}
+                      style={{ width: 18, height: 18, cursor: 'pointer', accentColor: BRAND.purple }}
+                    />
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span
+                        onClick={() => setSelectedEx(ex)}
+                        style={{
+                          fontWeight:600, fontSize:14,
+                          textDecoration: isChecked ? 'line-through' : 'underline',
+                          textDecorationStyle: 'dashed',
+                          color: isChecked ? '#16a34a' : '#1e293b',
+                          cursor: 'pointer'
+                        }}
+                        title="Egzersiz detaylarını gör"
+                      >
+                        {ex.name} ℹ️
+                      </span>
+                      <span style={{ color:'#64748b', fontSize:12 }}>{ex.equipment}</span>
+                    </div>
+                  </div>
+                  <div style={{ display:'flex', gap:6, alignItems:'center' }}>
+                    <Badge label={ex.muscleGroup} color="#f59e0b" />
+                    <Badge label={`${ex.sets}×${ex.reps}`} color="#3b82f6" />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </Card>
       )}
@@ -718,6 +799,34 @@ function MyProgramTab() {
             </div>
           )}
         </>
+      )}
+
+      {selectedEx && (
+        <Modal title={selectedEx.name} onClose={() => setSelectedEx(null)}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div>
+              <span style={{ fontWeight: 700, fontSize: 13, color: '#475569', display: 'block', marginBottom: 4 }}>🎯 Hedef Kas Grubu:</span>
+              <Badge label={selectedEx.muscleGroup} color="#f59e0b" />
+            </div>
+            <div>
+              <span style={{ fontWeight: 700, fontSize: 13, color: '#475569', display: 'block', marginBottom: 4 }}>⚙️ Ekipman:</span>
+              <Badge label={selectedEx.equipment || 'Ekipman Gerekmiyor'} color="#3b82f6" />
+            </div>
+            <div>
+              <span style={{ fontWeight: 700, fontSize: 13, color: '#475569', display: 'block', marginBottom: 4 }}>📊 Önerilen Set:</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: BRAND.purple }}>{selectedEx.sets} Set × {selectedEx.reps} Tekrar</span>
+            </div>
+            {selectedEx.description && (
+              <div>
+                <span style={{ fontWeight: 700, fontSize: 13, color: '#475569', display: 'block', marginBottom: 4 }}>📝 Nasıl Uygulanır?</span>
+                <p style={{ fontSize: 13, color: '#334155', lineHeight: 1.5, margin: 0, background: '#f8fafc', padding: 12, borderRadius: 10, border: '1px solid #e2e8f0' }}>
+                  {selectedEx.description}
+                </p>
+              </div>
+            )}
+            <Btn style={{ marginTop: 12 }} onClick={() => setSelectedEx(null)}>Kapat</Btn>
+          </div>
+        </Modal>
       )}
     </div>
   );
