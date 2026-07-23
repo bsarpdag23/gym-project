@@ -70,6 +70,8 @@ const api = {
   auth: {
     register: (d)    => api.req('/auth/register', { method:'POST', body: JSON.stringify(d) }),
     login:    (d)    => api.req('/auth/login',    { method:'POST', body: JSON.stringify(d) }),
+    forgotPassword: (email) => api.req('/auth/forgot-password', { method:'POST', body: JSON.stringify({ email }) }),
+    resetPassword: (token, passwordStr) => api.req('/auth/reset-password', { method:'POST', body: JSON.stringify({ token, passwordStr }) }),
   },
   users: {
     getAll:       ()          => api.req('/users'),

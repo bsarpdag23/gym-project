@@ -71,6 +71,12 @@ export class User {
   @Column({ nullable: true, type: 'varchar' })
   avatarUrl: string | null;
 
+  @Column({ nullable: true })
+  resetPasswordToken: string | null;
+
+  @Column({ nullable: true, type: 'timestamp' })
+  resetPasswordExpires: Date | null;
+
   @BeforeInsert()
   generateQrToken() {
     // 32 karakterlik rastgele, tahmin edilemez token

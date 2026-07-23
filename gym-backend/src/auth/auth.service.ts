@@ -53,4 +53,49 @@ export class AuthService {
       user: { id: user.id, email: user.email, fullName: user.fullName, role: user.role, gymId: user.gymId },
     };
   }
+
+  async forgotPassword(email: string) {
+    const user = await this.usersRepo.findOne({ where: { email } });
+    if (!user) {
+      throw new BadRequestException('Bu e-posta adresine kayıtlı bir kullanıcı bulunamadı.');
+    }
+
+    // 6 haneli rastgele kod üret (simülasyon kolaylığı için)
+    const token = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires = new Date();
+    expires.setMinutes(expires.getMinutes() + 15); // 15 dakika geçerli
+
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = expires;
+    await this.usersRepo.save(user);
+
+    console.log(`🔑 ŞİFRE SIFIRLAMA KODU (Email: ${email}): ${token}`);
+
+    return {
+      message: 'Şifre sıfırlama kodu gönderildi (Simülasyon).',
+      code: token, // Simülasyon kolaylığı için ön yüze de dönüyoruz
+    };
+  }
+
+  async resetPassword(token: string, passwordStr: string) {
+    const user = await this.usersRepo.findOne({
+      where: { resetPasswordToken: token },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Geçersiz sıfırlama kodu.');
+    }
+
+    if (user.resetPasswordExpires && user.resetPasswordExpires.getTime() < Date.now()) {
+      throw new BadRequestException('Sıfırlama kodunun süresi dolmuş.');
+    }
+
+    const hashed = await bcrypt.hash(passwordStr, 10);
+    user.password = hashed;
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+    await this.usersRepo.save(user);
+
+    return { message: 'Şifreniz başarıyla sıfırlandı. Giriş yapabilirsiniz.' };
+  }
 }
