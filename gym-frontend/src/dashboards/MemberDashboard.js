@@ -1175,9 +1175,9 @@ function DashboardOverviewTab({ user, onNavigate }) {
 
   return (
     <div>
-      <Card style={{ marginBottom:20, border:'none', background:`linear-gradient(135deg,${BRAND.primary},${BRAND.purple})` }}>
+      <Card style={{ marginBottom:20, border:'1px solid rgba(255,255,255,0.06)', background:'#111827' }}>
         <h2 style={{ margin:'0 0 4px', color:'#fff', display:'flex', alignItems:'center', gap:10 }}>Hoş geldin, {user.fullName?.split(' ')[0]} <FaRegSmile/></h2>
-        <p style={{ color:'#ffffffcc', margin:0, fontSize:14 }}>İşte bugünkü genel durumun.</p>
+        <p style={{ color:'#9ca3af', margin:0, fontSize:14 }}>İşte bugünkü genel durumun.</p>
       </Card>
 
       {!profile && (
@@ -1207,42 +1207,42 @@ function DashboardOverviewTab({ user, onNavigate }) {
 
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(360px, 1fr))', gap:16, alignItems:'start' }}>
 
-        {/* Sol üst: bugünkü antrenmanın küçük hâli */}
-        <Card style={{ border:`2px solid ${BRAND.purple}`, background:'linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%)' }}>
+        {/* Sol üst: bugünkü antrenmanın küçük hâli (Vibrant Purple Card) */}
+        <Card style={{ border:'none', background:'linear-gradient(135deg, #7c3aed 0%, #9333ea 100%)', color:'#fff' }}>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:8, marginBottom:12 }}>
-            <h4 style={{ margin:0, color:'#4c1d95', display:'flex', alignItems:'center', gap:8 }}><FaCalendarDay/> Bugünkü Antrenman</h4>
-            {todayWorkout && <Badge label={`Gün ${todayWorkout.day}/${program.workoutPlan.length}`} color="#8b5cf6" />}
+            <h4 style={{ margin:0, color:'#fff', display:'flex', alignItems:'center', gap:8 }}><FaCalendarDay/> Bugünkü Antrenman</h4>
+            {todayWorkout && <Badge label={`Gün ${todayWorkout.day}/${program.workoutPlan.length}`} color="#fff" />}
           </div>
           {todayWorkout ? (
             <>
-              <div style={{ fontSize:14, fontWeight:600, color:'#6b7280', marginBottom:10 }}>{todayWorkout.focus}</div>
+              <div style={{ fontSize:14, fontWeight:600, color:'rgba(255,255,255,0.8)', marginBottom:10 }}>{todayWorkout.focus}</div>
               <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
                 {todayWorkout.exercises.slice(0, 3).map((ex, i) => (
                   <div key={ex.id ?? `${ex.name}-${i}`} style={{ display:'flex', justifyContent:'space-between', alignItems:'center',
-                    background:'#fff', borderRadius:8, padding:'8px 12px', boxShadow:'0 1px 3px rgba(0,0,0,0.05)' }}>
-                    <span style={{ fontWeight:600, fontSize:13 }}>{ex.name}</span>
-                    <Badge label={`${ex.sets}×${ex.reps}`} color="#3b82f6" />
+                    background:'rgba(255,255,255,0.08)', borderRadius:8, padding:'8px 12px', border:'1px solid rgba(255,255,255,0.1)' }}>
+                    <span style={{ fontWeight:600, fontSize:13, color:'#fff' }}>{ex.name}</span>
+                    <Badge label={`${ex.sets}×${ex.reps}`} color="#fff" />
                   </div>
                 ))}
                 {todayWorkout.exercises.length > 3 && (
-                  <div style={{ color:'#8892a4', fontSize:12, textAlign:'center' }}>
+                  <div style={{ color:'rgba(255,255,255,0.6)', fontSize:12, textAlign:'center' }}>
                     +{todayWorkout.exercises.length - 3} egzersiz daha
                   </div>
                 )}
               </div>
             </>
           ) : (
-            <p style={{ color:'#6b7280', fontSize:13, margin:0 }}>
+            <p style={{ color:'rgba(255,255,255,0.8)', fontSize:13, margin:0 }}>
               {profile ? 'Henüz bir programın yok.' : 'Önce profilini tamamla.'}
             </p>
           )}
-          <Btn size="sm" outline color={BRAND.purple} style={{ marginTop:14 }} onClick={() => onNavigate('myprogram')}>Programım →</Btn>
+          <Btn size="sm" outline color="#fff" style={{ marginTop:14, borderColor:'rgba(255,255,255,0.4)', color:'#fff' }} onClick={() => onNavigate('myprogram')}>Programım →</Btn>
         </Card>
 
-        {/* Sağ üst: salon doluluğunun küçük hâli */}
-        <Card style={{ border:'2px solid #f59e0b', background:'linear-gradient(135deg, #fff7ed 0%, #ffffff 100%)' }}>
+        {/* Sağ üst: salon doluluğunun küçük hâli (Charcoal Dark Card) */}
+        <Card style={{ border:'1px solid rgba(255,255,255,0.06)', background:'#111827', color:'#fff' }}>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:8, marginBottom:12 }}>
-            <h4 style={{ margin:0, color:'#9a2c00', display:'flex', alignItems:'center', gap:8 }}><FaClock/> Salon Doluluğu</h4>
+            <h4 style={{ margin:0, color:'#fff', display:'flex', alignItems:'center', gap:8 }}><FaClock/> Salon Doluluğu</h4>
             {occupancy?.occupancyPercent != null && (
               <Badge label={`${occupancy.occupancyPercent}% dolu`}
                 color={occupancy.intensity === 'yüksek' ? '#e94560' : occupancy.intensity === 'orta' ? '#f59e0b' : '#10b981'} />
@@ -1250,16 +1250,16 @@ function DashboardOverviewTab({ user, onNavigate }) {
           </div>
           {occupancy?.occupancyPercent != null ? (
             <>
-              <p style={{ color:'#6b7280', fontSize:13, margin:'0 0 10px' }}>
+              <p style={{ color:'#9ca3af', fontSize:13, margin:'0 0 10px' }}>
                 {occupancy.recommendation || 'Bu saat için tahmin hazırlanıyor.'}
               </p>
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-                <div style={{ background:'#fff', borderRadius:8, padding:'8px 12px', boxShadow:'0 1px 3px rgba(0,0,0,0.05)' }}>
-                  <div style={{ fontSize:11, color:'#6b7280' }}>Bu saat</div>
+                <div style={{ background:'rgba(255,255,255,0.03)', borderRadius:8, padding:'8px 12px', border:'1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ fontSize:11, color:'#9ca3af' }}>Bu saat</div>
                   <div style={{ fontSize:15, fontWeight:800 }}>{occupancy.day} {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</div>
                 </div>
-                <div style={{ background:'#fff', borderRadius:8, padding:'8px 12px', boxShadow:'0 1px 3px rgba(0,0,0,0.05)' }}>
-                  <div style={{ fontSize:11, color:'#6b7280' }}>En sakin saat</div>
+                <div style={{ background:'rgba(255,255,255,0.03)', borderRadius:8, padding:'8px 12px', border:'1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ fontSize:11, color:'#9ca3af' }}>En sakin saat</div>
                   <div style={{ fontSize:15, fontWeight:800 }}>
                     {occupancy.quietSlots?.[0] ? `${occupancy.quietSlots[0].day} ${occupancy.quietSlots[0].hour}:00` : 'Veri yok'}
                   </div>
@@ -1267,64 +1267,64 @@ function DashboardOverviewTab({ user, onNavigate }) {
               </div>
             </>
           ) : (
-            <p style={{ color:'#6b7280', fontSize:13, margin:0 }}>Henüz yeterli veri yok.</p>
+            <p style={{ color:'#9ca3af', fontSize:13, margin:0 }}>Henüz yeterli veri yok.</p>
           )}
           <Btn size="sm" outline color="#f59e0b" style={{ marginTop:14 }} onClick={() => onNavigate('achievements')}>Detaylar →</Btn>
         </Card>
 
-        {/* Sol alt: üyelik + beslenme */}
+        {/* Sol alt: üyelik (Clean White Card) + beslenme (Charcoal Card) */}
         <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-          <Card>
-            <h4 style={{ margin:'0 0 8px', display:'flex', alignItems:'center', gap:8 }}><FaTicketAlt/> Üyeliğim</h4>
+          <Card style={{ background:'#ffffff', color:'#1e293b', border:'1px solid #e2e8f0', boxShadow:'0 8px 30px rgba(0,0,0,0.05)' }}>
+            <h4 style={{ margin:'0 0 8px', display:'flex', alignItems:'center', gap:8, color:'#1e293b' }}><FaTicketAlt/> Üyeliğim</h4>
             {activeEnrollment ? (
               <>
-                <div style={{ fontSize:18, fontWeight:700 }}>{activeEnrollment.plan?.name}</div>
-                <div style={{ color:'#6b7280', fontSize:13, marginTop:4 }}>
+                <div style={{ fontSize:18, fontWeight:700, color:'#1e293b' }}>{activeEnrollment.plan?.name}</div>
+                <div style={{ color:'#64748b', fontSize:13, marginTop:4 }}>
                   {Math.max(0, Math.ceil((new Date(activeEnrollment.endDate) - now) / 86400000))} gün kaldı
                 </div>
                 {activeEnrollment.totalPtSessions > 0 && (
-                  <div style={{ color:'#8b5cf6', fontSize:13, fontWeight:600, marginTop:8 }}>
+                  <div style={{ color:BRAND.primary, fontSize:13, fontWeight:600, marginTop:8 }}>
                     Kalan PT Seansı: {activeEnrollment.remainingPtSessions} / {activeEnrollment.totalPtSessions} ders
                   </div>
                 )}
               </>
             ) : (
-              <p style={{ color:'#6b7280', fontSize:13, margin:0 }}>Aktif üyeliğin yok.</p>
+              <p style={{ color:'#64748b', fontSize:13, margin:0 }}>Aktif üyeliğin yok.</p>
             )}
-            <Btn size="sm" outline style={{ marginTop:12 }} onClick={() => onNavigate('mine')}>Üyeliklerim →</Btn>
+            <Btn size="sm" outline color={BRAND.primary} style={{ marginTop:12 }} onClick={() => onNavigate('mine')}>Üyeliklerim →</Btn>
           </Card>
 
-          <Card>
-            <h4 style={{ margin:'0 0 8px', display:'flex', alignItems:'center', gap:8 }}><FaAppleAlt/> Beslenme Hedefi</h4>
+          <Card style={{ border:'1px solid rgba(255,255,255,0.06)', background:'#111827', color:'#fff' }}>
+            <h4 style={{ margin:'0 0 8px', display:'flex', alignItems:'center', gap:8, color:'#fff' }}><FaAppleAlt/> Beslenme Hedefi</h4>
             {program ? (
               <>
                 <div style={{ fontSize:18, fontWeight:700 }}>{program.dailyCalories} kcal</div>
-                <div style={{ color:'#6b7280', fontSize:13, marginTop:4 }}>
+                <div style={{ color:'#9ca3af', fontSize:13, marginTop:4 }}>
                   P {program.proteinG}g · K {program.carbsG}g · Y {program.fatG}g
                 </div>
               </>
             ) : (
-              <p style={{ color:'#6b7280', fontSize:13, margin:0 }}>Henüz bir diyet hedefin yok.</p>
+              <p style={{ color:'#9ca3af', fontSize:13, margin:0 }}>Henüz bir diyet hedefin yok.</p>
             )}
-            <Btn size="sm" outline style={{ marginTop:12 }} onClick={() => onNavigate('profile')}>Profilim & Diyet →</Btn>
+            <Btn size="sm" outline color={BRAND.primary} style={{ marginTop:12 }} onClick={() => onNavigate('profile')}>Profilim & Diyet →</Btn>
           </Card>
         </div>
 
-        {/* Sağ alt: başarılar + QR */}
+        {/* Sağ alt: başarılar (Charcoal) + QR (Vibrant Red Card) */}
         <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-          <Card>
-            <h4 style={{ margin:'0 0 8px', display:'flex', alignItems:'center', gap:8 }}><FaTrophy/> Başarılarım</h4>
+          <Card style={{ border:'1px solid rgba(255,255,255,0.06)', background:'#111827', color:'#fff' }}>
+            <h4 style={{ margin:'0 0 8px', display:'flex', alignItems:'center', gap:8, color:'#fff' }}><FaTrophy/> Başarılarım</h4>
             <div style={{ fontSize:18, fontWeight:700 }}>{gamification?.points || 0} puan</div>
             <div style={{ marginTop:10 }}>
               <ProgressBar value={badgeCount} max={3} color="#ec4899" height={8} />
             </div>
-            <Btn size="sm" outline style={{ marginTop:12 }} onClick={() => onNavigate('achievements')}>Başarılarım →</Btn>
+            <Btn size="sm" outline color={BRAND.primary} style={{ marginTop:12 }} onClick={() => onNavigate('achievements')}>Başarılarım →</Btn>
           </Card>
 
-          <Card>
-            <h4 style={{ margin:'0 0 8px', display:'flex', alignItems:'center', gap:8 }}><FaQrcode/> QR Kodum</h4>
-            <p style={{ color:'#6b7280', fontSize:13, margin:0 }}>Salona girerken görevliye okut.</p>
-            <Btn size="sm" outline style={{ marginTop:12 }} onClick={() => onNavigate('qr')}>QR Kodum →</Btn>
+          <Card style={{ border:'none', background:'linear-gradient(135deg, #e11d48 0%, #f43f5e 100%)', color:'#fff' }}>
+            <h4 style={{ margin:'0 0 8px', display:'flex', alignItems:'center', gap:8, color:'#fff' }}><FaQrcode/> QR Kodum</h4>
+            <p style={{ color:'rgba(255,255,255,0.85)', fontSize:13, margin:0 }}>Salona girerken görevliye okut.</p>
+            <Btn size="sm" outline color="#fff" style={{ marginTop:12, borderColor:'rgba(255,255,255,0.4)', color:'#fff' }} onClick={() => onNavigate('qr')}>QR Kodum →</Btn>
           </Card>
         </div>
       </div>
