@@ -100,8 +100,12 @@ export class GymsService {
     });
   }
 
-  // Salon bilgilerini ve durumunu güncelle (süper admin)
-  async update(id: number, data: { name?: string; address?: string; phone?: string; isActive?: boolean }) {
+  findOne(id: number) {
+    return this.gymRepo.findOne({ where: { id } });
+  }
+
+  // Salon bilgilerini ve durumunu güncelle (süper admin veya admin)
+  async update(id: number, data: { name?: string; address?: string; phone?: string; isActive?: boolean; capacity?: number }) {
     const gym = await this.gymRepo.findOne({ where: { id } });
     if (!gym) throw new NotFoundException('Salon bulunamadı.');
     Object.assign(gym, data);

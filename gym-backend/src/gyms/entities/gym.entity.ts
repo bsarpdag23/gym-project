@@ -17,6 +17,9 @@ export class Gym {
   @Column({ default: true })
   isActive: boolean;         // salon aktif mi (süper admin askıya alabilir)
 
+  @Column({ default: 50 })
+  capacity: number;          // Salon kapasitesi
+
   @CreateDateColumn()
   createdAt: Date;
 }

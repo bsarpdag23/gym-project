@@ -145,6 +145,8 @@ const api = {
     update: (id, d) => api.req(`/gyms/${id}`, { method:'PATCH', body: JSON.stringify(d) }),
     remove: (id) => api.req(`/gyms/${id}`, { method:'DELETE' }),
     getGlobalStats: () => api.req('/gyms/global-stats'),
+    getMyGym: () => api.req('/gyms/my-gym'),
+    updateMyGym: (d) => api.req('/gyms/my-gym', { method:'PATCH', body: JSON.stringify(d) }),
   },
   messages: {
     getDirectory:     ()        => api.req('/messages/directory'),

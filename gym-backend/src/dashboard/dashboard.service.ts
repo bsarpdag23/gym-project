@@ -4,6 +4,7 @@ import { Repository, MoreThanOrEqual, Between } from 'typeorm';
 import { User, UserRole } from '../users/entities/user.entity';
 import { Enrollment } from '../enrollments/entities/enrollment.entity';
 import { CheckIn } from '../check-ins/entities/check-in.entity';
+import { Gym } from '../gyms/entities/gym.entity';
 
 @Injectable()
 export class DashboardService {
@@ -11,6 +12,7 @@ export class DashboardService {
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Enrollment) private enrollRepo: Repository<Enrollment>,
     @InjectRepository(CheckIn) private checkInRepo: Repository<CheckIn>,
+    @InjectRepository(Gym) private gymRepo: Repository<Gym>,
   ) {}
 
   private getDayName(date: Date) {
@@ -157,6 +159,7 @@ export class DashboardService {
         busySlots: [],
         quietSlots: [],
         recommendation: 'Önce birkaç check-in kaydı oluşturun.',
+        occupancyPercent: 0,
       };
     }
 
@@ -167,11 +170,26 @@ export class DashboardService {
     const now = new Date();
     const dayName = this.getDayName(now);
     const currentHour = now.getHours();
-    const currentBucket = buckets.find((slot) => slot.day === dayName && slot.hour === currentHour);
-    
-    const maxCount = Math.max(...buckets.map((slot) => slot.count), 1);
-    const referencePeak = Math.max(maxCount, 10); // En az 10 check-in'i zirve kabul et (Test verisinde %100 çıkmasını önler)
-    const occupancyPercent = currentBucket ? Math.min(100, Math.round((currentBucket.count / referencePeak) * 100)) : 0;
+
+    // Son 2 saat içindeki check-in sayısı = salondaki aktif kişi sayısı
+    const twoHoursAgo = new Date();
+    twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
+
+    const activeCount = await this.checkInRepo.count({
+      where: isSuper
+        ? { checkInTime: MoreThanOrEqual(twoHoursAgo) }
+        : { gymId, checkInTime: MoreThanOrEqual(twoHoursAgo) }
+    });
+
+    let capacity = 50; // default fallback
+    if (gymId) {
+      const gym = await this.gymRepo.findOne({ where: { id: gymId } });
+      if (gym && gym.capacity) {
+        capacity = gym.capacity;
+      }
+    }
+
+    const occupancyPercent = Math.min(100, Math.round((activeCount / capacity) * 100));
 
     let intensity = 'düşük';
     let recommendation = 'Bu saat salon nispeten sakin; rahat bir antrenman için uygun.';

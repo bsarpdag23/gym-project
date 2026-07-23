@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Patch, Delete, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Patch, Delete, UseGuards, Request } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -8,6 +8,20 @@ import { CreateGymDto } from './dto/create-gym.dto';
 @Controller('gyms')
 export class GymsController {
   constructor(private readonly service: GymsService) {}
+
+  @Get('my-gym')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  getMyGym(@Request() req) {
+    return this.service.findOne(req.user.gymId);
+  }
+
+  @Patch('my-gym')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  updateMyGym(@Request() req, @Body() dto: { name?: string; address?: string; phone?: string; capacity?: number }) {
+    return this.service.update(req.user.gymId, dto);
+  }
 
   // Herkesin erişebileceği halka açık aktif salon listesi (Kayıt ekranı için)
   @Get('public')

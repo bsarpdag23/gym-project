@@ -44,6 +44,20 @@ export default function AdminDashboard({ user, onLogout }) {
   const [stats, setStats] = useState(null);
   const [showScanner, setShowScanner] = useState(false);
   const [reminderModal, setReminderModal] = useState(null);
+  const [gymCapacity, setGymCapacity] = useState(50);
+  const [savingCapacity, setSavingCapacity] = useState(false);
+
+  const saveCapacity = async () => {
+    setSavingCapacity(true);
+    try {
+      await api.gyms.updateMyGym({ capacity: +gymCapacity });
+      alert('Salon kapasitesi başarıyla güncellendi!');
+      load();
+    } catch (e) {
+      alert(e.message);
+    }
+    setSavingCapacity(false);
+  };
 
   const sendMockReminder = (member) => {
     setReminderModal({
@@ -72,7 +86,14 @@ export default function AdminDashboard({ user, onLogout }) {
       if (tab === 'enrollments') setEnr(await api.enrollments.getAll());
       if (tab === 'exercises') setExs(await api.exercises.getAll());
       if (tab === 'checkin') setCheckIns(await api.checkIns.getAll());
-      if (tab === 'dashboard') setStats(await api.dashboard.getStats());
+      if (tab === 'dashboard') {
+        const statsData = await api.dashboard.getStats();
+        setStats(statsData);
+        if (user.role === 'admin') {
+          const gym = await api.gyms.getMyGym();
+          if (gym) setGymCapacity(gym.capacity || 50);
+        }
+      }
       if (tab === 'programs') {
         const [p, e] = await Promise.all([api.programs.getAll(), api.exercises.getAll()]);
         setPrograms(p); setExs(e);
@@ -735,6 +756,31 @@ export default function AdminDashboard({ user, onLogout }) {
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 16 }}>
+                    {user.role === 'admin' && (
+                      <Card style={{ borderLeft: `4px solid ${BRAND.primary}` }}>
+                        <h3 style={{ margin: '0 0 14px', fontSize: 16, display: 'flex', alignItems: 'center', gap: 8, color: '#1e293b' }}>
+                          ⚙️ Salon Kapasite Ayarı
+                        </h3>
+                        <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.5, margin: '0 0 16px' }}>
+                          Salonunuzun maksimum üye kapasitesini belirleyin. Üyelerin doluluk oranı bu kapasiteye göre hesaplanır.
+                        </p>
+                        <Input
+                          label="Maksimum Kapasite (Kişi)"
+                          type="number"
+                          value={gymCapacity}
+                          onChange={e => setGymCapacity(e.target.value)}
+                          placeholder="50"
+                        />
+                        <Btn
+                          style={{ width: '100%', marginTop: 8 }}
+                          onClick={saveCapacity}
+                          disabled={savingCapacity}
+                        >
+                          {savingCapacity ? 'Kaydediliyor...' : 'Kapasiteyi Kaydet'}
+                        </Btn>
+                      </Card>
+                    )}
+
                     <Card style={{ borderLeft: '4px solid #f59e0b' }}>
                       <h3 style={{ margin: '0 0 14px', fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}><FaClock /> Salon Doluluk Özetı</h3>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
