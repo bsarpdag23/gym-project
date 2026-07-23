@@ -168,7 +168,10 @@ export class DashboardService {
     const dayName = this.getDayName(now);
     const currentHour = now.getHours();
     const currentBucket = buckets.find((slot) => slot.day === dayName && slot.hour === currentHour);
-    const occupancyPercent = currentBucket ? Math.min(100, Math.round((currentBucket.count / Math.max(...buckets.map((slot) => slot.count), 1)) * 100)) : 0;
+    
+    const maxCount = Math.max(...buckets.map((slot) => slot.count), 1);
+    const referencePeak = Math.max(maxCount, 10); // En az 10 check-in'i zirve kabul et (Test verisinde %100 çıkmasını önler)
+    const occupancyPercent = currentBucket ? Math.min(100, Math.round((currentBucket.count / referencePeak) * 100)) : 0;
 
     let intensity = 'düşük';
     let recommendation = 'Bu saat salon nispeten sakin; rahat bir antrenman için uygun.';
