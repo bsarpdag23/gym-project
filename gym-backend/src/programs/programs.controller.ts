@@ -40,9 +40,4 @@ export class ProgramsController {
 
   @Get('history')
   history(@Request() req) { return this.service.findAll(req.user.userId); }
-
-  @Post('clean-duplicates')
-  cleanDuplicates() {
-    return this.service.cleanCatalogDuplicates();
-  }
 }

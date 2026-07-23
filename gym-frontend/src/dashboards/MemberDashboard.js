@@ -685,7 +685,7 @@ function AchievementsTab() {
           <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:12, marginTop:16 }}>
             <div style={{ background:'#fff', borderRadius:10, padding:'12px 14px', boxShadow:'0 1px 3px rgba(0,0,0,0.05)' }}>
               <div style={{ fontSize:12, color:'#6b7280' }}>Bu saat</div>
-              <div style={{ fontSize:20, fontWeight:800 }}>{occupancy.day} {occupancy.hour}:00</div>
+              <div style={{ fontSize:20, fontWeight:800 }}>{occupancy.day} {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</div>
             </div>
             <div style={{ background:'#fff', borderRadius:10, padding:'12px 14px', boxShadow:'0 1px 3px rgba(0,0,0,0.05)' }}>
               <div style={{ fontSize:12, color:'#6b7280' }}>Yoğunluk</div>
@@ -1207,7 +1207,7 @@ function DashboardOverviewTab({ user, onNavigate }) {
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
                 <div style={{ background:'#fff', borderRadius:8, padding:'8px 12px', boxShadow:'0 1px 3px rgba(0,0,0,0.05)' }}>
                   <div style={{ fontSize:11, color:'#6b7280' }}>Bu saat</div>
-                  <div style={{ fontSize:15, fontWeight:800 }}>{occupancy.day} {occupancy.hour}:00</div>
+                  <div style={{ fontSize:15, fontWeight:800 }}>{occupancy.day} {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</div>
                 </div>
                 <div style={{ background:'#fff', borderRadius:8, padding:'8px 12px', boxShadow:'0 1px 3px rgba(0,0,0,0.05)' }}>
                   <div style={{ fontSize:11, color:'#6b7280' }}>En sakin saat</div>
