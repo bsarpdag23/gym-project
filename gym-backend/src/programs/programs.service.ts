@@ -33,6 +33,25 @@ export class ProgramsService {
       const exercises = await this.exerciseRepo.findBy({ id: In(exerciseIds) });
       if (!exercises.length) continue;
 
+      // Aynı isimde, sürede ve egzersiz kombinasyonuna sahip program var mı kontrol et
+      const existing = await this.workoutProgramRepo.findOne({
+        where: { name: day.focus, weeksCount: durationWeeks },
+        relations: { exercises: true },
+      });
+
+      if (existing) {
+        const existingIds = (existing.exercises || []).map((e) => e.id).sort();
+        const incomingIds = [...exerciseIds].sort();
+
+        const isSame =
+          existingIds.length === incomingIds.length &&
+          existingIds.every((val, index) => val === incomingIds[index]);
+
+        if (isSame) {
+          continue; // Birebir aynı program var, mükerrer kaydı önlemek için es geç
+        }
+      }
+
       const catalogProgram = this.workoutProgramRepo.create({
         name: day.focus,
         description: `Yapay zeka tarafından ${GOAL_LABELS[goal] || goal} hedefine göre oluşturuldu.`,
