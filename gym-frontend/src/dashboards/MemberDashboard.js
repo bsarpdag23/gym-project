@@ -1174,15 +1174,15 @@ function DashboardOverviewTab({ user, onNavigate }) {
   const badgeCount = gamification?.badges?.length || 0;
 
   return (
-    <div>
-      <Card style={{ marginBottom:20, border:'1px solid rgba(255,255,255,0.06)', background:'#111827' }}>
-        <h2 style={{ margin:'0 0 4px', color:'#fff', display:'flex', alignItems:'center', gap:10 }}>Hoş geldin, {user.fullName?.split(' ')[0]} <FaRegSmile/></h2>
-        <p style={{ color:'#9ca3af', margin:0, fontSize:14 }}>İşte bugünkü genel durumun.</p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/* Greeting card */}
+      <Card style={{ border: '1px solid rgba(255,255,255,0.06)', background: '#111827', padding: 24 }}>
+        <h2 style={{ margin: '0 0 4px', color: '#fff', fontSize: 22, fontWeight: 700 }}>Hoş geldin, {user.fullName?.split(' ')[0]}! 👋</h2>
+        <p style={{ color: '#9ca3af', margin: 0, fontSize: 14 }}>İşte bugün salonundaki genel durumun ve üyelik özetin.</p>
       </Card>
 
       {!profile && (
         <Card style={{
-          marginBottom: 20,
           border: '1px solid #bfdbfe',
           background: '#eff6ff',
           color: '#1e40af',
@@ -1205,143 +1205,155 @@ function DashboardOverviewTab({ user, onNavigate }) {
         </Card>
       )}
 
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(360px, 1fr))', gap:16, alignItems:'start' }}>
-
-        {/* Sol üst: bugünkü antrenmanın küçük hâli (Vibrant Purple Card) */}
-        <Card style={{ border:'none', background:'linear-gradient(135deg, #7c3aed 0%, #9333ea 100%)', color:'#fff' }}>
-          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:8, marginBottom:12 }}>
-            <h4 style={{ margin:0, color:'#fff', display:'flex', alignItems:'center', gap:8 }}><FaCalendarDay/> Bugünkü Antrenman</h4>
-            {todayWorkout && <Badge label={`Gün ${todayWorkout.day}/${program.workoutPlan.length}`} color="#fff" />}
-          </div>
-          {todayWorkout ? (
-            <>
-              <div style={{ fontSize:14, fontWeight:600, color:'rgba(255,255,255,0.8)', marginBottom:10 }}>{todayWorkout.focus}</div>
-              <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
-                {todayWorkout.exercises.slice(0, 3).map((ex, i) => (
-                  <div key={ex.id ?? `${ex.name}-${i}`} style={{ display:'flex', justifyContent:'space-between', alignItems:'center',
-                    background:'rgba(255,255,255,0.08)', borderRadius:8, padding:'8px 12px', border:'1px solid rgba(255,255,255,0.1)' }}>
-                    <span style={{ fontWeight:600, fontSize:13, color:'#fff' }}>{ex.name}</span>
-                    <Badge label={`${ex.sets}×${ex.reps}`} color="#fff" />
-                  </div>
-                ))}
-                {todayWorkout.exercises.length > 3 && (
-                  <div style={{ color:'rgba(255,255,255,0.6)', fontSize:12, textAlign:'center' }}>
-                    +{todayWorkout.exercises.length - 3} egzersiz daha
-                  </div>
-                )}
-              </div>
-            </>
-          ) : (
-            <p style={{ color:'rgba(255,255,255,0.8)', fontSize:13, margin:0 }}>
-              {profile ? 'Henüz bir programın yok.' : 'Önce profilini tamamla.'}
-            </p>
-          )}
-          <Btn size="sm" outline color="#fff" style={{ marginTop:14, borderColor:'rgba(255,255,255,0.4)', color:'#fff' }} onClick={() => onNavigate('myprogram')}>Programım →</Btn>
-        </Card>
-
-        {/* Sağ üst: salon doluluğunun küçük hâli (Charcoal Dark Card) */}
-        <Card style={{ border:'1px solid rgba(255,255,255,0.06)', background:'#111827', color:'#fff' }}>
-          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:8, marginBottom:12 }}>
-            <h4 style={{ margin:0, color:'#fff', display:'flex', alignItems:'center', gap:8 }}><FaClock/> Salon Doluluğu</h4>
-            {occupancy?.occupancyPercent != null && (
-              <Badge label={`${occupancy.occupancyPercent}% dolu`}
-                color={occupancy.intensity === 'yüksek' ? '#e94560' : occupancy.intensity === 'orta' ? '#f59e0b' : '#10b981'} />
-            )}
-          </div>
-          {occupancy?.occupancyPercent != null ? (
-            <>
-              <p style={{ color:'#9ca3af', fontSize:13, margin:'0 0 10px' }}>
-                {occupancy.recommendation || 'Bu saat için tahmin hazırlanıyor.'}
+      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 20, alignItems: 'stretch' }}>
+        {/* Left top large card: Member Card Management */}
+        <Card style={{ background: '#1c202a', border: '1px solid rgba(255,255,255,0.08)', color: '#fff', display: 'flex', justifyContent: 'space-between', gap: 20, padding: 24 }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <h3 style={{ margin: '0 0 12px', fontSize: 20, fontWeight: 800 }}>Dijital Giriş Kartı</h3>
+              <p style={{ color: '#9ca3af', fontSize: 13, lineHeight: 1.5, margin: '0 0 16px' }}>
+                All-in-one salon yönetim platformu. Salona hızlı giriş yapmak ve turnikelerden geçmek için bu dijital üye kartını okutun.
               </p>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-                <div style={{ background:'rgba(255,255,255,0.03)', borderRadius:8, padding:'8px 12px', border:'1px solid rgba(255,255,255,0.05)' }}>
-                  <div style={{ fontSize:11, color:'#9ca3af' }}>Bu saat</div>
-                  <div style={{ fontSize:15, fontWeight:800 }}>{occupancy.day} {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</div>
+            </div>
+            <Btn color={BRAND.primary} style={{ width: 'fit-content' }} onClick={() => onNavigate('qr')}>Giriş QR Kodu →</Btn>
+          </div>
+          {/* Card Mockup on the right */}
+          <div style={{
+            width: 140, height: 210, borderRadius: 16,
+            background: 'linear-gradient(135deg, #e11d48 0%, #f43f5e 100%)',
+            padding: 16, display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+            boxShadow: '0 10px 25px rgba(225,29,72,0.35)', flexShrink: 0, border: '1px solid rgba(255,255,255,0.15)',
+            boxSizing: 'border-box'
+          }}>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1, color: '#fff' }}>FITLIFE PRO</div>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', marginTop: 2 }}>Üye Kartı</div>
+            </div>
+            <div style={{ background: '#fff', padding: 8, borderRadius: 8, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <QRCodeSVG value={user.qrToken || 'fitlife'} size={60} />
+            </div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#fff', textAlign: 'center' }}>{user.fullName}</div>
+          </div>
+        </Card>
+
+        {/* Right top large card: Membership Overview (Vibrant Violet Card) */}
+        <Card style={{ border: 'none', background: 'linear-gradient(135deg, #7c3aed 0%, #9333ea 100%)', color: '#fff', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>Üyelik Özeti</h3>
+              <FaTicketAlt size={20} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+              <div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>Aktif Üyelik</div>
+                <div style={{ fontSize: 26, fontWeight: 800, marginTop: 4 }}>{activeEnrollment ? '1' : '0'} Adet</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>Kalan Süre</div>
+                <div style={{ fontSize: 26, fontWeight: 800, marginTop: 4 }}>
+                  {activeEnrollment ? `${Math.max(0, Math.ceil((new Date(activeEnrollment.endDate) - now) / 86400000))} Gün` : '—'}
                 </div>
-                <div style={{ background:'rgba(255,255,255,0.03)', borderRadius:8, padding:'8px 12px', border:'1px solid rgba(255,255,255,0.05)' }}>
-                  <div style={{ fontSize:11, color:'#9ca3af' }}>En sakin saat</div>
-                  <div style={{ fontSize:15, fontWeight:800 }}>
-                    {occupancy.quietSlots?.[0] ? `${occupancy.quietSlots[0].day} ${occupancy.quietSlots[0].hour}:00` : 'Veri yok'}
+              </div>
+              <div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>Toplam Puanı</div>
+                <div style={{ fontSize: 26, fontWeight: 800, marginTop: 4 }}>{gamification?.points || 0} Puan</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>Kazanılan Rozet</div>
+                <div style={{ fontSize: 26, fontWeight: 800, marginTop: 4 }}>{badgeCount} Rozet</div>
+              </div>
+            </div>
+          </div>
+          <div style={{
+            background: 'rgba(255,255,255,0.15)', borderRadius: 12, padding: '10px 16px',
+            fontSize: 13, fontWeight: 600, color: '#fff', border: '1px solid rgba(255,255,255,0.15)'
+          }}>
+            Katılım Skoru: {gamification?.checkInCount || 0} Kez Giriş Yapıldı
+          </div>
+        </Card>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 20, alignItems: 'stretch' }}>
+        {/* Left bottom card: September (Salon Doluluğu) (White Background Card) */}
+        <Card style={{ background: '#ffffff', color: '#1e293b', border: '1px solid #e2e8f0', boxShadow: '0 8px 30px rgba(0,0,0,0.04)', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#1e293b' }}>Salon Yoğunluğu</h3>
+              <Badge label={occupancy?.intensity ? `${occupancy.intensity.toUpperCase()}` : 'ORTA'} color={occupancy?.intensity === 'yüksek' ? '#ef4444' : '#f59e0b'} />
+            </div>
+            {occupancy?.occupancyPercent != null ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ fontSize: 32, fontWeight: 800, color: '#1e293b' }}>%{occupancy.occupancyPercent} Dolu</div>
+                <p style={{ color: '#475569', fontSize: 13, margin: 0 }}>
+                  {occupancy.recommendation || 'Şu an sakin saatlerdeyiz. Antrenman için harika bir zaman!'}
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 8 }}>
+                  <div style={{ background: '#f8fafc', padding: 12, borderRadius: 10, border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: 11, color: '#64748b' }}>Ölçüm Saati</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, marginTop: 2, color: '#1e293b' }}>
+                      {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </div>
+                  <div style={{ background: '#f8fafc', padding: 12, borderRadius: 10, border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: 11, color: '#64748b' }}>En Sakin Saat</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, marginTop: 2, color: '#1e293b' }}>
+                      {occupancy.quietSlots?.[0] ? `${occupancy.quietSlots[0].hour}:00` : '10:00'}
+                    </div>
                   </div>
                 </div>
               </div>
-            </>
-          ) : (
-            <p style={{ color:'#9ca3af', fontSize:13, margin:0 }}>Henüz yeterli veri yok.</p>
-          )}
-          <Btn size="sm" outline color="#f59e0b" style={{ marginTop:14 }} onClick={() => onNavigate('achievements')}>Detaylar →</Btn>
+            ) : (
+              <p style={{ color: '#64748b', fontSize: 13 }}>Yükleniyor...</p>
+            )}
+          </div>
+          <Btn size="sm" outline color={BRAND.primary} style={{ marginTop: 16 }} onClick={() => onNavigate('achievements')}>Tüm Tahminler →</Btn>
         </Card>
 
-        {/* Sol alt: üyelik (Clean White Card) + beslenme (Charcoal Card) */}
-        <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-          <Card style={{ background:'#ffffff', color:'#1e293b', border:'1px solid #e2e8f0', boxShadow:'0 8px 30px rgba(0,0,0,0.05)' }}>
-            <h4 style={{ margin:'0 0 8px', display:'flex', alignItems:'center', gap:8, color:'#1e293b' }}><FaTicketAlt/> Üyeliğim</h4>
-            {activeEnrollment ? (
-              <>
-                <div style={{ fontSize:18, fontWeight:700, color:'#1e293b' }}>{activeEnrollment.plan?.name}</div>
-                <div style={{ color:'#64748b', fontSize:13, marginTop:4 }}>
-                  {Math.max(0, Math.ceil((new Date(activeEnrollment.endDate) - now) / 86400000))} gün kaldı
+        {/* Right bottom card: Manage Your Subscription Plans */}
+        <Card style={{ background: '#1c202a', border: '1px solid rgba(255,255,255,0.08)', color: '#fff', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div>
+            <h3 style={{ margin: '0 0 16px', fontSize: 18, fontWeight: 800 }}>Salon Üyelik Paketleri</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+              <div style={{ background: '#0c0d10', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: 12, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 120, boxSizing: 'border-box' }}>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#9ca3af' }}>Günlük</div>
+                  <div style={{ fontSize: 20, fontWeight: 800, marginTop: 4, color: '#fff' }}>100 ₺</div>
                 </div>
-                {activeEnrollment.totalPtSessions > 0 && (
-                  <div style={{ color:BRAND.primary, fontSize:13, fontWeight:600, marginTop:8 }}>
-                    Kalan PT Seansı: {activeEnrollment.remainingPtSessions} / {activeEnrollment.totalPtSessions} ders
-                  </div>
-                )}
-              </>
-            ) : (
-              <p style={{ color:'#64748b', fontSize:13, margin:0 }}>Aktif üyeliğin yok.</p>
-            )}
-            <Btn size="sm" outline color={BRAND.primary} style={{ marginTop:12 }} onClick={() => onNavigate('mine')}>Üyeliklerim →</Btn>
-          </Card>
-
-          <Card style={{ border:'1px solid rgba(255,255,255,0.06)', background:'#111827', color:'#fff' }}>
-            <h4 style={{ margin:'0 0 8px', display:'flex', alignItems:'center', gap:8, color:'#fff' }}><FaAppleAlt/> Beslenme Hedefi</h4>
-            {program ? (
-              <>
-                <div style={{ fontSize:18, fontWeight:700 }}>{program.dailyCalories} kcal</div>
-                <div style={{ color:'#9ca3af', fontSize:13, marginTop:4 }}>
-                  P {program.proteinG}g · K {program.carbsG}g · Y {program.fatG}g
+                <div style={{ fontSize: 10, color: '#64748b' }}>Tek Girişlik</div>
+              </div>
+              <div style={{ background: '#7c3aed', borderRadius: 12, padding: 12, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 120, boxSizing: 'border-box' }}>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.8)' }}>Aylık Standart</div>
+                  <div style={{ fontSize: 20, fontWeight: 800, marginTop: 4, color: '#fff' }}>900 ₺</div>
                 </div>
-              </>
-            ) : (
-              <p style={{ color:'#9ca3af', fontSize:13, margin:0 }}>Henüz bir diyet hedefin yok.</p>
-            )}
-            <Btn size="sm" outline color={BRAND.primary} style={{ marginTop:12 }} onClick={() => onNavigate('profile')}>Profilim & Diyet →</Btn>
-          </Card>
-        </div>
-
-        {/* Sağ alt: başarılar (Charcoal) + QR (Vibrant Red Card) */}
-        <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-          <Card style={{ border:'1px solid rgba(255,255,255,0.06)', background:'#111827', color:'#fff' }}>
-            <h4 style={{ margin:'0 0 8px', display:'flex', alignItems:'center', gap:8, color:'#fff' }}><FaTrophy/> Başarılarım</h4>
-            <div style={{ fontSize:18, fontWeight:700 }}>{gamification?.points || 0} puan</div>
-            <div style={{ marginTop:10 }}>
-              <ProgressBar value={badgeCount} max={3} color="#ec4899" height={8} />
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>30 Gün Geçerli</div>
+              </div>
+              <div style={{ background: '#e11d48', borderRadius: 12, padding: 12, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 120, boxSizing: 'border-box' }}>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.8)' }}>Yıllık Gold</div>
+                  <div style={{ fontSize: 20, fontWeight: 800, marginTop: 4, color: '#fff' }}>8400 ₺</div>
+                </div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>En Popüler</div>
+              </div>
             </div>
-            <Btn size="sm" outline color={BRAND.primary} style={{ marginTop:12 }} onClick={() => onNavigate('achievements')}>Başarılarım →</Btn>
-          </Card>
-
-          <Card style={{ border:'none', background:'linear-gradient(135deg, #e11d48 0%, #f43f5e 100%)', color:'#fff' }}>
-            <h4 style={{ margin:'0 0 8px', display:'flex', alignItems:'center', gap:8, color:'#fff' }}><FaQrcode/> QR Kodum</h4>
-            <p style={{ color:'rgba(255,255,255,0.85)', fontSize:13, margin:0 }}>Salona girerken görevliye okut.</p>
-            <Btn size="sm" outline color="#fff" style={{ marginTop:12, borderColor:'rgba(255,255,255,0.4)', color:'#fff' }} onClick={() => onNavigate('qr')}>QR Kodum →</Btn>
-          </Card>
-        </div>
+          </div>
+          <Btn size="sm" color={BRAND.primary} style={{ marginTop: 16 }} onClick={() => onNavigate('plans')}>Tüm Paketleri İncele →</Btn>
+        </Card>
       </div>
     </div>
   );
 }
 
 const MEMBER_TABS = [
-  { id:'dashboard', label:<><FaHome/> Anasayfa</> },
-  { id:'plans',    label:<><FaBox/> Paketler</> },
-  { id:'mine',     label:<><FaTicketAlt/> Üyeliklerim</> },
-  { id:'programs', label:<><FaClipboardList/> Programlar</> },
-  { id:'profile', label:<><FaUser/> Profilim & Diyet</> },
-  { id:'myprogram', label:<><FaBullseye/> Programım</> },
-  { id:'achievements', label:<><FaTrophy/> Başarılarım</> },
-  { id:'chat', label:<><FaComments/> Sohbet</> },
-  { id:'qr', label:<><FaQrcode/> QR Kodum</> },
+  { id:'dashboard', label:'Anasayfa', icon:<FaHome size={20} /> },
+  { id:'plans',    label:'Paketler', icon:<FaBox size={20} /> },
+  { id:'mine',     label:'Üyeliklerim', icon:<FaTicketAlt size={20} /> },
+  { id:'programs', label:'Programlar', icon:<FaClipboardList size={20} /> },
+  { id:'profile', label:'Profilim & Diyet', icon:<FaUser size={20} /> },
+  { id:'myprogram', label:'Programım', icon:<FaBullseye size={20} /> },
+  { id:'achievements', label:'Başarılarım', icon:<FaTrophy size={20} /> },
+  { id:'chat', label:'Sohbet', icon:<FaComments size={20} /> },
+  { id:'qr', label:'QR Kodum', icon:<FaQrcode size={20} /> },
 ];
 
 // ─── Paketler sekmesi ───
@@ -1776,133 +1788,179 @@ export default function MemberDashboard({ user, onLogout }) {
   const goTab = (id) => navigate(`/member/${id}`);
 
   return (
-    <div style={{ minHeight:'100vh', background:'#f8fafc', fontFamily:'Segoe UI,sans-serif', color:'#1e293b' }}>
+    <div style={{ minHeight:'100vh', background:'#0a0e17', fontFamily:'Segoe UI,sans-serif', color:'#f3f4f6', display:'flex' }}>
+      
+      {/* Left Sidebar Menu */}
       <div style={{
-        background:`linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})`, padding:'14px 28px',
-        display:'flex', justifyContent:'space-between', alignItems:'center',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.08)', position:'sticky', top:0, zIndex:100
+        width: 76, background: '#0c0d10', borderRight: '1px solid rgba(255,255,255,0.06)',
+        height: '100vh', position: 'fixed', left: 0, top: 0,
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        padding: '24px 0', justifyContent: 'space-between', zIndex: 1000,
+        boxSizing: 'border-box'
       }}>
-        <div style={{ display:'flex', alignItems:'center', gap:14 }}>
-          <Logo light />
-          {gymName && (
-            <span style={{
-              background: 'rgba(255,255,255,0.18)',
-              padding: '4px 14px',
-              borderRadius: 20,
-              fontSize: 13,
-              fontWeight: 600,
-              color: '#fff',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              border: '1px solid rgba(255,255,255,0.25)'
-            }}>
-              <FaBuilding style={{ fontSize: 12 }} /> {gymName}
-            </span>
-          )}
-        </div>
-        <div style={{ position:'relative' }}>
-          <div
-            onClick={() => setShowUserMenu(!showUserMenu)}
-            style={{ display:'flex', gap:10, alignItems:'center', color:'#fff', cursor:'pointer', padding:'6px 12px', borderRadius:20, background:'rgba(255,255,255,0.12)', transition:'background .15s' }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.18)'}
-            onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = 'rgba(255,255,255,0.12)' }}
-          >
-            <Avatar src={resolveAvatarUrl(avatarUrl)} name={user.fullName} size={28} />
-            <span style={{ fontSize:14, fontWeight:600 }}>{user.fullName}</span>
-            <span style={{ fontSize:10, color:'rgba(255,255,255,0.7)' }}>▼</span>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 28, width: '100%' }}>
+          {/* Logo container */}
+          <div style={{
+            width: 44, height: 44, borderRadius: 12,
+            background: `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: `0 4px 12px ${BRAND.primary}40`, cursor: 'pointer'
+          }} onClick={() => navigate('/member/dashboard')}>
+            <FaBolt color="#fff" size={20} />
           </div>
-
-          {showUserMenu && (
-            <>
-              <div onClick={() => setShowUserMenu(false)} style={{ position:'fixed', inset:0, zIndex:998 }} />
-              <div style={{
-                position: 'absolute', top: 48, right: 0, background: '#fff',
-                border: '1px solid #e2e8f0', borderRadius: 14,
-                boxShadow: '0 10px 30px rgba(0,0,0,0.08)', zIndex: 999, padding: '6px 0',
-                width: 170, display: 'flex', flexDirection: 'column',
-                animation: 'slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-              }}>
-                <button onClick={() => { setShowUserMenu(false); goTab('profile'); }} style={{
-                  background: 'none', border: 'none', padding: '10px 16px', color: '#1e293b',
-                  textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition:'background .15s'
-                }} onMouseEnter={e => e.target.style.background = 'rgba(0,0,0,0.03)'}
-                   onMouseLeave={e => e.target.style.background = 'none'}>
-                  👤 Profil & Diyet
-                </button>
-                <button onClick={() => { setShowUserMenu(false); goTab('chat'); }} style={{
-                  background: 'none', border: 'none', padding: '10px 16px', color: '#1e293b',
-                  textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition:'background .15s'
-                }} onMouseEnter={e => e.target.style.background = 'rgba(0,0,0,0.03)'}
-                   onMouseLeave={e => e.target.style.background = 'none'}>
-                  💬 Sohbet
-                </button>
-                <button onClick={() => { setShowUserMenu(false); goTab('qr'); }} style={{
-                  background: 'none', border: 'none', padding: '10px 16px', color: '#1e293b',
-                  textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition:'background .15s'
-                }} onMouseEnter={e => e.target.style.background = 'rgba(0,0,0,0.03)'}
-                   onMouseLeave={e => e.target.style.background = 'none'}>
-                  📱 Giriş QR Kodum
-                </button>
-                <button onClick={() => { setShowUserMenu(false); onLogout(); }} style={{
-                  background: 'none', border: 'none', padding: '10px 16px', color: '#ef4444',
-                  textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-                  borderTop: '1px solid #f1f5f9', transition:'background .15s'
-                }} onMouseEnter={e => e.target.style.background = 'rgba(0,0,0,0.03)'}
-                   onMouseLeave={e => e.target.style.background = 'none'}>
-                  🚪 Çıkış Yap
-                </button>
-              </div>
-            </>
-          )}
+          
+          {/* Navigation stack */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, width: '100%', alignItems: 'center' }}>
+            {MEMBER_TABS.map(t => {
+              const isActive = activeTab === t.id;
+              return (
+                <div key={t.id} style={{ position: 'relative' }}>
+                  <button
+                    onClick={() => goTab(t.id)}
+                    title={t.label}
+                    style={{
+                      width: 46, height: 46, borderRadius: 12, border: 'none',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer', color: isActive ? '#fff' : '#64748b',
+                      background: isActive ? `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})` : 'transparent',
+                      boxShadow: isActive ? `0 4px 12px ${BRAND.primary}30` : 'none',
+                      transition: 'all 0.15s'
+                    }}
+                    onMouseEnter={e => {
+                      if (!isActive) {
+                        e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                        e.currentTarget.style.color = '#fff';
+                      }
+                    }}
+                    onMouseLeave={e => {
+                      if (!isActive) {
+                        e.currentTarget.style.background = 'transparent';
+                        e.currentTarget.style.color = '#64748b';
+                      }
+                    }}
+                  >
+                    {t.icon}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </div>
+
+        {/* Settings / Sign out */}
+        <button
+          onClick={onLogout}
+          title="Çıkış Yap"
+          style={{
+            width: 46, height: 46, borderRadius: 12, border: 'none',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', color: '#ef4444', background: 'transparent',
+            transition: 'all 0.15s'
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.1)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+        >
+          <span style={{ fontSize: 18 }}>🚪</span>
+        </button>
       </div>
 
-      <div style={{ maxWidth:1100, margin:'0 auto', padding:'28px 20px' }}>
+      {/* Main Content Area */}
+      <div style={{ marginLeft: 76, flex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
         <div style={{
-          background: '#f1f5f9', borderRadius: 20, padding: 6,
-          display: 'inline-flex', gap: 4, border: '1px solid #e2e8f0',
-          marginBottom: 28, flexWrap: 'wrap'
+          background: 'rgba(9, 10, 12, 0.75)', backdropFilter: 'blur(12px)', padding: '14px 28px',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          borderBottom: '1px solid rgba(255,255,255,0.06)', position: 'sticky', top: 0, zIndex: 100
         }}>
-          {MEMBER_TABS.map(t => {
-            const isActive = activeTab === t.id;
-            return (
-              <button
-                key={t.id}
-                onClick={() => goTab(t.id)}
-                style={{
-                  padding: '10px 22px',
-                  borderRadius: 14,
-                  border: 'none',
-                  background: isActive ? `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})` : 'transparent',
-                  color: isActive ? '#fff' : '#64748b',
-                  fontWeight: 600,
-                  fontSize: 14,
-                  cursor: 'pointer',
-                  boxShadow: isActive ? `0 4px 12px ${BRAND.primary}30` : 'none',
-                  transition: 'background .15s, color .15s, transform .1s'
-                }}
-                onMouseEnter={e => { if(!isActive) e.target.style.color = '#1e293b'; }}
-                onMouseLeave={e => { if(!isActive) e.target.style.color = '#64748b'; }}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <span style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.5px' }}>
+              FitLife <span style={{ color: BRAND.primary }}>Pro</span>
+            </span>
+            {gymName && (
+              <span style={{
+                background: 'rgba(255,255,255,0.05)',
+                padding: '4px 14px',
+                borderRadius: 20,
+                fontSize: 13,
+                fontWeight: 600,
+                color: '#fff',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                border: '1px solid rgba(255,255,255,0.1)'
+              }}>
+                <FaBuilding style={{ fontSize: 12, color: BRAND.primary }} /> {gymName}
+              </span>
+            )}
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <Btn size="sm" color="#ef4444" onClick={() => goTab('qr')}>+ Hızlı QR Kodum</Btn>
+            
+            <div style={{ position: 'relative' }}>
+              <div
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                style={{ display: 'flex', gap: 10, alignItems: 'center', color: '#fff', cursor: 'pointer', padding: '6px 12px', borderRadius: 20, background: 'rgba(255,255,255,0.04)', transition: 'background .15s' }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+                onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
               >
-                {t.label}
-              </button>
-            );
-          })}
+                <Avatar src={resolveAvatarUrl(avatarUrl)} name={user.fullName} size={28} />
+                <span style={{ fontSize: 14, fontWeight: 600 }}>{user.fullName}</span>
+                <span style={{ fontSize: 10, color: '#9ca3af' }}>▼</span>
+              </div>
+
+              {showUserMenu && (
+                <>
+                  <div onClick={() => setShowUserMenu(false)} style={{ position: 'fixed', inset: 0, zIndex: 998 }} />
+                  <div style={{
+                    position: 'absolute', top: 48, right: 0, background: '#111827',
+                    border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14,
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.5)', zIndex: 999, padding: '6px 0',
+                    width: 170, display: 'flex', flexDirection: 'column',
+                    animation: 'slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                  }}>
+                    <button onClick={() => { setShowUserMenu(false); goTab('profile'); }} style={{
+                      background: 'none', border: 'none', padding: '10px 16px', color: '#f3f4f6',
+                      textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'background .15s'
+                    }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                       onMouseLeave={e => e.target.style.background = 'none'}>
+                      👤 Profil & Diyet
+                    </button>
+                    <button onClick={() => { setShowUserMenu(false); goTab('chat'); }} style={{
+                      background: 'none', border: 'none', padding: '10px 16px', color: '#f3f4f6',
+                      textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'background .15s'
+                    }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                       onMouseLeave={e => e.target.style.background = 'none'}>
+                      💬 Sohbet
+                    </button>
+                    <button onClick={() => { setShowUserMenu(false); onLogout(); }} style={{
+                      background: 'none', border: 'none', padding: '10px 16px', color: '#ef4444',
+                      textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600,
+                      borderTop: '1px solid rgba(255,255,255,0.06)', transition: 'background .15s'
+                    }} onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.05)'}
+                       onMouseLeave={e => e.target.style.background = 'none'}>
+                      🚪 Çıkış Yap
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
         </div>
 
-        <Routes>
-          <Route path="dashboard" element={<DashboardOverviewTab user={user} onNavigate={goTab} />} />
-          <Route path="plans" element={<PlansTab />} />
-          <Route path="mine" element={<MyEnrollmentsTab />} />
-          <Route path="programs" element={<ProgramsCatalogTab />} />
-          <Route path="profile" element={<ProfileDietTab onAvatarChange={setAvatarUrl} onLogout={onLogout} />} />
-          <Route path="myprogram" element={<MyProgramTab />} />
-          <Route path="achievements" element={<AchievementsTab />} />
-          <Route path="chat" element={<ChatTab user={user} />} />
-          <Route path="qr" element={<MyQrTab user={user} />} />
-          <Route path="*" element={<Navigate to="dashboard" replace />} />
-        </Routes>
+        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '28px 20px', width: '100%', boxSizing: 'border-box' }}>
+          <Routes>
+            <Route path="dashboard" element={<DashboardOverviewTab user={user} onNavigate={goTab} />} />
+            <Route path="plans" element={<PlansTab />} />
+            <Route path="mine" element={<MyEnrollmentsTab />} />
+            <Route path="programs" element={<ProgramsCatalogTab />} />
+            <Route path="profile" element={<ProfileDietTab onAvatarChange={setAvatarUrl} onLogout={onLogout} />} />
+            <Route path="myprogram" element={<MyProgramTab />} />
+            <Route path="achievements" element={<AchievementsTab />} />
+            <Route path="chat" element={<ChatTab user={user} />} />
+            <Route path="qr" element={<MyQrTab user={user} />} />
+            <Route path="*" element={<Navigate to="dashboard" replace />} />
+          </Routes>
+        </div>
       </div>
 
       {checkInNotice && (
@@ -1910,16 +1968,16 @@ export default function MemberDashboard({ user, onLogout }) {
           <div style={{ textAlign:'center' }}>
             <div style={{ fontSize:52, marginBottom:10 }}>🏆</div>
             <h3 style={{ margin:'0 0 6px', color:'#10b981', fontWeight:700 }}>{checkInNotice.message}</h3>
-            <p style={{ fontSize:14, color:'#64748b', margin:'0 0 20px' }}>
+            <p style={{ fontSize:14, color:'#9ca3af', margin:'0 0 20px' }}>
               Plan: {checkInNotice.plan || '—'} · Geçerlilik: {checkInNotice.validUntil}
             </p>
-            <div style={{ background:'#fcf8ff', borderRadius:12, padding:16, border:'1px solid #f3e8ff', display:'inline-block', minWidth:200 }}>
+            <div style={{ background:'rgba(255,255,255,0.03)', borderRadius:12, padding:16, border:'1px solid rgba(255,255,255,0.08)', display:'inline-block', minWidth:200 }}>
               <div style={{ fontSize:13, color:BRAND.primary, fontWeight:600 }}>Kazanılan Puan: +{checkInNotice.pointsEarned} Puan</div>
-              <div style={{ fontSize:14, fontWeight:700, marginTop:4, color:'#1e293b' }}>Toplam Puanınız: {checkInNotice.totalPoints}</div>
+              <div style={{ fontSize:14, fontWeight:700, marginTop:4, color:'#fff' }}>Toplam Puanınız: {checkInNotice.totalPoints}</div>
             </div>
             {checkInNotice.newBadges?.length > 0 && (
               <div style={{ marginTop:20 }}>
-                <div style={{ fontSize:13, fontWeight:600, color:'#b45309', marginBottom:8 }}>Yeni Kazanılan Rozet(ler)! 🏅</div>
+                <div style={{ fontSize:13, fontWeight:600, color:'#e5c158', marginBottom:8 }}>Yeni Kazanılan Rozet(ler)! 🏅</div>
                 <div style={{ display:'flex', gap:6, justifyContent:'center', flexWrap:'wrap' }}>
                   {checkInNotice.newBadges.map(b => (
                     <Badge key={b} label={b} color="#d97706" />
