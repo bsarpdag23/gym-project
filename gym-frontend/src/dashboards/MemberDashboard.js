@@ -192,6 +192,31 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
     setDeletingAcc(false);
   };
 
+  const h = parseFloat(form.heightCm);
+  const w = parseFloat(form.weightKg);
+  let bmi = null;
+  let bmiCategory = '';
+  let bmiColor = '#64748b';
+  let bmiPercent = 0;
+  if (h > 0 && w > 0) {
+    const heightM = h / 100;
+    bmi = parseFloat((w / (heightM * heightM)).toFixed(1));
+    bmiPercent = Math.min(100, Math.max(0, ((bmi - 15) / (40 - 15)) * 100));
+    if (bmi < 18.5) {
+      bmiCategory = 'Zayıf';
+      bmiColor = '#3b82f6';
+    } else if (bmi < 25) {
+      bmiCategory = 'Normal';
+      bmiColor = '#10b981';
+    } else if (bmi < 30) {
+      bmiCategory = 'Fazla Kilolu';
+      bmiColor = '#f59e0b';
+    } else {
+      bmiCategory = 'Obez';
+      bmiColor = '#ef4444';
+    }
+  }
+
   if (loading) {
     return (
       <div style={{ display:'grid', gap:20 }}>
@@ -277,6 +302,53 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
           </p>
         )}
       </Card>
+
+      {bmi && (
+        <Card style={{ marginTop: 20 }}>
+          <h3 style={{ margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8, color: '#1e293b' }}>
+            📊 Vücut Kitle Endeksi (VKI) Analizi
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+              <span style={{ fontSize: 14, fontWeight: 600, color: '#475569' }}>Mevcut VKI Değeriniz:</span>
+              <span style={{ fontSize: 24, fontWeight: 800, color: bmiColor }}>
+                {bmi} <span style={{ fontSize: 14, fontWeight: 600 }}>({bmiCategory})</span>
+              </span>
+            </div>
+            
+            {/* BMI Gradient Bar with Indicator Pin */}
+            <div style={{ position: 'relative', height: 16, borderRadius: 8, background: 'linear-gradient(90deg, #3b82f6 0%, #10b981 30%, #f59e0b 60%, #ef4444 100%)', marginBottom: 12, marginTop: 6 }}>
+              {/* Pointer indicator */}
+              <div style={{
+                position: 'absolute', left: `${bmiPercent}%`, top: -4, width: 6, height: 24,
+                background: '#1e293b', border: '2.5px solid #fff', borderRadius: 3,
+                boxShadow: '0 2px 6px rgba(0,0,0,0.3)', transform: 'translateX(-50%)',
+                transition: 'left 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+              }} />
+            </div>
+            
+            {/* BMI ranges list */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: 10, borderTop: '1px solid #e2e8f0', paddingTop: 14 }}>
+              <div style={{ textAlign: 'center', padding: '6px 4px', borderRadius: 8, background: bmiCategory === 'Zayıf' ? '#eff6ff' : 'transparent', border: bmiCategory === 'Zayıf' ? '1px solid #bfdbfe' : '1px solid transparent' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#3b82f6' }}>Zayıf</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginTop: 2 }}>&lt; 18.5</div>
+              </div>
+              <div style={{ textAlign: 'center', padding: '6px 4px', borderRadius: 8, background: bmiCategory === 'Normal' ? '#ecfdf5' : 'transparent', border: bmiCategory === 'Normal' ? '1px solid #a7f3d0' : '1px solid transparent' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#10b981' }}>Normal</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginTop: 2 }}>18.5 - 24.9</div>
+              </div>
+              <div style={{ textAlign: 'center', padding: '6px 4px', borderRadius: 8, background: bmiCategory === 'Fazla Kilolu' ? '#fffbeb' : 'transparent', border: bmiCategory === 'Fazla Kilolu' ? '1px solid #fde68a' : '1px solid transparent' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#f59e0b' }}>Fazla Kilolu</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginTop: 2 }}>25 - 29.9</div>
+              </div>
+              <div style={{ textAlign: 'center', padding: '6px 4px', borderRadius: 8, background: bmiCategory === 'Obez' ? '#fef2f2' : 'transparent', border: bmiCategory === 'Obez' ? '1px solid #fca5a5' : '1px solid transparent' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#ef4444' }}>Obez</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginTop: 2 }}>&ge; 30</div>
+              </div>
+            </div>
+          </div>
+        </Card>
+      )}
 
       <Card style={{ marginTop:20, display:'flex', justifyContent:'space-between', alignItems:'center', gap:16 }}>
         <div style={{ display:'flex', alignItems:'center', gap:12 }}>
