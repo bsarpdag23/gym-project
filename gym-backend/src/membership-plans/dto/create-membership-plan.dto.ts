@@ -1,28 +1,31 @@
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateMembershipPlanDto {
-  @IsString()
+  @IsNotEmpty({ message: 'Plan adı boş bırakılamaz.' })
+  @IsString({ message: 'Plan adı metin olmalıdır.' })
   name: string;
 
-  @IsNumber()
+  @IsNotEmpty({ message: 'Süre (ay) boş bırakılamaz.' })
+  @IsNumber({}, { message: 'Süre sayı olmalıdır.' })
   durationMonths: number;
 
-  @IsNumber()
+  @IsNotEmpty({ message: 'Fiyat boş bırakılamaz.' })
+  @IsNumber({}, { message: 'Fiyat sayı olmalıdır.' })
   price: number;
 
-  @IsString()
+  @IsString({ message: 'Açıklama metin olmalıdır.' })
   @IsOptional()
   description?: string;
 
-  @IsBoolean()
+  @IsBoolean({ message: 'Aktiflik durumu mantıksal değer olmalıdır.' })
   @IsOptional()
   isActive?: boolean;
   
-  @IsBoolean()
+  @IsBoolean({ message: 'PT dahil olma durumu mantıksal değer olmalıdır.' })
   @IsOptional()
   includesPersonalTraining?: boolean;
 
-  @IsNumber()
+  @IsNumber({}, { message: 'PT seans sayısı sayı olmalıdır.' })
   @IsOptional()
   ptSessionsCount?: number;
 }

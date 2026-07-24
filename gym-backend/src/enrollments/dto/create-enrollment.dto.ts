@@ -1,18 +1,13 @@
-import { IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateEnrollmentDto {
-  @IsNumber()
+  @IsNotEmpty({ message: 'Plan ID boş bırakılamaz.' })
+  @IsNumber({}, { message: 'Plan ID sayı olmalıdır.' })
   planId: number;
 }
 
-
-// ─────────────────────────────────────────────────────────
-// src/enrollments/dto/update-enrollment.dto.ts
-// ─────────────────────────────────────────────────────────
-import { IsOptional, IsString } from 'class-validator';
-
 export class UpdateEnrollmentDto {
-  @IsString()
+  @IsString({ message: 'Durum metin olmalıdır.' })
   @IsOptional()
   status?: string;
 }

@@ -76,7 +76,7 @@ export default function LoginPage({ onLogin, goRegister, goHome }) {
               <h2 style={{ margin:'0 0 4px', fontSize:22, display:'flex', alignItems:'center', gap:8 }}>Tekrar Hoş Geldiniz <FaRegSmile color={BRAND.primary} /></h2>
               <p style={{ color:'#6b7280', fontSize:14, margin:'0 0 24px' }}>Hesabınıza giriş yapın</p>
 
-              {err && <div style={{ background:'#fee2e2', border:'1px solid #fca5a5', color:'#dc2626', borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14 }}>{err}</div>}
+              {err && <div style={{ background:'#fee2e2', border:'1px solid #fca5a5', color:'#dc2626', borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14, whiteSpace:'pre-line' }}>{err}</div>}
               {successMsg && <div style={{ background:'#dcfce7', border:'1px solid #bbf7d0', color:'#16a34a', borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14 }}>{successMsg}</div>}
 
               <Input label="Email" value={form.email} onChange={set('email')} type="email" placeholder="ornek@firma.com" />
@@ -108,7 +108,7 @@ export default function LoginPage({ onLogin, goRegister, goHome }) {
               <h2 style={{ margin:'0 0 4px', fontSize:22, display:'flex', alignItems:'center', gap:8 }}>Şifremi Unuttum <FaKey color={BRAND.primary} /></h2>
               <p style={{ color:'#6b7280', fontSize:14, margin:'0 0 24px' }}>Hesabınıza ait e-posta adresini girin, şifre sıfırlama kodu gönderelim.</p>
 
-              {err && <div style={{ background:'#fee2e2', border:'1px solid #fca5a5', color:'#dc2626', borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14 }}>{err}</div>}
+              {err && <div style={{ background:'#fee2e2', border:'1px solid #fca5a5', color:'#dc2626', borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14, whiteSpace:'pre-line' }}>{err}</div>}
 
               <Input label="E-posta Adresi" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} type="email" placeholder="ornek@firma.com" />
 
@@ -130,7 +130,7 @@ export default function LoginPage({ onLogin, goRegister, goHome }) {
               <h2 style={{ margin:'0 0 4px', fontSize:22, display:'flex', alignItems:'center', gap:8 }}>Şifreyi Sıfırla <FaLock color={BRAND.primary} /></h2>
               <p style={{ color:'#6b7280', fontSize:14, margin:'0 0 24px' }}>E-posta adresinize gönderilen 6 haneli kodu ve yeni şifrenizi girin.</p>
 
-              {err && <div style={{ background:'#fee2e2', border:'1px solid #fca5a5', color:'#dc2626', borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14 }}>{err}</div>}
+              {err && <div style={{ background:'#fee2e2', border:'1px solid #fca5a5', color:'#dc2626', borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14, whiteSpace:'pre-line' }}>{err}</div>}
               {simulatedCode && (
                 <div style={{ background:'#e0f2fe', border:'1px solid #bae6fd', color:'#0369a1', borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14, fontWeight:600 }}>
                   Simüle Edilen Kod: {simulatedCode} (Kutucuğa otomatik yazıldı)

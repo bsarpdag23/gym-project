@@ -31,7 +31,9 @@ const api = {
         localStorage.removeItem('user');
         window.location.href = '/login';
       }
-      const msg = data?.message || `Hata oluştu (${res.status})`;
+      const msg = Array.isArray(data?.message)
+        ? data.message.join('\n')
+        : (data?.message || `Hata oluştu (${res.status})`);
       throw new Error(msg);
     }
     return data;
@@ -62,7 +64,9 @@ const api = {
         localStorage.removeItem('user');
         window.location.href = '/login';
       }
-      const msg = data?.message || `Yükleme başarısız oldu (${res.status})`;
+      const msg = Array.isArray(data?.message)
+        ? data.message.join('\n')
+        : (data?.message || `Yükleme başarısız oldu (${res.status})`);
       throw new Error(msg);
     }
     return data;

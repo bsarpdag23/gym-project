@@ -1,6 +1,7 @@
-import { IsIn } from 'class-validator';
+import { IsIn, IsNotEmpty } from 'class-validator';
 
 export class UpdateRoleDto {
-  @IsIn(['admin', 'trainer', 'member'])
+  @IsNotEmpty({ message: 'Rol alanı boş bırakılamaz.' })
+  @IsIn(['admin', 'trainer', 'member'], { message: 'Geçersiz rol seçimi.' })
   role: string;
 }

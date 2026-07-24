@@ -1,32 +1,39 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateExerciseDto {
-  @IsString()
+  @IsNotEmpty({ message: 'Egzersiz adı boş bırakılamaz.' })
+  @IsString({ message: 'Egzersiz adı metin olmalıdır.' })
   name: string;
 
-  @IsString() @IsOptional()
+  @IsString({ message: 'Açıklama metin olmalıdır.' })
+  @IsOptional()
   description?: string;
 
-  @IsString()
+  @IsNotEmpty({ message: 'Kategori boş bırakılamaz.' })
+  @IsString({ message: 'Kategori metin olmalıdır.' })
   category: string;
 
-  @IsString() @IsOptional()
+  @IsString({ message: 'Kas grubu metin olmalıdır.' })
+  @IsOptional()
   muscleGroup?: string;
 
-  @IsString() @IsOptional()
+  @IsString({ message: 'Hedef türü metin olmalıdır.' })
+  @IsOptional()
   goalType?: string;
 
-  @IsString() @IsOptional()
+  @IsString({ message: 'Ekipman metin olmalıdır.' })
+  @IsOptional()
   equipment?: string;
 
-  @IsNumber() @IsOptional()
+  @IsNumber({}, { message: 'Set sayısı sayı olmalıdır.' })
+  @IsOptional()
   sets?: number;
 
-  @IsNumber() @IsOptional()
+  @IsNumber({}, { message: 'Tekrar sayısı sayı olmalıdır.' })
+  @IsOptional()
   reps?: number;
 
-  @IsString() @IsOptional()
+  @IsString({ message: 'Video URL metin olmalıdır.' })
+  @IsOptional()
   videoUrl?: string;
-
-  
 }

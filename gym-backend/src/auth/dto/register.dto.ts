@@ -1,23 +1,26 @@
-import { IsEmail, IsOptional, IsString, MinLength, IsInt } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength, IsInt } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class RegisterDto {
-  @IsEmail()
+  @IsNotEmpty({ message: 'E-posta adresi boş bırakılamaz.' })
+  @IsEmail({}, { message: 'Geçerli bir e-posta adresi giriniz.' })
   email: string;
 
-  @IsString()
+  @IsNotEmpty({ message: 'Ad Soyad alanı boş bırakılamaz.' })
+  @IsString({ message: 'Ad Soyad metin formatında olmalıdır.' })
   fullName: string;
 
-  @IsString()
-  @MinLength(6)
+  @IsNotEmpty({ message: 'Şifre boş bırakılamaz.' })
+  @IsString({ message: 'Şifre metin formatında olmalıdır.' })
+  @MinLength(6, { message: 'Şifre en az 6 karakter olmalıdır.' })
   password: string;
 
-  @IsString()
+  @IsString({ message: 'Telefon numarası metin formatında olmalıdır.' })
   @IsOptional()
   phone?: string;
 
   @IsOptional()
-  @IsInt()
+  @IsInt({ message: 'Salon ID tam sayı olmalıdır.' })
   @Type(() => Number)
   gymId?: number;
 }

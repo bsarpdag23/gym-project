@@ -70,7 +70,7 @@ export default function RegisterPage({ goLogin, goHome }) {
               <p style={{ color:'#6b7280', fontSize:14, margin:'0 0 22px' }}>14 gün ücretsiz, kart gerekmez</p>
 
               {err && <div style={{ background:'#fee2e2', border:'1px solid #fca5a5', color:'#dc2626',
-                borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14 }}>{err}</div>}
+                borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14, whiteSpace:'pre-line' }}>{err}</div>}
 
               <Input label="Ad Soyad" value={form.fullName} onChange={set('fullName')} placeholder="Ali Yılmaz" />
               <Input label="Telefon"  value={form.phone}    onChange={set('phone')} placeholder="05XX XXX XX XX" />
