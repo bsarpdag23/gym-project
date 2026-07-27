@@ -1,5 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ProfileInput, GoalType } from './fitness-calculator';
+import * as fs from 'fs';
 
 export interface GroqApiStatus {
   status: 'healthy' | 'warning' | 'error' | 'invalid_key';
@@ -190,9 +191,24 @@ Cevabını SADECE aşağıdaki JSON formatında ver. Başka hiçbir açıklama, 
     }
   }
 
+  private getActiveGroqApiKey(): string {
+    try {
+      if (fs.existsSync('.env')) {
+        const content = fs.readFileSync('.env', 'utf8');
+        const match = content.match(/^GROQ_API_KEY\s*=\s*(.+)$/m);
+        if (match && match[1]) {
+          const key = match[1].trim().replace(/^["']|["']$/g, '');
+          if (key) process.env.GROQ_API_KEY = key;
+        }
+      }
+    } catch (e) {}
+    return process.env.GROQ_API_KEY || '';
+  }
+
   // ── Groq (Llama) API çağrısı — OpenAI uyumlu endpoint, SDK gerekmez ──
   private async callGroq(prompt: string): Promise<string> {
-    if (!process.env.GROQ_API_KEY) {
+    const apiKey = this.getActiveGroqApiKey();
+    if (!apiKey) {
       this.latestStatus = {
         ...this.latestStatus,
         status: 'invalid_key',
@@ -207,7 +223,7 @@ Cevabını SADECE aşağıdaki JSON formatında ver. Başka hiçbir açıklama, 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
