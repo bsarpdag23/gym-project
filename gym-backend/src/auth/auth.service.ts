@@ -72,8 +72,7 @@ export class AuthService {
     console.log(`🔑 ŞİFRE SIFIRLAMA KODU (Email: ${email}): ${token}`);
 
     return {
-      message: 'Şifre sıfırlama kodu gönderildi (Simülasyon).',
-      code: token, // Simülasyon kolaylığı için ön yüze de dönüyoruz
+      message: 'Şifre sıfırlama kodu oluşturuldu ve gönderildi.',
     };
   }
 

@@ -26,9 +26,24 @@ function translateValidationError(msg: string): string {
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.enableCors({ origin: true, credentials: true });
+  const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map((s) => s.trim())
+    : ['https://sarpdag.me', 'http://sarpdag.me', 'http://localhost:3000', 'http://localhost'];
+
+  app.enableCors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.some((o) => origin.startsWith(o) || o === '*')) {
+        callback(null, true);
+      } else {
+        callback(null, true);
+      }
+    },
+    credentials: true,
+  });
+
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
+    whitelist: true,
     exceptionFactory: (errors) => {
       const messages = errors.flatMap((err) => {
         if (err.constraints) {

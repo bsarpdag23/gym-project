@@ -60,9 +60,16 @@ import { MessagesController } from './messages/messages.controller';
 import { MessagesService } from './messages/messages.service';
 import { MessagesGateway } from './messages/messages.gateway';
 
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 120,
+    }]),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST || 'localhost',
@@ -71,7 +78,7 @@ import { MessagesGateway } from './messages/messages.gateway';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [User, MembershipPlan, Enrollment, Exercise, WorkoutProgram, ProgramRating, HealthProfile, FitnessProgram, CheckIn, Gym, Message],
-      synchronize: true,         // Tabloları otomatik oluşturur (dev için)
+      synchronize: process.env.NODE_ENV === 'production' ? false : true,
       logging: false,
     }),
     TypeOrmModule.forFeature([User, MembershipPlan, Enrollment, Exercise, WorkoutProgram, ProgramRating, HealthProfile, FitnessProgram, CheckIn, Gym, Message]),
@@ -96,6 +103,10 @@ import { MessagesGateway } from './messages/messages.gateway';
     MessagesController,
   ],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
     AuthService,
     JwtStrategy,
     MembershipPlansService,
