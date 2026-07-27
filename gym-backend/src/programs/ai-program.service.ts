@@ -192,17 +192,23 @@ Cevabını SADECE aşağıdaki JSON formatında ver. Başka hiçbir açıklama, 
   }
 
   private getActiveGroqApiKey(): string {
-    try {
-      if (fs.existsSync('.env')) {
-        const content = fs.readFileSync('.env', 'utf8');
-        const match = content.match(/^GROQ_API_KEY\s*=\s*(.+)$/m);
-        if (match && match[1]) {
-          const key = match[1].trim().replace(/^["']|["']$/g, '');
-          if (key) process.env.GROQ_API_KEY = key;
+    const paths = ['.env', '../.env', 'gym-backend/.env'];
+    for (const p of paths) {
+      try {
+        if (fs.existsSync(p)) {
+          const content = fs.readFileSync(p, 'utf8');
+          const match = content.match(/^GROQ_API_KEY\s*=\s*(.+)$/m);
+          if (match && match[1]) {
+            const key = match[1].trim().replace(/^["']|["']$/g, '');
+            if (key) {
+              process.env.GROQ_API_KEY = key;
+              return key;
+            }
+          }
         }
-      }
-    } catch (e) {}
-    return process.env.GROQ_API_KEY || '';
+      } catch (e) {}
+    }
+    return (process.env.GROQ_API_KEY || '').trim();
   }
 
   // ── Groq (Llama) API çağrısı — OpenAI uyumlu endpoint, SDK gerekmez ──
