@@ -316,12 +316,17 @@ function GymListView({ user, onLogout }) {
             </div>
 
             {/* Error / Warning Alert Banner */}
-            {globalStats.aiStatus.status === 'invalid_key' && (
+            {(globalStats.aiStatus.status === 'invalid_key' || globalStats.aiStatus.status === 'error') && (
               <div style={{
                 background: '#fef2f2', border: '1px solid #fca5a5', color: '#dc2626',
                 borderRadius: 10, padding: '12px 16px', fontSize: 13, marginBottom: 16, fontWeight: 600
               }}>
                 🚨 <strong>Kritik Uyarı:</strong> Groq API anahtarınız geçersiz veya süresi dolmuş! Diyet ve antrenman üretimi otomatik yedek hesaplama motoruna düşmektedir. Kesintisiz AI hizmeti için <code>.env</code> dosyasındaki <code>GROQ_API_KEY</code> değerini yenisiyle değiştirin.
+                {globalStats.aiStatus.errorMessage && (
+                  <div style={{ fontSize: 11, color: '#991b1b', marginTop: 6, fontFamily: 'monospace', wordBreak: 'break-all', background: 'rgba(255,255,255,0.6)', padding: '6px 10px', borderRadius: 6 }}>
+                    Sunucu Hata Yanıtı: {globalStats.aiStatus.errorMessage}
+                  </div>
+                )}
               </div>
             )}
 

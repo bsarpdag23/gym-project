@@ -38,6 +38,7 @@ services:
       - "3001:3001"
     volumes:
       - uploads_data:/app/uploads
+      - ./gym-backend/.env:/app/.env:ro
     depends_on:
       - db
 
