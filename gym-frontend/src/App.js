@@ -8,6 +8,7 @@ import AdminDashboard from './dashboards/AdminDashboard';
 import MemberDashboard from './dashboards/MemberDashboard';
 import SuperAdminDashboard from './dashboards/SuperAdminDashboard';
 import { disconnectSocket } from './socket';
+import api from './api';
 
 function homePathFor(user) {
   if (!user) return '/';
@@ -61,11 +62,43 @@ export default function App() {
   const [loaded, setLoaded] = useState(false);
   const [toasts, setToasts] = useState([]);
 
+  const logout = () => {
+    disconnectSocket();
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+  };
+
   useEffect(() => {
+    const token = localStorage.getItem('token');
     const u = localStorage.getItem('user');
-    const t = localStorage.getItem('token');
-    if (u && t) setUser(JSON.parse(u));
-    setLoaded(true);
+
+    if (token) {
+      if (u) {
+        try { setUser(JSON.parse(u)); } catch (e) {}
+      }
+      // Sunucudan gerçek rol ve yetki bilgilerini doğrula
+      api.users.getMe()
+        .then((realUser) => {
+          if (realUser && realUser.id) {
+            setUser(realUser);
+            localStorage.setItem('user', JSON.stringify(realUser));
+          } else {
+            logout();
+          }
+        })
+        .catch(() => {
+          // Token geçersizse veya yetki tahrifi yapıldıysa oturumu kapat
+          logout();
+        })
+        .finally(() => {
+          setLoaded(true);
+        });
+    } else {
+      localStorage.removeItem('user');
+      setUser(null);
+      setLoaded(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -104,12 +137,6 @@ export default function App() {
   }, []);
 
   const handleLogin = (u) => setUser(u);
-  const logout = () => {
-    disconnectSocket();
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-  };
 
   if (!loaded) return null;
 

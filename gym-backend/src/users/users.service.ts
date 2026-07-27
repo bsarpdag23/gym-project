@@ -76,7 +76,17 @@ export class UsersService {
     const user = await this.repo.findOne({ where: { id: userId } });
     if (!user) throw new BadRequestException('Kullanıcı bulunamadı.');
 
-    // Güvenlik: salon sahibi sadece kendi salonundaki kullanıcının rolünü değiştirebilir
+    // Güvenlik 1: Yalnızca Süper Admin yeni bir Süper Admin atayabilir
+    if (role === UserRole.SUPER_ADMIN && currentUser.role !== 'super_admin') {
+      throw new BadRequestException('Yalnızca Süper Admin bu rolü atayabilir.');
+    }
+
+    // Güvenlik 2: Normal admin Süper Admin hesabının rolünü değiştiremez
+    if (user.role === UserRole.SUPER_ADMIN && currentUser.role !== 'super_admin') {
+      throw new BadRequestException('Süper Admin hesabının yetkileri değiştirilemez.');
+    }
+
+    // Güvenlik 3: Salon sahibi sadece kendi salonundaki kullanıcının rolünü değiştirebilir
     if (currentUser.role !== 'super_admin' && user.gymId !== currentUser.gymId) {
       throw new BadRequestException('Bu kullanıcı sizin salonunuza ait değil.');
     }
