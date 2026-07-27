@@ -21,7 +21,10 @@ services:
     container_name: gym-backend
     restart: always
     env_file:
-      - ./gym-backend/.env
+      - path: ./gym-backend/.env
+        required: false
+      - path: .env
+        required: false
     environment:
       DB_HOST: db
       DB_PORT: 5432
@@ -35,7 +38,6 @@ services:
       - "3001:3001"
     volumes:
       - uploads_data:/app/uploads
-      - ./gym-backend/.env:/app/.env
     depends_on:
       - db
 
