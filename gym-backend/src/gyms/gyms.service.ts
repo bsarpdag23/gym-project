@@ -8,6 +8,7 @@ import { CheckIn } from '../check-ins/entities/check-in.entity';
 import { MembershipPlan } from '../membership-plans/entities/membership-plan.entity';
 import { MoreThanOrEqual } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { AiProgramService } from '../programs/ai-program.service';
 
 @Injectable()
 export class GymsService {
@@ -16,6 +17,7 @@ export class GymsService {
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Enrollment) private enrollmentRepo: Repository<Enrollment>,
     @InjectRepository(CheckIn) private checkInRepo: Repository<CheckIn>,
+    private aiProgramService: AiProgramService,
   ) {}
 
   // Tüm salonlar (süper admin görür)
@@ -146,13 +148,20 @@ export class GymsService {
       where: { checkInTime: MoreThanOrEqual(startOfToday) },
     });
 
+    const aiStatus = await this.aiProgramService.getApiStatus();
+
     return {
       totalGyms,
       totalMembers,
       activeEnrollments,
       totalRevenue,
       todayCheckIns,
+      aiStatus,
     };
+  }
+
+  async testAiStatus() {
+    return this.aiProgramService.testApiStatus();
   }
 
   async findPublicDetail(gymId: number) {

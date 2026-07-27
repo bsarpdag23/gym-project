@@ -46,6 +46,13 @@ export class GymsController {
     return this.service.getGlobalStats();
   }
 
+  @Post('ai-status/test')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('super_admin')
+  testAiStatus() {
+    return this.service.testAiStatus();
+  }
+
   @Get(':id/detail')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('super_admin')

@@ -173,6 +173,7 @@ function GymListView({ user, onLogout }) {
   });
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState('');
+  const [testingAi, setTestingAi] = useState(false);
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
   const load = async () => {
@@ -189,6 +190,17 @@ function GymListView({ user, onLogout }) {
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
+
+  const handleTestAi = async () => {
+    setTestingAi(true);
+    try {
+      const updatedAiStatus = await api.gyms.testAiStatus();
+      setGlobalStats(prev => ({ ...prev, aiStatus: updatedAiStatus }));
+    } catch (e) {
+      alert('AI Status test hatası: ' + e.message);
+    }
+    setTestingAi(false);
+  };
 
   const openAdd = () => {
     setForm({ name:'', address:'', phone:'', ownerName:'', ownerEmail:'', ownerPassword:'' });
@@ -253,6 +265,122 @@ function GymListView({ user, onLogout }) {
 
       <div style={{ maxWidth:1100, margin:'0 auto', padding:'28px 20px' }}>
         
+        {/* AI Model & Groq API Key Rate Limit Status Card */}
+        {globalStats?.aiStatus && (
+          <Card style={{
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: 16,
+            padding: 22,
+            marginBottom: 24,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{
+                  width: 38, height: 38, borderRadius: 10,
+                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 18
+                }}>
+                  🤖
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 17, fontWeight: 800, color: '#1e293b' }}>
+                    AI Servis Durumu & Groq API Limiti
+                  </h3>
+                  <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
+                    Model: <span style={{ fontWeight: 700, color: '#6366f1' }}>Groq (Llama 3.3 70B Versatile)</span>
+                    {globalStats.aiStatus.lastChecked && (
+                      <span style={{ marginLeft: 10 }}>• Son Kontrol: {new Date(globalStats.aiStatus.lastChecked).toLocaleTimeString('tr-TR')}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                {/* Status Badge */}
+                {globalStats.aiStatus.status === 'healthy' && (
+                  <Badge label="🟢 Sağlıklı (Limit Yeterli)" color="#10b981" />
+                )}
+                {globalStats.aiStatus.status === 'warning' && (
+                  <Badge label="⚠️ Uyarı: Limit Azalıyor (<%20)" color="#f59e0b" />
+                )}
+                {(globalStats.aiStatus.status === 'error' || globalStats.aiStatus.status === 'invalid_key') && (
+                  <Badge label="🔴 Kritik: API Anahtar Hatası" color="#ef4444" />
+                )}
+
+                <Btn size="sm" outline color="#6366f1" onClick={handleTestAi} disabled={testingAi}>
+                  {testingAi ? 'Test Ediliyor...' : '⚡ API Key\'i Test Et'}
+                </Btn>
+              </div>
+            </div>
+
+            {/* Error / Warning Alert Banner */}
+            {globalStats.aiStatus.status === 'invalid_key' && (
+              <div style={{
+                background: '#fef2f2', border: '1px solid #fca5a5', color: '#dc2626',
+                borderRadius: 10, padding: '12px 16px', fontSize: 13, marginBottom: 16, fontWeight: 600
+              }}>
+                🚨 <strong>Kritik Uyarı:</strong> Groq API anahtarınız geçersiz veya süresi dolmuş! Diyet ve antrenman üretimi otomatik yedek hesaplama motoruna düşmektedir. Kesintisiz AI hizmeti için <code>.env</code> dosyasındaki <code>GROQ_API_KEY</code> değerini yenisiyle değiştirin.
+              </div>
+            )}
+
+            {globalStats.aiStatus.status === 'warning' && (
+              <div style={{
+                background: '#fffbeb', border: '1px solid #fde68a', color: '#b45309',
+                borderRadius: 10, padding: '12px 16px', fontSize: 13, marginBottom: 16, fontWeight: 600
+              }}>
+                ⚠️ <strong>Uyarı:</strong> Groq API kullanım limitinizin %80'den fazlası harcandı! Kesinti yaşamamak için yakında API anahtarını değiştirmeniz önerilir.
+              </div>
+            )}
+
+            {/* Limit Metrics Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+              {/* Request Limit */}
+              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 14 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, color: '#475569', marginBottom: 6 }}>
+                  <span>Dakikalık İstek Limiti (RPM)</span>
+                  <span style={{ color: globalStats.aiStatus.remainingPercentRequests < 20 ? '#ef4444' : '#10b981' }}>
+                    %{globalStats.aiStatus.remainingPercentRequests ?? 100} Kalan
+                  </span>
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: '#1e293b', marginBottom: 8 }}>
+                  {globalStats.aiStatus.remainingRequests != null ? `${globalStats.aiStatus.remainingRequests.toLocaleString('tr')} / ${globalStats.aiStatus.limitRequests?.toLocaleString('tr') || '—'}` : 'Henüz Ölçülmedi'}
+                </div>
+                <div style={{ height: 6, background: '#e2e8f0', borderRadius: 3, overflow: 'hidden' }}>
+                  <div style={{
+                    height: '100%',
+                    width: `${Math.min(100, Math.max(0, globalStats.aiStatus.remainingPercentRequests ?? 100))}%`,
+                    background: globalStats.aiStatus.remainingPercentRequests < 20 ? '#ef4444' : globalStats.aiStatus.remainingPercentRequests < 50 ? '#f59e0b' : '#10b981',
+                    transition: 'width 0.3s'
+                  }} />
+                </div>
+              </div>
+
+              {/* Token Limit */}
+              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: 14 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 700, color: '#475569', marginBottom: 6 }}>
+                  <span>Dakikalık Token Limiti (TPM)</span>
+                  <span style={{ color: globalStats.aiStatus.remainingPercentTokens < 20 ? '#ef4444' : '#10b981' }}>
+                    %{globalStats.aiStatus.remainingPercentTokens ?? 100} Kalan
+                  </span>
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: '#1e293b', marginBottom: 8 }}>
+                  {globalStats.aiStatus.remainingTokens != null ? `${globalStats.aiStatus.remainingTokens.toLocaleString('tr')} / ${globalStats.aiStatus.limitTokens?.toLocaleString('tr') || '—'}` : 'Henüz Ölçülmedi'}
+                </div>
+                <div style={{ height: 6, background: '#e2e8f0', borderRadius: 3, overflow: 'hidden' }}>
+                  <div style={{
+                    height: '100%',
+                    width: `${Math.min(100, Math.max(0, globalStats.aiStatus.remainingPercentTokens ?? 100))}%`,
+                    background: globalStats.aiStatus.remainingPercentTokens < 20 ? '#ef4444' : globalStats.aiStatus.remainingPercentTokens < 50 ? '#f59e0b' : '#10b981',
+                    transition: 'width 0.3s'
+                  }} />
+                </div>
+              </div>
+            </div>
+          </Card>
+        )}
+
         {/* Global Platform Stats Dashboard */}
         {globalStats && (
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))', gap:16, marginBottom:28 }}>

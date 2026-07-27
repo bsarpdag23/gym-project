@@ -1,9 +1,33 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-// import { GoogleGenerativeAI } from '@google/generative-ai';   // ← Gemini (kredi açılınca geri alınacak)
 import { ProfileInput, GoalType } from './fitness-calculator';
+
+export interface GroqApiStatus {
+  status: 'healthy' | 'warning' | 'error' | 'invalid_key';
+  hasKey: boolean;
+  limitRequests: number | null;
+  remainingRequests: number | null;
+  limitTokens: number | null;
+  remainingTokens: number | null;
+  remainingPercentRequests: number;
+  remainingPercentTokens: number;
+  lastChecked: string | null;
+  errorMessage: string | null;
+}
 
 @Injectable()
 export class AiProgramService {
+  private latestStatus: GroqApiStatus = {
+    status: 'healthy',
+    hasKey: !!process.env.GROQ_API_KEY,
+    limitRequests: null,
+    remainingRequests: null,
+    limitTokens: null,
+    remainingTokens: null,
+    remainingPercentRequests: 100,
+    remainingPercentTokens: 100,
+    lastChecked: null,
+    errorMessage: null,
+  };
   // ── GEMINI (devre dışı — prepay kredisi yüklendiğinde yorumdan çıkar) ──
   // private genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
@@ -168,6 +192,17 @@ Cevabını SADECE aşağıdaki JSON formatında ver. Başka hiçbir açıklama, 
 
   // ── Groq (Llama) API çağrısı — OpenAI uyumlu endpoint, SDK gerekmez ──
   private async callGroq(prompt: string): Promise<string> {
+    if (!process.env.GROQ_API_KEY) {
+      this.latestStatus = {
+        ...this.latestStatus,
+        status: 'invalid_key',
+        hasKey: false,
+        lastChecked: new Date().toISOString(),
+        errorMessage: 'GROQ_API_KEY ortam değişkeni ayarlanmamış.',
+      };
+      throw new Error('GROQ_API_KEY ortam değişkeni ayarlanmamış.');
+    }
+
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -181,13 +216,74 @@ Cevabını SADECE aşağıdaki JSON formatında ver. Başka hiçbir açıklama, 
       }),
     });
 
+    const limitReq = parseInt(res.headers.get('x-ratelimit-limit-requests') || '0', 10) || null;
+    const remReq = parseInt(res.headers.get('x-ratelimit-remaining-requests') || '0', 10) || null;
+    const limitTok = parseInt(res.headers.get('x-ratelimit-limit-tokens') || '0', 10) || null;
+    const remTok = parseInt(res.headers.get('x-ratelimit-remaining-tokens') || '0', 10) || null;
+
+    const reqPct = (limitReq && remReq != null) ? Math.round((remReq / limitReq) * 100) : 100;
+    const tokPct = (limitTok && remTok != null) ? Math.round((remTok / limitTok) * 100) : 100;
+
+    let statusStatus: 'healthy' | 'warning' | 'error' | 'invalid_key' = 'healthy';
+    if (!res.ok) {
+      if (res.status === 401) statusStatus = 'invalid_key';
+      else statusStatus = 'error';
+    } else if (reqPct < 20 || tokPct < 20) {
+      statusStatus = 'warning';
+    }
+
     if (!res.ok) {
       const errText = await res.text();
+      this.latestStatus = {
+        status: statusStatus,
+        hasKey: true,
+        limitRequests: limitReq,
+        remainingRequests: remReq,
+        limitTokens: limitTok,
+        remainingTokens: remTok,
+        remainingPercentRequests: reqPct,
+        remainingPercentTokens: tokPct,
+        lastChecked: new Date().toISOString(),
+        errorMessage: `Groq Hata (${res.status}): ${errText}`,
+      };
       throw new Error(`Groq hatası: ${res.status} - ${errText}`);
     }
 
+    this.latestStatus = {
+      status: statusStatus,
+      hasKey: true,
+      limitRequests: limitReq,
+      remainingRequests: remReq,
+      limitTokens: limitTok,
+      remainingTokens: remTok,
+      remainingPercentRequests: reqPct,
+      remainingPercentTokens: tokPct,
+      lastChecked: new Date().toISOString(),
+      errorMessage: null,
+    };
+
     const data = await res.json();
     return data.choices[0].message.content;
+  }
+
+  async getApiStatus(): Promise<GroqApiStatus> {
+    if (!this.latestStatus.lastChecked && process.env.GROQ_API_KEY) {
+      try {
+        await this.callGroq('Test connection ping');
+      } catch (e) {
+        // Status updated in callGroq catch
+      }
+    }
+    return this.latestStatus;
+  }
+
+  async testApiStatus(): Promise<GroqApiStatus> {
+    try {
+      await this.callGroq('Test connection ping');
+    } catch (e) {
+      // Status updated in callGroq catch
+    }
+    return this.latestStatus;
   }
 
   // AI başarısız olursa kullanılacak yedek diyet planı üreticisi
