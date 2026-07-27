@@ -189,4 +189,78 @@ Cevabını SADECE aşağıdaki JSON formatında ver. Başka hiçbir açıklama, 
     const data = await res.json();
     return data.choices[0].message.content;
   }
+
+  // AI başarısız olursa kullanılacak yedek diyet planı üreticisi
+  generateFallbackDietPlan(goal: string, calories: number, macros: { proteinG: number; carbsG: number; fatG: number }) {
+    const bfastCals = Math.round(calories * 0.25);
+    const lunchCals = Math.round(calories * 0.35);
+    const dinnerCals = Math.round(calories * 0.30);
+    const snackCals = calories - (bfastCals + lunchCals + dinnerCals);
+
+    const bfastP = Math.round(macros.proteinG * 0.25);
+    const lunchP = Math.round(macros.proteinG * 0.35);
+    const dinnerP = Math.round(macros.proteinG * 0.30);
+    const snackP = macros.proteinG - (bfastP + lunchP + dinnerP);
+
+    const bfastC = Math.round(macros.carbsG * 0.25);
+    const lunchC = Math.round(macros.carbsG * 0.35);
+    const dinnerC = Math.round(macros.carbsG * 0.30);
+    const snackC = macros.carbsG - (bfastC + lunchC + dinnerC);
+
+    const bfastF = Math.round(macros.fatG * 0.25);
+    const lunchF = Math.round(macros.fatG * 0.35);
+    const dinnerF = Math.round(macros.fatG * 0.30);
+    const snackF = macros.fatG - (bfastF + lunchF + dinnerF);
+
+    return {
+      meals: [
+        {
+          name: "Kahvaltı",
+          time: "08:00",
+          items: [
+            "3 adet yumurta (haşlanmış veya az zeytinyağında omlet)",
+            "60g süzme lor peyniri veya beyaz peynir",
+            "2 dilim tam buğday ekmeği",
+            "10 adet zeytin, domates ve salatalık"
+          ],
+          calories: bfastCals,
+          macros: { protein: bfastP, carbs: bfastC, fat: bfastF }
+        },
+        {
+          name: "Öğle Yemeği",
+          time: "13:00",
+          items: [
+            "180g ızgara tavuk göğsü veya hindi",
+            "1 su bardağı haşlanmış esmer pirinç veya bulgur pilavı",
+            "1 tatlı kaşığı zeytinyağlı mevsim salata",
+            "1 kase yoğurt"
+          ],
+          calories: lunchCals,
+          macros: { protein: lunchP, carbs: lunchC, fat: lunchF }
+        },
+        {
+          name: "Ara Öğün",
+          time: "16:00",
+          items: [
+            "1 adet orta boy muz veya elma",
+            "15 adet çiğ badem veya ceviz içi",
+            "1 ölçek whey protein veya 1 su bardağı süt"
+          ],
+          calories: snackCals,
+          macros: { protein: snackP, carbs: snackC, fat: snackF }
+        },
+        {
+          name: "Akşam Yemeği",
+          time: "19:00",
+          items: [
+            "180g ızgara somon / köfte veya fırın tavuk",
+            "150g fırınlanmış tatlı patates veya haşlanmış patates",
+            "Bol yeşillikli zeytinyağlı salata"
+          ],
+          calories: dinnerCals,
+          macros: { protein: dinnerP, carbs: dinnerC, fat: dinnerF }
+        }
+      ]
+    };
+  }
 }

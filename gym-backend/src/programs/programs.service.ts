@@ -219,16 +219,30 @@ export class ProgramsService {
 
     const { input } = await this.getProfileInput(userId);
 
-    const dietPlan = await this.aiProgramService.generateDietPlan(
-      input,
-      activeProgram.goal,
-      activeProgram.dailyCalories,
-      {
-        proteinG: activeProgram.proteinG,
-        carbsG: activeProgram.carbsG,
-        fatG: activeProgram.fatG,
-      }
-    );
+    let dietPlan;
+    try {
+      dietPlan = await this.aiProgramService.generateDietPlan(
+        input,
+        activeProgram.goal,
+        activeProgram.dailyCalories,
+        {
+          proteinG: activeProgram.proteinG,
+          carbsG: activeProgram.carbsG,
+          fatG: activeProgram.fatG,
+        }
+      );
+    } catch (err) {
+      console.warn('⚠️ AI Diyet Üretme Hatası (Yedek Hesaplanmış Diyet Listesine Düşülüyor):', err.message);
+      dietPlan = this.aiProgramService.generateFallbackDietPlan(
+        activeProgram.goal,
+        activeProgram.dailyCalories,
+        {
+          proteinG: activeProgram.proteinG,
+          carbsG: activeProgram.carbsG,
+          fatG: activeProgram.fatG,
+        }
+      );
+    }
 
     activeProgram.dietPlan = dietPlan;
     return this.programRepo.save(activeProgram);
