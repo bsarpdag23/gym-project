@@ -1414,6 +1414,108 @@ function DashboardOverviewTab({ user, onNavigate }) {
         </Card>
       )}
 
+      {/* Bugünün Antrenman Programı Kartı */}
+      {todayWorkout ? (
+        <Card style={{
+          background: '#ffffff',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 8px 30px rgba(0,0,0,0.04)',
+          padding: 24,
+          borderRadius: 16,
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{
+                width: 44, height: 44, borderRadius: 12,
+                background: 'linear-gradient(135deg, #e11d48, #f43f5e)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#fff', fontSize: 20, boxShadow: '0 4px 14px rgba(225,29,72,0.35)', flexShrink: 0
+              }}>
+                <FaDumbbell />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: '#1e293b' }}>
+                  Bugünün Antrenmanı {todayWorkout.day ? `(Gün ${todayWorkout.day})` : ''}
+                </h3>
+                <div style={{ fontSize: 13, color: '#64748b', marginTop: 2 }}>
+                  Odak Bölge: <span style={{ fontWeight: 700, color: '#e11d48' }}>{todayWorkout.focus || 'Genel Vücut'}</span>
+                </div>
+              </div>
+            </div>
+            <Btn size="sm" color={BRAND.primary} onClick={() => onNavigate('program')}>
+              Tüm Programı Gör →
+            </Btn>
+          </div>
+
+          {todayWorkout.exercises && todayWorkout.exercises.length > 0 ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+              {todayWorkout.exercises.map((ex, idx) => (
+                <div key={idx} style={{
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 12,
+                  padding: '12px 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 12
+                }}>
+                  <div style={{ overflow: 'hidden' }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: '#1e293b', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{ex.name}</div>
+                    {ex.muscleGroup && (
+                      <div style={{ fontSize: 11, color: '#64748b', textTransform: 'capitalize', marginTop: 2 }}>
+                        {ex.muscleGroup}
+                      </div>
+                    )}
+                  </div>
+                  <div style={{
+                    background: '#ffffff',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: 8,
+                    padding: '4px 10px',
+                    fontSize: 12,
+                    fontWeight: 800,
+                    color: '#334155',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0
+                  }}>
+                    {ex.sets || 3} Set × {ex.reps || 10}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>Bu gün için tanımlanmış egzersiz bulunmamaktadır.</p>
+          )}
+        </Card>
+      ) : program ? (
+        <Card style={{ background: '#ffffff', border: '1px solid #e2e8f0', padding: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <FaCalendarDay size={22} color="#8b5cf6" />
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 15, color: '#1e293b' }}>Bugün Dinlenme Günü</div>
+                <div style={{ fontSize: 13, color: '#64748b', marginTop: 2 }}>Bugün için planlanmış antrenman yok. İyice dinlenin ve beslenmenize dikkat edin!</div>
+              </div>
+            </div>
+            <Btn size="sm" outline color="#8b5cf6" onClick={() => onNavigate('program')}>Programı İncele</Btn>
+          </div>
+        </Card>
+      ) : profile ? (
+        <Card style={{ background: '#ffffff', border: '1px solid #e2e8f0', padding: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <FaDumbbell size={22} color="#e11d48" />
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 15, color: '#1e293b' }}>Henüz Aktif Antrenman Programınız Yok</div>
+                <div style={{ fontSize: 13, color: '#64748b', marginTop: 2 }}>Kişisel profil bilgilerinize göre anında yapay zeka veya hızlı antrenman programı oluşturabilirsiniz.</div>
+              </div>
+            </div>
+            <Btn size="sm" color={BRAND.primary} onClick={() => onNavigate('profile')}>Program Oluştur →</Btn>
+          </div>
+        </Card>
+      ) : null}
+
       <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 20, alignItems: 'stretch' }}>
         {/* Left top large card: Member Card Management */}
         <Card style={{ background: '#ffffff', border: '1px solid #e2e8f0', color: '#1e293b', display: 'flex', justifyContent: 'space-between', gap: 20, padding: 24 }}>
