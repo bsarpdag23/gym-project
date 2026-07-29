@@ -28,7 +28,7 @@ async function bootstrap() {
 
   const allowedOrigins = process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',').map((s) => s.trim())
-    : ['https://sarpdag.me', 'http://sarpdag.me', 'http://localhost:3000', 'http://localhost'];
+    : ['https://gymlifepro.tech', 'http://gymlifepro.tech', 'https://www.gymlifepro.tech', 'http://www.gymlifepro.tech', 'https://sarpdag.me', 'http://sarpdag.me', 'http://localhost:3000', 'http://localhost'];
 
   app.enableCors({
     origin: (origin, callback) => {
