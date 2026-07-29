@@ -467,7 +467,7 @@ function GymListView({ user, onLogout }) {
             borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14 }}>{err}</div>}
 
           <div style={{ fontSize:13, fontWeight:700, color:'#64748b', marginBottom:8 }}>SALON BİLGİLERİ</div>
-          <Input label="Salon Adı" value={form.name} onChange={set('name')} placeholder="FitLife Kadıköy" />
+          <Input label="Salon Adı" value={form.name} onChange={set('name')} placeholder="GymLife Kadıköy" />
           <Input label="Adres" value={form.address} onChange={set('address')} placeholder="Kadıköy, İstanbul" />
           <Input label="Telefon" value={form.phone} onChange={set('phone')} placeholder="0216 000 00 00" />
 

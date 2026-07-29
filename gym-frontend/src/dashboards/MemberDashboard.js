@@ -6,7 +6,7 @@ import {
   FaClipboardList, FaInfoCircle, FaSave, FaCheck, FaBullseye, FaSyncAlt, FaBolt,
   FaAppleAlt, FaUser, FaHourglassHalf, FaExclamationTriangle, FaDumbbell, FaHistory,
   FaClock, FaTrophy, FaCheckCircle, FaRobot, FaChalkboardTeacher, FaStar, FaRegStar,
-  FaHome, FaBox, FaTicketAlt, FaQrcode, FaMobileAlt, FaCalendarDay, FaRegSmile,
+  FaHome, FaBox, FaTicketAlt, FaQrcode, FaMobileAlt, FaCalendarDay,
   FaComments, FaPaperPlane, FaEyeSlash, FaEye, FaCamera, FaBuilding, FaLock, FaSpinner, FaCreditCard,
 } from 'react-icons/fa';
 import {
@@ -14,7 +14,7 @@ import {
   GiChestArmor, GiLegArmor, GiRunningShoe, GiArm, GiHeartBeats, GiFist, GiAbdominalArmor,
   GiSprint, GiRun,
 } from 'react-icons/gi';
-import { BRAND, Btn, Card, Badge, Input, Select, Logo, ProgressBar, Avatar, Modal } from '../components/ui';
+import { BRAND, Btn, Card, Badge, Input, Select, ProgressBar, Avatar, Modal } from '../components/ui';
 import api, { resolveAvatarUrl } from '../api';
 import { getSocket } from '../socket';
 import { PROGRAM_CATEGORIES, PROGRAM_CATEGORY_LABELS } from '../programCategories';
@@ -574,7 +574,7 @@ function MyProgramTab() {
         }
       }
     }
-  }, [program]);
+  }, [program, todayWorkout]);
 
   const toggleExercise = (name) => {
     const next = { ...completedEx, [name]: !completedEx[name] };
@@ -1537,7 +1537,7 @@ function DashboardOverviewTab({ user, onNavigate }) {
             boxSizing: 'border-box'
           }}>
             <div>
-              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1, color: '#fff' }}>FITLIFE PRO</div>
+              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1, color: '#fff' }}>GYMLIFE PRO</div>
               <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', marginTop: 2 }}>Üye Kartı</div>
             </div>
             <div style={{ background: '#fff', padding: 8, borderRadius: 8, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -2189,7 +2189,7 @@ export default function MemberDashboard({ user, onLogout }) {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <span style={{ fontWeight: 800, fontSize: 18, color: '#1e293b', letterSpacing: '-0.5px' }}>
-              FitLife <span style={{ color: BRAND.primary }}>Pro</span>
+              GymLife <span style={{ color: BRAND.primary }}>Pro</span>
             </span>
             {gymName && (
               <span style={{

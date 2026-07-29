@@ -204,7 +204,7 @@ export function Logo({ light, size = 22 }) {
         <FaBolt color="#fff" size={size-8} />
       </div>
       <span style={{ fontWeight:900, fontSize:size, color: light ? '#fff' : '#1e293b', letterSpacing:'-0.5px' }}>
-        FitLife <span style={{ color:BRAND.primary }}>Pro</span>
+        GymLife <span style={{ color:BRAND.primary }}>Pro</span>
       </span>
     </div>
   );

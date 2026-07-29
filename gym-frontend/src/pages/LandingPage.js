@@ -218,7 +218,7 @@ export default function LandingPage({ goLogin, goRegister }) {
         <p style={{ color:'#8892a4', fontSize:14, margin: '6px 0 0' }}>
           Destek ve İletişim: <a href="mailto:sarpdag1907@gmail.com" style={{ color: BRAND.primary, textDecoration: 'none', fontWeight: 600 }}>sarpdag1907@gmail.com</a>
         </p>
-        <p style={{ color:'#64748b', fontSize:12, margin: 0 }}>© 2026 FitLife Pro — Tüm hakları saklıdır.</p>
+        <p style={{ color:'#64748b', fontSize:12, margin: 0 }}>© 2026 GymLife Pro — Tüm hakları saklıdır.</p>
       </div>
     </div>
   );

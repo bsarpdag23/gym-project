@@ -64,8 +64,8 @@ export default function AdminDashboard({ user, onLogout }) {
       memberName: member.memberName,
       phone: member.memberPhone || '05XX XXX XX XX',
       email: member.memberEmail,
-      smsContent: `Sayin ${member.memberName}, FitLife salon uyeliginizin suresi ${member.daysRemaining} gun sonra (${new Date(member.endDate).toLocaleDateString('tr-TR')}) dolacaktir. Uyeliginizi yenilemek ve size ozel firsatlardan yararlanmak icin salonumuzu ziyaret edebilir veya online islemlerden paketinizi yenileyebilirsiniz. Saglikli gunler dileriz!`,
-      emailContent: `Merhaba ${member.memberName},\n\nFitLife salon üyeliğinizin süresi ${member.daysRemaining} gün sonra dolacaktır.\n\nSon Geçerlilik Tarihi: ${new Date(member.endDate).toLocaleDateString('tr-TR')}\nAktif Paket: ${member.planName}\n\nAntrenmanlarınıza ara vermeden devam etmek için üye paneliniz üzerinden üyeliğinizi hemen uzatabilirsiniz.\n\nSağlıklı Günler,\nFitLife Yönetim Paneli`,
+      smsContent: `Sayin ${member.memberName}, GymLife salon uyeliginizin suresi ${member.daysRemaining} gun sonra (${new Date(member.endDate).toLocaleDateString('tr-TR')}) dolacaktir. Uyeliginizi yenilemek ve size ozel firsatlardan yararlanmak icin salonumuzu ziyaret edebilir veya online islemlerden paketinizi yenileyebilirsiniz. Saglikli gunler dileriz!`,
+      emailContent: `Merhaba ${member.memberName},\n\nGymLife salon üyeliğinizin süresi ${member.daysRemaining} gün sonra dolacaktır.\n\nSon Geçerlilik Tarihi: ${new Date(member.endDate).toLocaleDateString('tr-TR')}\nAktif Paket: ${member.planName}\n\nAntrenmanlarınıza ara vermeden devam etmek için üye paneliniz üzerinden üyeliğinizi hemen uzatabilirsiniz.\n\nSağlıklı Günler,\nGymLife Yönetim Paneli`,
     });
   };
 

@@ -147,7 +147,7 @@ export default function GymDetailPage() {
       <div style={{ background: '#0f172a', padding: '30px 20px', color: '#94a3b8', textAlign: 'center', marginTop: 60, borderTop: '1px solid #1e293b' }}>
         <h4 style={{ color: '#fff', margin: '0 0 6px', fontSize: 15 }}>{gym.name}</h4>
         <p style={{ fontSize: 12, margin: '0 0 12px' }}>{gym.address}</p>
-        <p style={{ fontSize: 11, margin: 0 }}>© 2026 FitLife Pro — Tüm hakları saklıdır.</p>
+        <p style={{ fontSize: 11, margin: 0 }}>© 2026 GymLife Pro — Tüm hakları saklıdır.</p>
       </div>
     </div>
   );
