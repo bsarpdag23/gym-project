@@ -6,7 +6,8 @@ import {
   FaCheckCircle, FaTimesCircle, FaClock, FaTrophy, FaCog, FaRunning, FaSave, FaMoneyBillWave,
   FaComments, FaPaperPlane, FaCamera,
 } from 'react-icons/fa';
-import { BRAND, Btn, Card, Badge, Input, Select, Modal, Logo, Avatar } from '../components/ui';
+import { BRAND, Btn, Card, Badge, Input, Select, Modal, Logo, Avatar, ThemeToggleBtn } from '../components/ui';
+import { useTheme } from '../context/ThemeContext';
 import api, { resolveAvatarUrl } from '../api';
 import { getSocket } from '../socket';
 import { PROGRAM_CATEGORIES, PROGRAM_CATEGORY_LABELS } from '../programCategories';
@@ -225,50 +226,64 @@ export default function AdminDashboard({ user, onLogout }) {
   const TABS = ALL_TABS.filter(t => t.roles.includes(user.role));
   const color = { users: '#e94560', plans: '#3b82f6', enrollments: '#10b981', exercises: '#f59e0b', programs: '#8b5cf6', dashboard: '#8b5cf6', mymembers: '#8b5cf6', checkin: '#10b981', chat: '#ec4899' };
 
+  const { isDark } = useTheme();
+
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'Segoe UI,sans-serif', color: '#1e293b' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', fontFamily: 'Segoe UI,sans-serif', color: 'var(--text-main)', transition: 'background-color 0.3s ease' }}>
       <div style={{
-        background: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(12px)', padding: '14px 28px',
+        background: isDark ? 'rgba(11, 15, 25, 0.85)' : 'rgba(255, 255, 255, 0.85)',
+        backdropFilter: 'blur(12px)', padding: '14px 28px',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, zIndex: 100
+        borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e2e8f0', position: 'sticky', top: 0, zIndex: 100
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <Logo light={false} />
+          <Logo light={isDark} />
           <Badge label={user.role === 'admin' ? 'Admin' : 'Trainer'} color={BRAND.primary} />
         </div>
-        <div style={{ position: 'relative' }}>
-          <div
-            onClick={() => setShowUserMenu(!showUserMenu)}
-            style={{ display: 'flex', gap: 10, alignItems: 'center', color: '#1e293b', cursor: 'pointer', padding: '6px 12px', borderRadius: 20, background: 'rgba(0,0,0,0.03)', transition: 'background .15s' }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.05)'}
-            onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = 'rgba(0,0,0,0.03)' }}
-          >
-            <Avatar name={user.fullName} size={28} />
-            <span style={{ fontSize: 14, fontWeight: 600 }}>{user.fullName}</span>
-            <span style={{ fontSize: 10, color: '#64748b' }}>▼</span>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <ThemeToggleBtn />
+          <div style={{ position: 'relative' }}>
+            <div
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              style={{
+                display: 'flex', gap: 10, alignItems: 'center',
+                color: 'var(--text-main)', cursor: 'pointer', padding: '6px 12px',
+                borderRadius: 20, background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)',
+                transition: 'background .15s'
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'}
+              onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)' }}
+            >
+              <Avatar name={user.fullName} size={28} />
+              <span style={{ fontSize: 14, fontWeight: 600 }}>{user.fullName}</span>
+              <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>▼</span>
+            </div>
 
-          {showUserMenu && (
-            <>
-              <div onClick={() => setShowUserMenu(false)} style={{ position: 'fixed', inset: 0, zIndex: 998 }} />
-              <div style={{
-                position: 'absolute', top: 48, right: 0, background: '#ffffff',
-                border: '1px solid #e2e8f0', borderRadius: 14,
-                boxShadow: '0 10px 30px rgba(0,0,0,0.06)', zIndex: 999, padding: '6px 0',
-                width: 150, display: 'flex', flexDirection: 'column',
-                animation: 'slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-              }}>
-                <button onClick={() => { setShowUserMenu(false); onLogout(); }} style={{
-                  background: 'none', border: 'none', padding: '10px 16px', color: '#ef4444',
-                  textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'background .15s',
-                  borderTop: '1px solid #f1f5f9'
-                }} onMouseEnter={e => e.target.style.background = '#f1f5f9'}
-                   onMouseLeave={e => e.target.style.background = 'none'}>
-                  🚪 Çıkış Yap
-                </button>
-              </div>
-            </>
-          )}
+            {showUserMenu && (
+              <>
+                <div onClick={() => setShowUserMenu(false)} style={{ position: 'fixed', inset: 0, zIndex: 998 }} />
+                <div style={{
+                  position: 'absolute', top: 48, right: 0,
+                  background: isDark ? '#111827' : '#ffffff',
+                  border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid #e2e8f0',
+                  borderRadius: 14,
+                  boxShadow: isDark ? '0 10px 30px rgba(0,0,0,0.4)' : '0 10px 30px rgba(0,0,0,0.06)',
+                  zIndex: 999, padding: '6px 0',
+                  width: 150, display: 'flex', flexDirection: 'column',
+                  animation: 'slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                }}>
+                  <button onClick={() => { setShowUserMenu(false); onLogout(); }} style={{
+                    background: 'none', border: 'none', padding: '10px 16px', color: '#ef4444',
+                    textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'background .15s',
+                    borderTop: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid #f1f5f9'
+                  }} onMouseEnter={e => e.target.style.background = isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}
+                     onMouseLeave={e => e.target.style.background = 'none'}>
+                    🚪 Çıkış Yap
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 

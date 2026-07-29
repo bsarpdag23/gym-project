@@ -4,7 +4,8 @@ import {
   FaBolt, FaCrown, FaBuilding, FaUsers, FaTicketAlt, FaMoneyBillWave,
   FaDoorOpen, FaUser, FaMapMarkerAlt, FaPhone, FaSave, FaEdit, FaTrash,
 } from 'react-icons/fa';
-import { BRAND, Btn, Card, Badge, Input, Modal, Logo, Avatar } from '../components/ui';
+import { BRAND, Btn, Card, Badge, Input, Modal, Logo, Avatar, ThemeToggleBtn } from '../components/ui';
+import { useTheme } from '../context/ThemeContext';
 import api from '../api';
 
 function SkeletonCard({ height = 150, style = {} }) {
@@ -21,27 +22,37 @@ function SkeletonCard({ height = 150, style = {} }) {
 
 function Header({ user, onLogout }) {
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const { isDark } = useTheme();
+
   return (
     <div style={{
-      background: 'rgba(17, 24, 39, 0.75)', backdropFilter: 'blur(12px)', padding: '14px 28px',
+      background: isDark ? 'rgba(11, 15, 25, 0.85)' : 'rgba(255, 255, 255, 0.85)',
+      backdropFilter: 'blur(12px)', padding: '14px 28px',
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-      borderBottom: '1px solid rgba(255,255,255,0.06)', position: 'sticky', top: 0, zIndex: 100
+      borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e2e8f0',
+      position: 'sticky', top: 0, zIndex: 100
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-        <Logo light />
+        <Logo light={isDark} />
         <Badge label={<><FaBolt/> Süper Admin</>} color={BRAND.primary} />
       </div>
-      <div style={{ position: 'relative' }}>
-        <div
-          onClick={() => setShowUserMenu(!showUserMenu)}
-          style={{ display: 'flex', gap: 10, alignItems: 'center', color: '#fff', cursor: 'pointer', padding: '6px 12px', borderRadius: 20, background: 'rgba(255,255,255,0.04)', transition: 'background .15s' }}
-          onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
-          onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
-        >
-          <Avatar name={user.fullName} size={28} />
-          <span style={{ fontSize: 14, fontWeight: 600 }}><FaCrown style={{ marginRight: 4, verticalAlign: '-1px' }} /> {user.fullName}</span>
-          <span style={{ fontSize: 10, color: '#64748b' }}>▼</span>
-        </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <ThemeToggleBtn />
+        <div style={{ position: 'relative' }}>
+          <div
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            style={{
+              display: 'flex', gap: 10, alignItems: 'center', color: 'var(--text-main)', cursor: 'pointer',
+              padding: '6px 12px', borderRadius: 20,
+              background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)', transition: 'background .15s'
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'}
+            onMouseLeave={e => { if(!showUserMenu) e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)' }}
+          >
+            <Avatar name={user.fullName} size={28} />
+            <span style={{ fontSize: 14, fontWeight: 600 }}><FaCrown style={{ marginRight: 4, verticalAlign: '-1px' }} /> {user.fullName}</span>
+            <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>▼</span>
+          </div>
 
         {showUserMenu && (
           <>
@@ -64,6 +75,7 @@ function Header({ user, onLogout }) {
             </div>
           </>
         )}
+        </div>
       </div>
     </div>
   );

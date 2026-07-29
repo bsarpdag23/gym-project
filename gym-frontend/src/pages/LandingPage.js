@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUsers, FaDumbbell, FaClipboardList, FaLock, FaChartBar, FaCloud, FaRocket, FaBolt, FaCheck, FaMapMarkerAlt } from 'react-icons/fa';
-import { BRAND, Btn, Card, Badge, Logo } from '../components/ui';
+import { BRAND, Btn, Card, Badge, Logo, ThemeToggleBtn } from '../components/ui';
+import { useTheme } from '../context/ThemeContext';
 import api from '../api';
 
 export default function LandingPage({ goLogin, goRegister }) {
@@ -55,19 +56,26 @@ export default function LandingPage({ goLogin, goRegister }) {
     },
   ];
 
+  const { isDark } = useTheme();
+
   return (
-    <div style={{ fontFamily:'Segoe UI,sans-serif', color:'#111827' }}>
+    <div style={{ fontFamily:'Segoe UI,sans-serif', color:'var(--text-main)', background: 'var(--bg-primary)', transition: 'background-color 0.3s ease' }}>
       {/* ── NAVBAR ── */}
-      <div style={{ position:'sticky', top:0, zIndex:50, background:'rgba(255,255,255,.85)',
-        backdropFilter:'blur(10px)', borderBottom:'1px solid #f0f0f0' }}>
+      <div style={{
+        position:'sticky', top:0, zIndex:50,
+        background: isDark ? 'rgba(11,15,25,.85)' : 'rgba(255,255,255,.85)',
+        backdropFilter:'blur(12px)',
+        borderBottom: isDark ? '1px solid rgba(255,255,255,.08)' : '1px solid #f0f0f0'
+      }}>
         <div style={{ maxWidth:1180, margin:'0 auto', padding:'14px 24px',
           display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-          <Logo />
-          <div style={{ display:'flex', gap:32, alignItems:'center' }}>
-            <a href="#features" style={{ color:'#374151', textDecoration:'none', fontSize:14, fontWeight:600 }}>Özellikler</a>
-            <a href="#gyms" style={{ color:'#374151', textDecoration:'none', fontSize:14, fontWeight:600 }}>Spor Salonları</a>
-            <a href="#pricing"  style={{ color:'#374151', textDecoration:'none', fontSize:14, fontWeight:600 }}>Fiyatlandırma</a>
-            <Btn onClick={goLogin} color="#374151" outline size="sm">Giriş Yap</Btn>
+          <Logo light={isDark} />
+          <div style={{ display:'flex', gap:20, alignItems:'center' }}>
+            <a href="#features" style={{ color: isDark ? '#94a3b8' : '#374151', textDecoration:'none', fontSize:14, fontWeight:600 }}>Özellikler</a>
+            <a href="#gyms" style={{ color: isDark ? '#94a3b8' : '#374151', textDecoration:'none', fontSize:14, fontWeight:600 }}>Spor Salonları</a>
+            <a href="#pricing" style={{ color: isDark ? '#94a3b8' : '#374151', textDecoration:'none', fontSize:14, fontWeight:600 }}>Fiyatlandırma</a>
+            <ThemeToggleBtn />
+            <Btn onClick={goLogin} color={isDark ? '#94a3b8' : '#374151'} outline size="sm">Giriş Yap</Btn>
             <Btn onClick={goRegister} size="sm">Ücretsiz Başla</Btn>
           </div>
         </div>

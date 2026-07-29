@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaLock, FaRegSmile, FaKey, FaEnvelope } from 'react-icons/fa';
-import { BRAND, Btn, Card, Input, Logo } from '../components/ui';
+import { BRAND, Btn, Card, Input, Logo, ThemeToggleBtn } from '../components/ui';
+import { useTheme } from '../context/ThemeContext';
 import api from '../api';
 
 export default function LoginPage({ onLogin, goRegister, goHome }) {
@@ -62,12 +63,21 @@ export default function LoginPage({ onLogin, goRegister, goHome }) {
     setLoading(false);
   };
 
+  const { isDark } = useTheme();
+
   return (
-    <div style={{ minHeight:'100vh', background:`linear-gradient(160deg,${BRAND.dark},${BRAND.dark2})`,
-      display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Segoe UI,sans-serif', padding:16 }}>
+    <div style={{
+      minHeight:'100vh',
+      background: isDark ? 'linear-gradient(160deg, #0b0f19, #111827)' : 'linear-gradient(160deg, #f8fafc, #e2e8f0)',
+      display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'Segoe UI,sans-serif', padding:16,
+      transition: 'background 0.3s ease'
+    }}>
       <div style={{ width:'100%', maxWidth:420 }}>
-        <div onClick={goHome} style={{ display:'flex', justifyContent:'center', marginBottom:30, cursor:'pointer' }}>
-          <Logo light size={24} />
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24 }}>
+          <div onClick={goHome} style={{ cursor:'pointer' }}>
+            <Logo light={isDark} size={24} />
+          </div>
+          <ThemeToggleBtn />
         </div>
 
         <Card style={{ padding:34 }}>

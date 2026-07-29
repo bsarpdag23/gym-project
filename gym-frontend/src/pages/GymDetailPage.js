@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaMapMarkerAlt, FaPhone, FaArrowLeft, FaDumbbell, FaUsers, FaClock } from 'react-icons/fa';
-import { BRAND, Btn, Card, Badge, Logo } from '../components/ui';
+import { BRAND, Btn, Card, Badge, Logo, ThemeToggleBtn } from '../components/ui';
+import { useTheme } from '../context/ThemeContext';
 import api from '../api';
 
 export default function GymDetailPage() {
   const { gymId } = useParams();
   const navigate = useNavigate();
+  const { isDark } = useTheme();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -53,18 +55,25 @@ export default function GymDetailPage() {
   ];
 
   return (
-    <div style={{ fontFamily: 'Segoe UI,sans-serif', background: '#f8fafc', minHeight: '100vh', color: '#1f2937' }}>
+    <div style={{ fontFamily: 'Segoe UI,sans-serif', background: 'var(--bg-primary)', minHeight: '100vh', color: 'var(--text-main)', transition: 'background-color 0.3s ease' }}>
       
       {/* ── NAVBAR ── */}
-      <div style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, zIndex: 50 }}>
+      <div style={{
+        background: isDark ? 'rgba(11, 15, 25, 0.85)' : '#fff',
+        borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e2e8f0',
+        position: 'sticky', top: 0, zIndex: 50, backdropFilter: 'blur(12px)'
+      }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '14px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <Btn onClick={() => navigate('/')} outline size="sm" style={{ padding: '6px 10px' }}>
               <FaArrowLeft />
             </Btn>
-            <Logo />
+            <Logo light={isDark} />
           </div>
-          <Btn onClick={() => navigate('/login')} size="sm">Giriş Yap</Btn>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <ThemeToggleBtn />
+            <Btn onClick={() => navigate('/login')} size="sm">Giriş Yap</Btn>
+          </div>
         </div>
       </div>
 

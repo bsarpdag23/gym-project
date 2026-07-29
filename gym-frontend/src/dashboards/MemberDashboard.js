@@ -14,7 +14,8 @@ import {
   GiChestArmor, GiLegArmor, GiRunningShoe, GiArm, GiHeartBeats, GiFist, GiAbdominalArmor,
   GiSprint, GiRun,
 } from 'react-icons/gi';
-import { BRAND, Btn, Card, Badge, Input, Select, ProgressBar, Avatar, Modal } from '../components/ui';
+import { BRAND, Btn, Card, Badge, Input, Select, ProgressBar, Avatar, Modal, ThemeToggleBtn } from '../components/ui';
+import { useTheme } from '../context/ThemeContext';
 import api, { resolveAvatarUrl } from '../api';
 import { getSocket } from '../socket';
 import { PROGRAM_CATEGORIES, PROGRAM_CATEGORY_LABELS } from '../programCategories';
@@ -2103,12 +2104,16 @@ export default function MemberDashboard({ user, onLogout }) {
 
   const goTab = (id) => navigate(`/member/${id}`);
 
+  const { isDark } = useTheme();
+
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'Segoe UI,sans-serif', color: '#1e293b', display: 'flex' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', fontFamily: 'Segoe UI,sans-serif', color: 'var(--text-main)', display: 'flex', transition: 'background-color 0.3s ease' }}>
 
       {/* Left Sidebar Menu */}
       <div style={{
-        width: 76, background: '#ffffff', borderRight: '1px solid #e2e8f0',
+        width: 76,
+        background: isDark ? '#111827' : '#ffffff',
+        borderRight: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e2e8f0',
         height: '100vh', position: 'fixed', left: 0, top: 0,
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         padding: '24px 0', justifyContent: 'space-between', zIndex: 1000,
@@ -2137,21 +2142,21 @@ export default function MemberDashboard({ user, onLogout }) {
                     style={{
                       width: 46, height: 46, borderRadius: 12, border: 'none',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      cursor: 'pointer', color: isActive ? '#fff' : '#64748b',
+                      cursor: 'pointer', color: isActive ? '#fff' : (isDark ? '#94a3b8' : '#64748b'),
                       background: isActive ? `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})` : 'transparent',
                       boxShadow: isActive ? `0 4px 12px ${BRAND.primary}30` : 'none',
                       transition: 'all 0.15s'
                     }}
                     onMouseEnter={e => {
                       if (!isActive) {
-                        e.currentTarget.style.background = '#f1f5f9';
-                        e.currentTarget.style.color = '#1e293b';
+                        e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.08)' : '#f1f5f9';
+                        e.currentTarget.style.color = isDark ? '#f8fafc' : '#1e293b';
                       }
                     }}
                     onMouseLeave={e => {
                       if (!isActive) {
                         e.currentTarget.style.background = 'transparent';
-                        e.currentTarget.style.color = '#64748b';
+                        e.currentTarget.style.color = isDark ? '#94a3b8' : '#64748b';
                       }
                     }}
                   >
@@ -2183,45 +2188,52 @@ export default function MemberDashboard({ user, onLogout }) {
       {/* Main Content Area */}
       <div style={{ marginLeft: 76, flex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
         <div style={{
-          background: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(12px)', padding: '14px 28px',
+          background: isDark ? 'rgba(11, 15, 25, 0.85)' : 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(12px)', padding: '14px 28px',
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, zIndex: 100
+          borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e2e8f0',
+          position: 'sticky', top: 0, zIndex: 100
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <span style={{ fontWeight: 800, fontSize: 18, color: '#1e293b', letterSpacing: '-0.5px' }}>
+            <span style={{ fontWeight: 800, fontSize: 18, color: 'var(--text-main)', letterSpacing: '-0.5px' }}>
               GymLife <span style={{ color: BRAND.primary }}>Pro</span>
             </span>
             {gymName && (
               <span style={{
-                background: '#f1f5f9',
+                background: isDark ? 'rgba(255, 255, 255, 0.06)' : '#f1f5f9',
                 padding: '4px 14px',
                 borderRadius: 20,
                 fontSize: 13,
                 fontWeight: 600,
-                color: '#1e293b',
+                color: 'var(--text-main)',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 6,
-                border: '1px solid #e2e8f0'
+                border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid #e2e8f0'
               }}>
                 <FaBuilding style={{ fontSize: 12, color: BRAND.primary }} /> {gymName}
               </span>
             )}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <ThemeToggleBtn />
             <Btn size="sm" color={BRAND.primary} onClick={() => goTab('qr')}>+ Hızlı QR Kodum</Btn>
 
             <div style={{ position: 'relative' }}>
               <div
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                style={{ display: 'flex', gap: 10, alignItems: 'center', color: '#1e293b', cursor: 'pointer', padding: '6px 12px', borderRadius: 20, background: 'rgba(0,0,0,0.03)', transition: 'background .15s' }}
-                onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.06)'}
-                onMouseLeave={e => { if (!showUserMenu) e.currentTarget.style.background = 'rgba(0,0,0,0.03)' }}
+                style={{
+                  display: 'flex', gap: 10, alignItems: 'center', color: 'var(--text-main)', cursor: 'pointer',
+                  padding: '6px 12px', borderRadius: 20,
+                  background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)', transition: 'background .15s'
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'}
+                onMouseLeave={e => { if (!showUserMenu) e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)' }}
               >
                 <Avatar src={resolveAvatarUrl(avatarUrl)} name={user.fullName} size={28} />
                 <span style={{ fontSize: 14, fontWeight: 600 }}>{user.fullName}</span>
-                <span style={{ fontSize: 10, color: '#64748b' }}>▼</span>
+                <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>▼</span>
               </div>
 
               {showUserMenu && (

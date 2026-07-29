@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -141,32 +142,34 @@ export default function App() {
   if (!loaded) return null;
 
   return (
-    <BrowserRouter>
-      <AppRoutes user={user} onLogin={handleLogin} onLogout={logout} />
-      
-      {/* Global Toast Container */}
-      <div style={{ position:'fixed', top:24, right:24, zIndex:10000, display:'flex', flexDirection:'column', gap:10, maxWidth:360, width:'calc(100% - 48px)' }}>
-        {toasts.map(t => (
-          <div key={t.id} className="slide-in" style={{
-            background: t.type === 'success' ? '#10b981' : '#e94560',
-            color: '#fff',
-            padding: '14px 22px',
-            borderRadius: 14,
-            boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)',
-            fontFamily: 'Segoe UI, sans-serif',
-            fontSize: 14,
-            fontWeight: 600,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            border: '1px solid rgba(255,255,255,0.15)',
-            boxSizing: 'border-box',
-          }}>
-            <span style={{ fontSize: 18 }}>{t.type === 'success' ? '✓' : 'ℹ'}</span>
-            <span>{t.message}</span>
-          </div>
-        ))}
-      </div>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <AppRoutes user={user} onLogin={handleLogin} onLogout={logout} />
+        
+        {/* Global Toast Container */}
+        <div style={{ position:'fixed', top:24, right:24, zIndex:10000, display:'flex', flexDirection:'column', gap:10, maxWidth:360, width:'calc(100% - 48px)' }}>
+          {toasts.map(t => (
+            <div key={t.id} className="slide-in" style={{
+              background: t.type === 'success' ? '#10b981' : '#e94560',
+              color: '#fff',
+              padding: '14px 22px',
+              borderRadius: 14,
+              boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)',
+              fontFamily: 'Segoe UI, sans-serif',
+              fontSize: 14,
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              border: '1px solid rgba(255,255,255,0.15)',
+              boxSizing: 'border-box',
+            }}>
+              <span style={{ fontSize: 18 }}>{t.type === 'success' ? '✓' : 'ℹ'}</span>
+              <span>{t.message}</span>
+            </div>
+          ))}
+        </div>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
