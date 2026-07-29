@@ -530,6 +530,7 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
 
 // ─── Programım sekmesi (bugünkü antrenman + program üretme/görüntüleme) ───
 function MyProgramTab() {
+  const { isDark } = useTheme();
   const [profile, setProfile] = useState(null);
   const [program, setProgram] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -615,38 +616,45 @@ function MyProgramTab() {
         <Card style={{ marginBottom: 20, textAlign: 'center', padding: 40 }}>
           <div style={{ fontSize: 48, marginBottom: 12, display: 'flex', justifyContent: 'center' }}><FaInfoCircle /></div>
           <h3 style={{ margin: '0 0 6px' }}>Önce bilgilerini gir</h3>
-          <p style={{ color: '#64748b', margin: 0 }}>
+          <p style={{ color: isDark ? '#94a3b8' : '#64748b', margin: 0 }}>
             Sana özel bir antrenman programı oluşturmak için <FaUser style={{ verticalAlign: '-2px' }} /> Profilim &amp; Diyet sekmesinden bilgilerini tamamla.
           </p>
         </Card>
       )}
 
       {todayWorkout && (
-        <Card style={{ marginBottom: 20, border: `2px solid ${BRAND.purple}`, background: 'linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%)' }}>
+        <Card style={{
+          marginBottom: 20,
+          border: isDark ? '1px solid rgba(6, 182, 212, 0.25)' : `2px solid ${BRAND.purple}`,
+          background: isDark ? 'rgba(16, 23, 38, 0.85)' : 'linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%)'
+        }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <div>
-              <h3 style={{ margin: '0 0 6px', color: '#4c1d95', display: 'flex', alignItems: 'center', gap: 8 }}><FaCalendarDay /> Bugün Yapman Gerekenler</h3>
-              <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>{todayWorkout.focus}</p>
+              <h3 style={{ margin: '0 0 6px', color: isDark ? '#00f2fe' : '#4c1d95', display: 'flex', alignItems: 'center', gap: 8 }}><FaCalendarDay /> Bugün Yapman Gerekenler</h3>
+              <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: 13, margin: 0 }}>{todayWorkout.focus}</p>
             </div>
-            <Badge label={`Gün ${todayWorkout.day}/${program.workoutPlan.length}`} color="#8b5cf6" />
+            <Badge label={`Gün ${todayWorkout.day}/${program.workoutPlan.length}`} color={isDark ? '#00f2fe' : '#8b5cf6'} />
           </div>
 
           {/* Progress Section */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, margin: '14px 0 20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700, color: '#475569' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 700, color: isDark ? '#f8fafc' : '#475569' }}>
               <span>Bugünkü Antrenman İlerlemesi</span>
               <span>{completedCount} / {totalExercises} Egzersiz (%{completionPercent})</span>
             </div>
-            <div style={{ width: '100%', height: 8, background: '#e2e8f0', borderRadius: 4, overflow: 'hidden' }}>
+            <div style={{ width: '100%', height: 8, background: isDark ? '#0b1120' : '#e2e8f0', borderRadius: 4, overflow: 'hidden' }}>
               <div style={{
                 width: `${completionPercent}%`, height: '100%',
-                background: `linear-gradient(90deg, #10b981, #059669)`,
+                background: isDark ? 'linear-gradient(90deg, #00f2fe, #7c3aed)' : 'linear-gradient(90deg, #10b981, #059669)',
+                boxShadow: isDark ? '0 0 10px #00f2fe' : 'none',
                 transition: 'width 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
               }} />
             </div>
             {completionPercent === 100 && (
               <div style={{
-                background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#065f46',
+                background: isDark ? 'rgba(16, 185, 129, 0.15)' : '#ecfdf5',
+                border: isDark ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid #a7f3d0',
+                color: isDark ? '#34d399' : '#065f46',
                 borderRadius: 10, padding: '10px 14px', fontSize: 13, fontWeight: 700,
                 textAlign: 'center', marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6
               }}>
@@ -661,8 +669,8 @@ function MyProgramTab() {
               return (
                 <div key={ex.id ?? `${ex.name}-${i}`} style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  background: isChecked ? '#f0fdf4' : '#fff',
-                  border: isChecked ? '1px solid #bbf7d0' : '1px solid #f1f5f9',
+                  background: isChecked ? (isDark ? 'rgba(16, 185, 129, 0.15)' : '#f0fdf4') : (isDark ? '#0b1120' : '#fff'),
+                  border: isChecked ? (isDark ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid #bbf7d0') : (isDark ? '1px solid rgba(6, 182, 212, 0.25)' : '1px solid #f1f5f9'),
                   borderRadius: 12, padding: '12px 16px', transition: 'all 0.2s',
                   boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
                 }}>
@@ -671,7 +679,7 @@ function MyProgramTab() {
                       type="checkbox"
                       checked={isChecked}
                       onChange={() => toggleExercise(ex.name)}
-                      style={{ width: 18, height: 18, cursor: 'pointer', accentColor: BRAND.purple }}
+                      style={{ width: 18, height: 18, cursor: 'pointer', accentColor: isDark ? '#00f2fe' : BRAND.purple }}
                     />
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <span
@@ -680,19 +688,19 @@ function MyProgramTab() {
                           fontWeight: 600, fontSize: 14,
                           textDecoration: isChecked ? 'line-through' : 'underline',
                           textDecorationStyle: 'dashed',
-                          color: isChecked ? '#16a34a' : '#1e293b',
+                          color: isChecked ? (isDark ? '#34d399' : '#16a34a') : (isDark ? '#f8fafc' : '#1e293b'),
                           cursor: 'pointer'
                         }}
                         title="Egzersiz detaylarını gör"
                       >
                         {ex.name} ℹ️
                       </span>
-                      <span style={{ color: '#64748b', fontSize: 12 }}>{ex.equipment}</span>
+                      <span style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: 12 }}>{ex.equipment}</span>
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                     <Badge label={ex.muscleGroup} color="#f59e0b" />
-                    <Badge label={`${ex.sets}×${ex.reps}`} color="#3b82f6" />
+                    <Badge label={`${ex.sets}×${ex.reps}`} color={isDark ? '#00f2fe' : '#3b82f6'} />
                   </div>
                 </div>
               );
@@ -705,7 +713,7 @@ function MyProgramTab() {
         <Card style={{ marginBottom: 20, textAlign: 'center', padding: 40 }}>
           <div style={{ fontSize: 48, marginBottom: 12, display: 'flex', justifyContent: 'center' }}><FaBullseye /></div>
           <h3 style={{ margin: '0 0 6px' }}>Henüz bir programın yok</h3>
-          <p style={{ color: '#64748b', margin: 0 }}>
+          <p style={{ color: isDark ? '#94a3b8' : '#64748b', margin: 0 }}>
             Bilgilerine göre program oluşturmak için <FaUser style={{ verticalAlign: '-2px' }} /> Profilim &amp; Diyet sekmesine git.
           </p>
         </Card>
@@ -715,10 +723,10 @@ function MyProgramTab() {
         <>
           <Card style={{ marginBottom: 16 }}>
             <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-              <Badge label={goalLabel[program.goal] || program.goal} color="#8b5cf6" />
-              <Badge label={`${program.startWeightKg} → ${program.targetWeightKg} kg`} color="#3b82f6" />
+              <Badge label={goalLabel[program.goal] || program.goal} color={isDark ? '#a855f7' : '#8b5cf6'} />
+              <Badge label={`${program.startWeightKg} → ${program.targetWeightKg} kg`} color={isDark ? '#00f2fe' : '#3b82f6'} />
               <Badge label={`${program.durationWeeks} hafta`} color="#10b981" />
-              <Badge label={`${program.startDate} → ${program.endDate}`} color='#64748b' />
+              <Badge label={`${program.startDate} → ${program.endDate}`} color={isDark ? '#94a3b8' : '#64748b'} />
               <Badge label={<><FaHourglassHalf /> {daysLeft} gün kaldı</>} color="#e94560" />
             </div>
             {program.warnings && program.warnings.length > 0 && (
@@ -726,43 +734,49 @@ function MyProgramTab() {
                 {program.warnings.map((w, i) => (
                   <div key={i} style={{
                     display: 'flex', gap: 10, alignItems: 'flex-start',
-                    background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 10,
+                    background: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fffbeb',
+                    border: isDark ? '1px solid rgba(245, 158, 11, 0.35)' : '1px solid #fde68a',
+                    borderRadius: 10,
                     padding: '12px 14px', marginBottom: 8
                   }}>
                     <span style={{ fontSize: 18, flexShrink: 0 }}><FaExclamationTriangle /></span>
-                    <span style={{ fontSize: 13, color: '#92400e', lineHeight: 1.5 }}>{w.message}</span>
+                    <span style={{ fontSize: 13, color: isDark ? '#fde68a' : '#92400e', lineHeight: 1.5 }}>{w.message}</span>
                   </div>
                 ))}
               </div>
             )}
           </Card>
 
-          <h4 style={{ margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 8 }}><FaDumbbell /> Haftalık Antrenman Planı</h4>
+          <h4 style={{ margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 8, color: isDark ? '#f8fafc' : '#1e293b' }}><FaDumbbell /> Haftalık Antrenman Planı</h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {program.workoutPlan.map((day) => (
               <Card key={day.day}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
                   <div style={{
-                    width: 32, height: 32, borderRadius: 8, background: '#8b5cf6', color: '#fff',
+                    width: 32, height: 32, borderRadius: 8,
+                    background: isDark ? 'linear-gradient(135deg, #00f2fe, #7c3aed)' : '#8b5cf6',
+                    color: isDark ? '#090d16' : '#fff',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 14
                   }}>
                     {day.day}
                   </div>
-                  <h4 style={{ margin: 0 }}>Gün {day.day} — {day.focus}</h4>
+                  <h4 style={{ margin: 0, color: isDark ? '#f8fafc' : '#1e293b' }}>Gün {day.day} — {day.focus}</h4>
                 </div>
                 <div style={{ display: 'grid', gap: 8 }}>
                   {day.exercises.map((ex, i) => (
                     <div key={ex.id ?? `${ex.name}-${i}`} style={{
                       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                      background: '#f8fafc', borderRadius: 8, padding: '10px 14px'
+                      background: isDark ? '#0b1120' : '#f8fafc',
+                      border: isDark ? '1px solid rgba(6, 182, 212, 0.2)' : 'none',
+                      borderRadius: 8, padding: '10px 14px'
                     }}>
                       <div>
-                        <span style={{ fontWeight: 600, fontSize: 14 }}>{ex.name}</span>
-                        <span style={{ color: '#64748b', fontSize: 12, marginLeft: 8 }}>{ex.equipment}</span>
+                        <span style={{ fontWeight: 600, fontSize: 14, color: isDark ? '#f8fafc' : '#1e293b' }}>{ex.name}</span>
+                        <span style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: 12, marginLeft: 8 }}>{ex.equipment}</span>
                       </div>
                       <div style={{ display: 'flex', gap: 6 }}>
                         <Badge label={ex.muscleGroup} color="#f59e0b" />
-                        <Badge label={`${ex.sets}×${ex.reps}`} color="#3b82f6" />
+                        <Badge label={`${ex.sets}×${ex.reps}`} color={isDark ? '#00f2fe' : '#3b82f6'} />
                       </div>
                     </div>
                   ))}
@@ -847,6 +861,7 @@ function MyProgramTab() {
 
 // ─── Başarılarım sekmesi (rozetler + salon doluluk tahmini) ───
 function AchievementsTab() {
+  const { isDark } = useTheme();
   const [occupancy, setOccupancy] = useState(null);
   const [gamification, setGamification] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -899,39 +914,61 @@ function AchievementsTab() {
   return (
     <div>
       {occupancy && (
-        <Card style={{ marginBottom: 20, border: '2px solid #f59e0b', background: 'linear-gradient(135deg, #fff7ed 0%, #ffffff 100%)' }}>
+        <Card style={{
+          marginBottom: 20,
+          border: isDark ? '1px solid rgba(245, 158, 11, 0.4)' : '2px solid #f59e0b',
+          background: isDark ? 'rgba(16, 23, 38, 0.85)' : 'linear-gradient(135deg, #fff7ed 0%, #ffffff 100%)'
+        }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <div>
-              <h3 style={{ margin: '0 0 6px', color: '#9a2c00', display: 'flex', alignItems: 'center', gap: 8 }}><FaClock /> Bugün salon doluluk tahmini</h3>
-              <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>
+              <h3 style={{ margin: '0 0 6px', color: isDark ? '#fbbf24' : '#9a2c00', display: 'flex', alignItems: 'center', gap: 8 }}><FaClock /> Bugün salon doluluk tahmini</h3>
+              <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: 13, margin: 0 }}>
                 {occupancy.recommendation || 'Bu saat için tahmin hazırlanıyor.'}
               </p>
             </div>
             <Badge label={`${occupancy.occupancyPercent ?? 0}% dolu`} color={occupancy.intensity === 'yüksek' ? '#e94560' : occupancy.intensity === 'orta' ? '#f59e0b' : '#10b981'} />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginTop: 16 }}>
-            <div style={{ background: '#fff', borderRadius: 10, padding: '12px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-              <div style={{ fontSize: 12, color: '#64748b' }}>Bu saat</div>
-              <div style={{ fontSize: 20, fontWeight: 800 }}>{occupancy.day} {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</div>
+            <div style={{
+              background: isDark ? '#0b1120' : '#fff',
+              border: isDark ? '1px solid rgba(6, 182, 212, 0.2)' : 'none',
+              borderRadius: 10, padding: '12px 14px',
+              boxShadow: isDark ? 'none' : '0 1px 3px rgba(0,0,0,0.05)'
+            }}>
+              <div style={{ fontSize: 12, color: isDark ? '#94a3b8' : '#64748b' }}>Bu saat</div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: isDark ? '#f8fafc' : '#1e293b' }}>{occupancy.day} {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</div>
             </div>
-            <div style={{ background: '#fff', borderRadius: 10, padding: '12px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-              <div style={{ fontSize: 12, color: '#64748b' }}>Yoğunluk</div>
-              <div style={{ fontSize: 20, fontWeight: 800 }}>{occupancy.intensity}</div>
+            <div style={{
+              background: isDark ? '#0b1120' : '#fff',
+              border: isDark ? '1px solid rgba(6, 182, 212, 0.2)' : 'none',
+              borderRadius: 10, padding: '12px 14px',
+              boxShadow: isDark ? 'none' : '0 1px 3px rgba(0,0,0,0.05)'
+            }}>
+              <div style={{ fontSize: 12, color: isDark ? '#94a3b8' : '#64748b' }}>Yoğunluk</div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: isDark ? '#00f2fe' : '#1e293b' }}>{occupancy.intensity}</div>
             </div>
-            <div style={{ background: '#fff', borderRadius: 10, padding: '12px 14px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-              <div style={{ fontSize: 12, color: '#64748b' }}>En sakin saatler</div>
-              <div style={{ fontSize: 14, fontWeight: 700 }}>{(occupancy.quietSlots || []).slice(0, 2).map((slot) => `${slot.day} ${slot.hour}:00`).join(' · ') || 'Veri yok'}</div>
+            <div style={{
+              background: isDark ? '#0b1120' : '#fff',
+              border: isDark ? '1px solid rgba(6, 182, 212, 0.2)' : 'none',
+              borderRadius: 10, padding: '12px 14px',
+              boxShadow: isDark ? 'none' : '0 1px 3px rgba(0,0,0,0.05)'
+            }}>
+              <div style={{ fontSize: 12, color: isDark ? '#94a3b8' : '#64748b' }}>En sakin saatler</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: isDark ? '#f8fafc' : '#1e293b' }}>{(occupancy.quietSlots || []).slice(0, 2).map((slot) => `${slot.day} ${slot.hour}:00`).join(' · ') || 'Veri yok'}</div>
             </div>
           </div>
         </Card>
       )}
 
       {gamification && (
-        <Card style={{ background: 'linear-gradient(135deg, #fdf2f8 0%, #ffffff 100%)', border: '1px solid #f9a8d4' }}>
+        <Card style={{
+          background: isDark ? 'rgba(16, 23, 38, 0.85)' : 'linear-gradient(135deg, #fdf2f8 0%, #ffffff 100%)',
+          border: isDark ? '1px solid rgba(236, 72, 153, 0.35)' : '1px solid #f9a8d4'
+        }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <div>
-              <h3 style={{ margin: '0 0 6px', display: 'flex', alignItems: 'center', gap: 8 }}><FaTrophy /> Başarılar</h3>
-              <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>
+              <h3 style={{ margin: '0 0 6px', display: 'flex', alignItems: 'center', gap: 8, color: isDark ? '#f8fafc' : '#1e293b' }}><FaTrophy /> Başarılar</h3>
+              <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: 13, margin: 0 }}>
                 Toplam {gamification.points} puan ve {gamification.badges?.length || 0} başarın var.
               </p>
             </div>
@@ -948,21 +985,21 @@ function AchievementsTab() {
           <div style={{ marginTop: 14, overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
-                <tr style={{ textAlign: 'left', color: '#64748b' }}>
-                  <th style={{ padding: '8px 10px', borderBottom: '1px solid #e5e7eb' }}>Başarı</th>
-                  <th style={{ padding: '8px 10px', borderBottom: '1px solid #e5e7eb' }}>Durum</th>
-                  <th style={{ padding: '8px 10px', borderBottom: '1px solid #e5e7eb', minWidth: 160 }}>İlerleme</th>
-                  <th style={{ padding: '8px 10px', borderBottom: '1px solid #e5e7eb' }}>Açıklama</th>
+                <tr style={{ textAlign: 'left', color: isDark ? '#94a3b8' : '#64748b' }}>
+                  <th style={{ padding: '8px 10px', borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e5e7eb' }}>Başarı</th>
+                  <th style={{ padding: '8px 10px', borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e5e7eb' }}>Durum</th>
+                  <th style={{ padding: '8px 10px', borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e5e7eb', minWidth: 160 }}>İlerleme</th>
+                  <th style={{ padding: '8px 10px', borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #e5e7eb' }}>Açıklama</th>
                 </tr>
               </thead>
               <tbody>
                 {achievements.map((achievement) => (
                   <tr key={achievement.name}>
-                    <td style={{ padding: '10px', borderBottom: '1px solid #f3f4f6', fontWeight: 700 }}>{achievement.name}</td>
-                    <td style={{ padding: '10px', borderBottom: '1px solid #f3f4f6' }}>
+                    <td style={{ padding: '10px', borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid #f3f4f6', fontWeight: 700, color: isDark ? '#f8fafc' : '#1e293b' }}>{achievement.name}</td>
+                    <td style={{ padding: '10px', borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid #f3f4f6', color: isDark ? '#f8fafc' : '#1e293b' }}>
                       {achievement.unlocked ? <><FaCheckCircle color="#10b981" /> Açıldı</> : <><FaHourglassHalf /> Beklemede</>}
                     </td>
-                    <td style={{ padding: '10px', borderBottom: '1px solid #f3f4f6' }}>
+                    <td style={{ padding: '10px', borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid #f3f4f6' }}>
                       <ProgressBar
                         value={Math.min(checkInCount, achievement.threshold)}
                         max={achievement.threshold}
@@ -970,7 +1007,7 @@ function AchievementsTab() {
                         height={8}
                       />
                     </td>
-                    <td style={{ padding: '10px', borderBottom: '1px solid #f3f4f6', color: '#64748b' }}>{achievement.description}</td>
+                    <td style={{ padding: '10px', borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid #f3f4f6', color: isDark ? '#94a3b8' : '#64748b' }}>{achievement.description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -984,6 +1021,7 @@ function AchievementsTab() {
 
 // ─── Programlar sekmesi (kategoriye göre katalog + değerlendirme) ───
 function ProgramsCatalogTab() {
+  const { isDark } = useTheme();
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState(null);
@@ -1039,8 +1077,8 @@ function ProgramsCatalogTab() {
           <Card key={c.value} style={{ cursor: 'pointer', textAlign: 'center', padding: 28 }}
             onClick={() => setCategory(c.value)}>
             <div style={{ fontSize: 32, marginBottom: 8 }}>{CATEGORY_ICONS[c.value]}</div>
-            <h3 style={{ margin: '0 0 4px' }}>{c.label}</h3>
-            <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>{countFor(c.value)} program</p>
+            <h3 style={{ margin: '0 0 4px', color: isDark ? '#f8fafc' : '#1e293b' }}>{c.label}</h3>
+            <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: 13, margin: 0 }}>{countFor(c.value)} program</p>
           </Card>
         ))}
       </div>
@@ -1053,12 +1091,12 @@ function ProgramsCatalogTab() {
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
         <Btn size="sm" outline onClick={() => setCategory(null)}>← Kategoriler</Btn>
-        <h2 style={{ margin: 0 }}>{CATEGORY_ICONS[category]} {PROGRAM_CATEGORY_LABELS[category]}</h2>
+        <h2 style={{ margin: 0, color: isDark ? '#f8fafc' : '#1e293b' }}>{CATEGORY_ICONS[category]} {PROGRAM_CATEGORY_LABELS[category]}</h2>
       </div>
 
       {list.length === 0 && (
         <Card style={{ textAlign: 'center', padding: 40 }}>
-          <p style={{ color: '#64748b', margin: 0 }}>Bu kategoride henüz program yok.</p>
+          <p style={{ color: isDark ? '#94a3b8' : '#64748b', margin: 0 }}>Bu kategoride henüz program yok.</p>
         </Card>
       )}
 
@@ -1069,14 +1107,14 @@ function ProgramsCatalogTab() {
           return (
             <Card key={p.id}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                <h3 style={{ margin: 0 }}>{p.name}</h3>
+                <h3 style={{ margin: 0, color: isDark ? '#f8fafc' : '#1e293b' }}>{p.name}</h3>
                 <Btn size="sm" onClick={() => handleActivate(p.id)} color="#10b981">
                   <FaBolt /> Aktifleştir
                 </Btn>
               </div>
-              <p style={{ color: '#64748b', fontSize: 13, margin: '0 0 12px' }}>{p.description}</p>
+              <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: 13, margin: '0 0 12px' }}>{p.description}</p>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
-                <Badge label={p.difficulty} color="#8b5cf6" />
+                <Badge label={p.difficulty} color={isDark ? '#a855f7' : '#8b5cf6'} />
                 <Badge label={`${p.weeksCount} Hafta`} color="#10b981" />
                 <Badge label={p.source === 'ai' ? <><FaRobot /> AI</> : <><FaChalkboardTeacher /> Antrenör</>} color={p.source === 'ai' ? '#f59e0b' : '#64748b'} />
                 {p.ratingCount > 0 && <Badge label={<><FaStar /> {p.avgRating} ({p.ratingCount})</>} color="#ec4899" />}
@@ -1086,26 +1124,28 @@ function ProgramsCatalogTab() {
                 {(p.exercises || []).map((e) => (
                   <div key={e.id} style={{
                     display: 'flex', justifyContent: 'space-between',
-                    background: '#f8fafc', borderRadius: 8, padding: '10px 14px', fontSize: 14
+                    background: isDark ? '#0b1120' : '#f8fafc',
+                    border: isDark ? '1px solid rgba(6, 182, 212, 0.2)' : 'none',
+                    borderRadius: 8, padding: '10px 14px', fontSize: 14
                   }}>
-                    <span style={{ fontWeight: 500 }}>{e.name}</span>
+                    <span style={{ fontWeight: 500, color: isDark ? '#f8fafc' : '#1e293b' }}>{e.name}</span>
                     <div style={{ display: 'flex', gap: 8 }}>
                       <Badge label={e.muscleGroup} color="#f59e0b" />
-                      <Badge label={`${e.sets}×${e.reps}`} color="#3b82f6" />
+                      <Badge label={`${e.sets}×${e.reps}`} color={isDark ? '#00f2fe' : '#3b82f6'} />
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid #f0f0f0' }}>
-                <div style={{ fontSize: 13, color: '#64748b', marginBottom: 8 }}>Bu programı değerlendir</div>
+              <div style={{ marginTop: 16, paddingTop: 14, borderTop: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid #f0f0f0' }}>
+                <div style={{ fontSize: 13, color: isDark ? '#94a3b8' : '#64748b', marginBottom: 8 }}>Bu programı değerlendir</div>
                 <div style={{ display: 'flex', gap: 4, marginBottom: 8 }}>
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button key={star}
                       onClick={() => setRatingDraft({ ...ratingDraft, [p.id]: { ...myDraft, rating: star } })}
                       style={{
                         background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, padding: 0,
-                        color: (myDraft.rating || 0) >= star ? '#f59e0b' : '#e5e7eb', display: 'flex'
+                        color: (myDraft.rating || 0) >= star ? '#f59e0b' : (isDark ? '#334155' : '#e5e7eb'), display: 'flex'
                       }}>
                       {(myDraft.rating || 0) >= star ? <FaStar /> : <FaRegStar />}
                     </button>
@@ -1117,7 +1157,10 @@ function ProgramsCatalogTab() {
                   placeholder="Yorumun (opsiyonel)"
                   style={{
                     width: '100%', minHeight: 60, padding: '8px 10px', borderRadius: 8,
-                    border: '1.5px solid #e5e7eb', fontSize: 13, boxSizing: 'border-box', resize: 'vertical'
+                    background: isDark ? '#0b1120' : '#fff',
+                    color: isDark ? '#f8fafc' : '#1e293b',
+                    border: isDark ? '1px solid rgba(6, 182, 212, 0.3)' : '1.5px solid #e5e7eb',
+                    fontSize: 13, boxSizing: 'border-box', resize: 'vertical'
                   }}
                 />
                 <Btn size="sm" style={{ marginTop: 8 }} onClick={() => submitRating(p.id)}>
@@ -1127,16 +1170,16 @@ function ProgramsCatalogTab() {
                 {comments.length > 0 && (
                   <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {comments.map((r) => (
-                      <div key={r.id} style={{ background: '#f8fafc', borderRadius: 8, padding: '8px 12px', fontSize: 13 }}>
+                      <div key={r.id} style={{ background: isDark ? '#0b1120' : '#f8fafc', borderRadius: 8, padding: '8px 12px', fontSize: 13 }}>
                         <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 2 }}>
                           {[1, 2, 3, 4, 5].map((star) => (
                             star <= r.rating
                               ? <FaStar key={star} color="#f59e0b" size={12} />
-                              : <FaRegStar key={star} color="#e5e7eb" size={12} />
+                              : <FaRegStar key={star} color={isDark ? '#334155' : '#e5e7eb'} size={12} />
                           ))}
-                          <span style={{ color: '#64748b', fontWeight: 400, marginLeft: 4 }}> · {r.user?.fullName}</span>
+                          <span style={{ color: isDark ? '#94a3b8' : '#64748b', fontWeight: 400, marginLeft: 4 }}> · {r.user?.fullName}</span>
                         </div>
-                        <div style={{ color: '#475569', marginTop: 2 }}>{r.comment}</div>
+                        <div style={{ color: isDark ? '#f8fafc' : '#475569', marginTop: 2 }}>{r.comment}</div>
                       </div>
                     ))}
                   </div>
