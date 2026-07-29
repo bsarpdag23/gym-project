@@ -1315,6 +1315,7 @@ function ChatTab({ user }) {
 
 // ─── Anasayfa sekmesi (tüm sekmelerden özet) ───
 function DashboardOverviewTab({ user, onNavigate }) {
+  const { isDark } = useTheme();
   const [loading, setLoading] = useState(true);
   const [enrollments, setEnrollments] = useState([]);
   const [profile, setProfile] = useState(null);
@@ -1386,41 +1387,45 @@ function DashboardOverviewTab({ user, onNavigate }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       {/* Greeting card */}
-      <Card style={{ border: '1px solid #e2e8f0', background: '#ffffff', padding: 24 }}>
-        <h2 style={{ margin: '0 0 4px', color: '#1e293b', fontSize: 22, fontWeight: 700 }}>Hoş geldin, {user.fullName?.split(' ')[0]}! 👋</h2>
-        <p style={{ color: '#64748b', margin: 0, fontSize: 14 }}>İşte bugün salonundaki genel durumun ve üyelik özetin.</p>
+      <Card style={{
+        border: isDark ? '1px solid rgba(6, 182, 212, 0.22)' : '1px solid #e2e8f0',
+        background: isDark ? 'rgba(16, 23, 38, 0.85)' : '#ffffff',
+        padding: 24
+      }}>
+        <h2 style={{ margin: '0 0 4px', color: isDark ? '#f8fafc' : '#1e293b', fontSize: 22, fontWeight: 700 }}>Hoş geldin, {user.fullName?.split(' ')[0]}! 👋</h2>
+        <p style={{ color: isDark ? '#94a3b8' : '#64748b', margin: 0, fontSize: 14 }}>İşte bugün salonundaki genel durumun ve üyelik özetin.</p>
       </Card>
 
       {!profile && (
         <Card style={{
-          border: '1px solid #bfdbfe',
-          background: '#eff6ff',
-          color: '#1e40af',
+          border: isDark ? '1px solid rgba(6, 182, 212, 0.3)' : '1px solid #bfdbfe',
+          background: isDark ? 'rgba(6, 182, 212, 0.08)' : '#eff6ff',
+          color: isDark ? '#00f2fe' : '#1e40af',
           display: 'flex',
-          justifyContent: 'space-between',
+          justify: 'space-between',
           alignItems: 'center',
           gap: 16,
           padding: '16px 20px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <FaInfoCircle size={20} color="#3b82f6" />
+            <FaInfoCircle size={20} color={isDark ? '#00f2fe' : '#3b82f6'} />
             <div>
               <div style={{ fontWeight: 700, fontSize: 15 }}>Profil Bilgileriniz Eksik</div>
-              <div style={{ fontSize: 13, color: '#1e40af', marginTop: 2 }}>
+              <div style={{ fontSize: 13, color: isDark ? '#94a3b8' : '#1e40af', marginTop: 2 }}>
                 Lütfen diyet ve antrenman programı oluşturabilmemiz için profil bilgilerinizi giriniz.
               </div>
             </div>
           </div>
-          <Btn size="sm" color="#3b82f6" onClick={() => onNavigate('profile')}>Profili Tamamla</Btn>
+          <Btn size="sm" color={isDark ? '#00f2fe' : '#3b82f6'} onClick={() => onNavigate('profile')}>Profili Tamamla</Btn>
         </Card>
       )}
 
       {/* Bugünün Antrenman Programı Kartı */}
       {todayWorkout ? (
         <Card style={{
-          background: '#ffffff',
-          border: '1px solid #e2e8f0',
-          boxShadow: '0 8px 30px rgba(0,0,0,0.04)',
+          background: isDark ? 'rgba(16, 23, 38, 0.85)' : '#ffffff',
+          border: isDark ? '1px solid rgba(6, 182, 212, 0.22)' : '1px solid #e2e8f0',
+          boxShadow: isDark ? '0 8px 32px rgba(6, 182, 212, 0.15)' : '0 8px 30px rgba(0,0,0,0.04)',
           padding: 24,
           borderRadius: 16,
         }}>
@@ -1428,22 +1433,23 @@ function DashboardOverviewTab({ user, onNavigate }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{
                 width: 44, height: 44, borderRadius: 12,
-                background: 'linear-gradient(135deg, #e11d48, #f43f5e)',
+                background: isDark ? 'linear-gradient(135deg, #00f2fe, #7c3aed)' : 'linear-gradient(135deg, #e11d48, #f43f5e)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: '#fff', fontSize: 20, boxShadow: '0 4px 14px rgba(225,29,72,0.35)', flexShrink: 0
+                color: isDark ? '#090d16' : '#fff', fontSize: 20,
+                boxShadow: isDark ? '0 0 16px rgba(0, 242, 254, 0.4)' : '0 4px 14px rgba(225,29,72,0.35)', flexShrink: 0
               }}>
                 <FaDumbbell />
               </div>
               <div>
-                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: '#1e293b' }}>
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: isDark ? '#f8fafc' : '#1e293b' }}>
                   Bugünün Antrenmanı {todayWorkout.day ? `(Gün ${todayWorkout.day})` : ''}
                 </h3>
-                <div style={{ fontSize: 13, color: '#64748b', marginTop: 2 }}>
-                  Odak Bölge: <span style={{ fontWeight: 700, color: '#e11d48' }}>{todayWorkout.focus || 'Genel Vücut'}</span>
+                <div style={{ fontSize: 13, color: isDark ? '#94a3b8' : '#64748b', marginTop: 2 }}>
+                  Odak Bölge: <span style={{ fontWeight: 700, color: isDark ? '#00f2fe' : '#e11d48' }}>{todayWorkout.focus || 'Genel Vücut'}</span>
                 </div>
               </div>
             </div>
-            <Btn size="sm" color={BRAND.primary} onClick={() => onNavigate('program')}>
+            <Btn size="sm" color={isDark ? '#00f2fe' : BRAND.primary} onClick={() => onNavigate('program')}>
               Tüm Programı Gör →
             </Btn>
           </div>
@@ -1452,8 +1458,8 @@ function DashboardOverviewTab({ user, onNavigate }) {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
               {todayWorkout.exercises.map((ex, idx) => (
                 <div key={idx} style={{
-                  background: '#f8fafc',
-                  border: '1px solid #e2e8f0',
+                  background: isDark ? '#0b1120' : '#f8fafc',
+                  border: isDark ? '1px solid rgba(6, 182, 212, 0.25)' : '1px solid #e2e8f0',
                   borderRadius: 12,
                   padding: '12px 16px',
                   display: 'flex',
@@ -1462,21 +1468,21 @@ function DashboardOverviewTab({ user, onNavigate }) {
                   gap: 12
                 }}>
                   <div style={{ overflow: 'hidden' }}>
-                    <div style={{ fontWeight: 700, fontSize: 14, color: '#1e293b', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{ex.name}</div>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: isDark ? '#f8fafc' : '#1e293b', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{ex.name}</div>
                     {ex.muscleGroup && (
-                      <div style={{ fontSize: 11, color: '#64748b', textTransform: 'capitalize', marginTop: 2 }}>
+                      <div style={{ fontSize: 11, color: isDark ? '#94a3b8' : '#64748b', textTransform: 'capitalize', marginTop: 2 }}>
                         {ex.muscleGroup}
                       </div>
                     )}
                   </div>
                   <div style={{
-                    background: '#ffffff',
-                    border: '1px solid #cbd5e1',
+                    background: isDark ? 'rgba(6, 182, 212, 0.12)' : '#ffffff',
+                    border: isDark ? '1px solid rgba(6, 182, 212, 0.3)' : '1px solid #cbd5e1',
                     borderRadius: 8,
                     padding: '4px 10px',
                     fontSize: 12,
                     fontWeight: 800,
-                    color: '#334155',
+                    color: isDark ? '#00f2fe' : '#334155',
                     whiteSpace: 'nowrap',
                     flexShrink: 0
                   }}>
@@ -1486,70 +1492,80 @@ function DashboardOverviewTab({ user, onNavigate }) {
               ))}
             </div>
           ) : (
-            <p style={{ color: '#64748b', fontSize: 13, margin: 0 }}>Bu gün için tanımlanmış egzersiz bulunmamaktadır.</p>
+            <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: 13, margin: 0 }}>Bu gün için tanımlanmış egzersiz bulunmamaktadır.</p>
           )}
         </Card>
       ) : program ? (
-        <Card style={{ background: '#ffffff', border: '1px solid #e2e8f0', padding: 20 }}>
+        <Card style={{ background: isDark ? 'rgba(16, 23, 38, 0.85)' : '#ffffff', border: isDark ? '1px solid rgba(6, 182, 212, 0.22)' : '1px solid #e2e8f0', padding: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <FaCalendarDay size={22} color="#8b5cf6" />
+              <FaCalendarDay size={22} color={isDark ? '#00f2fe' : '#8b5cf6'} />
               <div>
-                <div style={{ fontWeight: 700, fontSize: 15, color: '#1e293b' }}>Bugün Dinlenme Günü</div>
-                <div style={{ fontSize: 13, color: '#64748b', marginTop: 2 }}>Bugün için planlanmış antrenman yok. İyice dinlenin ve beslenmenize dikkat edin!</div>
+                <div style={{ fontWeight: 700, fontSize: 15, color: isDark ? '#f8fafc' : '#1e293b' }}>Bugün Dinlenme Günü</div>
+                <div style={{ fontSize: 13, color: isDark ? '#94a3b8' : '#64748b', marginTop: 2 }}>Bugün için planlanmış antrenman yok. İyice dinlenin ve beslenmenize dikkat edin!</div>
               </div>
             </div>
-            <Btn size="sm" outline color="#8b5cf6" onClick={() => onNavigate('program')}>Programı İncele</Btn>
+            <Btn size="sm" outline color={isDark ? '#00f2fe' : '#8b5cf6'} onClick={() => onNavigate('program')}>Programı İncele</Btn>
           </div>
         </Card>
       ) : profile ? (
-        <Card style={{ background: '#ffffff', border: '1px solid #e2e8f0', padding: 20 }}>
+        <Card style={{ background: isDark ? 'rgba(16, 23, 38, 0.85)' : '#ffffff', border: isDark ? '1px solid rgba(6, 182, 212, 0.22)' : '1px solid #e2e8f0', padding: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <FaDumbbell size={22} color="#e11d48" />
+              <FaDumbbell size={22} color={isDark ? '#00f2fe' : '#e11d48'} />
               <div>
-                <div style={{ fontWeight: 700, fontSize: 15, color: '#1e293b' }}>Henüz Aktif Antrenman Programınız Yok</div>
-                <div style={{ fontSize: 13, color: '#64748b', marginTop: 2 }}>Kişisel profil bilgilerinize göre anında yapay zeka veya hızlı antrenman programı oluşturabilirsiniz.</div>
+                <div style={{ fontWeight: 700, fontSize: 15, color: isDark ? '#f8fafc' : '#1e293b' }}>Henüz Aktif Antrenman Programınız Yok</div>
+                <div style={{ fontSize: 13, color: isDark ? '#94a3b8' : '#64748b', marginTop: 2 }}>Kişisel profil bilgilerinize göre anında yapay zeka veya hızlı antrenman programı oluşturabilirsiniz.</div>
               </div>
             </div>
-            <Btn size="sm" color={BRAND.primary} onClick={() => onNavigate('profile')}>Program Oluştur →</Btn>
+            <Btn size="sm" color={isDark ? '#00f2fe' : BRAND.primary} onClick={() => onNavigate('profile')}>Program Oluştur →</Btn>
           </div>
         </Card>
       ) : null}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 20, alignItems: 'stretch' }}>
         {/* Left top large card: Member Card Management */}
-        <Card style={{ background: '#ffffff', border: '1px solid #e2e8f0', color: '#1e293b', display: 'flex', justifyContent: 'space-between', gap: 20, padding: 24 }}>
+        <Card style={{
+          background: isDark ? 'rgba(16, 23, 38, 0.85)' : '#ffffff',
+          border: isDark ? '1px solid rgba(6, 182, 212, 0.22)' : '1px solid #e2e8f0',
+          color: isDark ? '#f8fafc' : '#1e293b',
+          display: 'flex', justifyContent: 'space-between', gap: 20, padding: 24
+        }}>
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
-              <h3 style={{ margin: '0 0 12px', fontSize: 20, fontWeight: 800, color: '#1e293b' }}>Dijital Giriş Kartı</h3>
-              <p style={{ color: '#64748b', fontSize: 13, lineHeight: 1.5, margin: '0 0 16px' }}>
+              <h3 style={{ margin: '0 0 12px', fontSize: 20, fontWeight: 800, color: isDark ? '#f8fafc' : '#1e293b' }}>Dijital Giriş Kartı</h3>
+              <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: 13, lineHeight: 1.5, margin: '0 0 16px' }}>
                 All-in-one salon yönetim platformu. Salona hızlı giriş yapmak ve turnikelerden geçmek için bu dijital üye kartını okutun.
               </p>
             </div>
-            <Btn color={BRAND.primary} style={{ width: 'fit-content' }} onClick={() => onNavigate('qr')}>Giriş QR Kodu →</Btn>
+            <Btn color={isDark ? '#00f2fe' : BRAND.primary} style={{ width: 'fit-content' }} onClick={() => onNavigate('qr')}>Giriş QR Kodu →</Btn>
           </div>
           {/* Card Mockup on the right */}
           <div style={{
             width: 140, height: 210, borderRadius: 16,
-            background: 'linear-gradient(135deg, #e11d48 0%, #f43f5e 100%)',
+            background: isDark ? 'linear-gradient(135deg, #00f2fe 0%, #7c3aed 100%)' : 'linear-gradient(135deg, #e11d48 0%, #f43f5e 100%)',
             padding: 16, display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-            boxShadow: '0 10px 25px rgba(225,29,72,0.35)', flexShrink: 0, border: '1px solid rgba(255,255,255,0.15)',
-            boxSizing: 'border-box'
+            boxShadow: isDark ? '0 10px 25px rgba(0, 242, 254, 0.35)' : '0 10px 25px rgba(225,29,72,0.35)', flexShrink: 0,
+            border: '1px solid rgba(255,255,255,0.2)', boxSizing: 'border-box'
           }}>
             <div>
-              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1, color: '#fff' }}>GYMLIFE PRO</div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', marginTop: 2 }}>Üye Kartı</div>
+              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1, color: isDark ? '#090d16' : '#fff' }}>GYMLIFE PRO</div>
+              <div style={{ fontSize: 10, color: isDark ? 'rgba(9,13,22,0.8)' : 'rgba(255,255,255,0.7)', marginTop: 2 }}>Üye Kartı</div>
             </div>
             <div style={{ background: '#fff', padding: 8, borderRadius: 8, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <QRCodeSVG value={user.qrToken || 'fitlife'} size={60} />
             </div>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#fff', textAlign: 'center' }}>{user.fullName}</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: isDark ? '#090d16' : '#fff', textAlign: 'center' }}>{user.fullName}</div>
           </div>
         </Card>
 
         {/* Right top large card: Membership Overview (Vibrant Violet Card) */}
-        <Card style={{ border: 'none', background: 'linear-gradient(135deg, #7c3aed 0%, #9333ea 100%)', color: '#fff', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <Card style={{
+          border: isDark ? '1px solid rgba(168, 85, 247, 0.35)' : 'none',
+          background: isDark ? 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)' : 'linear-gradient(135deg, #7c3aed 0%, #9333ea 100%)',
+          color: '#fff', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          boxShadow: isDark ? '0 8px 32px rgba(124, 58, 237, 0.3)' : 'none'
+        }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>Üyelik Özeti</h3>
@@ -1557,28 +1573,28 @@ function DashboardOverviewTab({ user, onNavigate }) {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
               <div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>Aktif Üyelik</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)' }}>Aktif Üyelik</div>
                 <div style={{ fontSize: 26, fontWeight: 800, marginTop: 4 }}>{activeEnrollment ? '1' : '0'} Adet</div>
               </div>
               <div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>Kalan Süre</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)' }}>Kalan Süre</div>
                 <div style={{ fontSize: 26, fontWeight: 800, marginTop: 4 }}>
                   {activeEnrollment ? `${Math.max(0, Math.ceil((new Date(activeEnrollment.endDate) - now) / 86400000))} Gün` : '—'}
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>Toplam Puanı</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)' }}>Toplam Puanı</div>
                 <div style={{ fontSize: 26, fontWeight: 800, marginTop: 4 }}>{gamification?.points || 0} Puan</div>
               </div>
               <div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>Kazanılan Rozet</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)' }}>Kazanılan Rozet</div>
                 <div style={{ fontSize: 26, fontWeight: 800, marginTop: 4 }}>{badgeCount} Rozet</div>
               </div>
             </div>
           </div>
           <div style={{
             background: 'rgba(255,255,255,0.15)', borderRadius: 12, padding: '10px 16px',
-            fontSize: 13, fontWeight: 600, color: '#fff', border: '1px solid rgba(255,255,255,0.15)'
+            fontSize: 13, fontWeight: 600, color: '#fff', border: '1px solid rgba(255,255,255,0.2)'
           }}>
             Katılım Skoru: {gamification?.checkInCount || 0} Kez Giriş Yapıldı
           </div>
@@ -1586,71 +1602,85 @@ function DashboardOverviewTab({ user, onNavigate }) {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 20, alignItems: 'stretch' }}>
-        {/* Left bottom card: September (Salon Doluluğu) (White Background Card) */}
-        <Card style={{ background: '#ffffff', color: '#1e293b', border: '1px solid #e2e8f0', boxShadow: '0 8px 30px rgba(0,0,0,0.04)', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        {/* Left bottom card: Salon Yoğunluğu */}
+        <Card style={{
+          background: isDark ? 'rgba(16, 23, 38, 0.85)' : '#ffffff',
+          color: isDark ? '#f8fafc' : '#1e293b',
+          border: isDark ? '1px solid rgba(6, 182, 212, 0.22)' : '1px solid #e2e8f0',
+          boxShadow: isDark ? '0 8px 32px rgba(6, 182, 212, 0.15)' : '0 8px 30px rgba(0,0,0,0.04)',
+          padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
+        }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#1e293b' }}>Salon Yoğunluğu</h3>
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: isDark ? '#f8fafc' : '#1e293b' }}>Salon Yoğunluğu</h3>
               <Badge label={occupancy?.intensity ? `${occupancy.intensity.toUpperCase()}` : 'ORTA'} color={occupancy?.intensity === 'yüksek' ? '#ef4444' : '#f59e0b'} />
             </div>
             {occupancy?.occupancyPercent != null ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div style={{ fontSize: 32, fontWeight: 800, color: '#1e293b' }}>%{occupancy.occupancyPercent} Dolu</div>
-                <p style={{ color: '#475569', fontSize: 13, margin: 0 }}>
+                <div style={{ fontSize: 32, fontWeight: 800, color: isDark ? '#00f2fe' : '#1e293b' }}>%{occupancy.occupancyPercent} Dolu</div>
+                <p style={{ color: isDark ? '#94a3b8' : '#475569', fontSize: 13, margin: 0 }}>
                   {occupancy.recommendation || 'Şu an sakin saatlerdeyiz. Antrenman için harika bir zaman!'}
                 </p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 8 }}>
-                  <div style={{ background: '#f8fafc', padding: 12, borderRadius: 10, border: '1px solid #e2e8f0' }}>
-                    <div style={{ fontSize: 11, color: '#64748b' }}>Ölçüm Saati</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, marginTop: 2, color: '#1e293b' }}>
+                  <div style={{ background: isDark ? '#0b1120' : '#f8fafc', padding: 12, borderRadius: 10, border: isDark ? '1px solid rgba(6, 182, 212, 0.2)' : '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: 11, color: isDark ? '#94a3b8' : '#64748b' }}>Ölçüm Saati</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, marginTop: 2, color: isDark ? '#f8fafc' : '#1e293b' }}>
                       {new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </div>
-                  <div style={{ background: '#f8fafc', padding: 12, borderRadius: 10, border: '1px solid #e2e8f0' }}>
-                    <div style={{ fontSize: 11, color: '#64748b' }}>En Sakin Saat</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, marginTop: 2, color: '#1e293b' }}>
+                  <div style={{ background: isDark ? '#0b1120' : '#f8fafc', padding: 12, borderRadius: 10, border: isDark ? '1px solid rgba(6, 182, 212, 0.2)' : '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: 11, color: isDark ? '#94a3b8' : '#64748b' }}>En Sakin Saat</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, marginTop: 2, color: isDark ? '#00f2fe' : '#1e293b' }}>
                       {occupancy.quietSlots?.[0] ? `${occupancy.quietSlots[0].hour}:00` : '10:00'}
                     </div>
                   </div>
                 </div>
               </div>
             ) : (
-              <p style={{ color: '#64748b', fontSize: 13 }}>Yükleniyor...</p>
+              <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: 13 }}>Yükleniyor...</p>
             )}
           </div>
-          <Btn size="sm" outline color={BRAND.primary} style={{ marginTop: 16 }} onClick={() => onNavigate('achievements')}>Tüm Tahminler →</Btn>
+          <Btn size="sm" outline color={isDark ? '#00f2fe' : BRAND.primary} style={{ marginTop: 16 }} onClick={() => onNavigate('achievements')}>Tüm Tahminler →</Btn>
         </Card>
 
         {/* Right bottom card: Manage Your Subscription Plans */}
-        <Card style={{ background: '#ffffff', border: '1px solid #e2e8f0', color: '#1e293b', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <Card style={{
+          background: isDark ? 'rgba(16, 23, 38, 0.85)' : '#ffffff',
+          border: isDark ? '1px solid rgba(6, 182, 212, 0.22)' : '1px solid #e2e8f0',
+          color: isDark ? '#f8fafc' : '#1e293b',
+          padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
+        }}>
           <div>
-            <h3 style={{ margin: '0 0 16px', fontSize: 18, fontWeight: 800, color: '#1e293b' }}>Salon Üyelik Paketleri</h3>
+            <h3 style={{ margin: '0 0 16px', fontSize: 18, fontWeight: 800, color: isDark ? '#f8fafc' : '#1e293b' }}>Salon Üyelik Paketleri</h3>
             {plans && plans.length > 0 ? (
               <div style={{ display: 'grid', gridTemplateColumns: plans.slice(0, 3).length === 1 ? '1fr' : plans.slice(0, 3).length === 2 ? '1fr 1fr' : '1fr 1fr 1fr', gap: 10 }}>
                 {plans.slice(0, 3).map((p, idx) => {
-                  const backgrounds = ['#f8fafc', '#7c3aed', '#e11d48'];
+                  const backgrounds = isDark
+                    ? ['#0b1120', 'linear-gradient(135deg, #00f2fe, #7c3aed)', 'linear-gradient(135deg, #7c3aed, #ec4899)']
+                    : ['#f8fafc', '#7c3aed', '#e11d48'];
                   const bg = backgrounds[idx % backgrounds.length];
-                  const isLight = bg === '#f8fafc';
+                  const isLight = !isDark && bg === '#f8fafc';
                   return (
                     <div key={p.id} style={{
-                      background: bg, border: isLight ? '1px solid #e2e8f0' : 'none',
+                      background: bg,
+                      border: isDark ? '1px solid rgba(6, 182, 212, 0.25)' : (isLight ? '1px solid #e2e8f0' : 'none'),
                       borderRadius: 12, padding: 12, display: 'flex', flexDirection: 'column',
                       justifyContent: 'space-between', height: 120, boxSizing: 'border-box'
                     }}>
                       <div>
-                        <div style={{ fontSize: 12, fontWeight: 700, color: isLight ? '#475569' : 'rgba(255,255,255,0.8)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: isLight ? '#475569' : 'rgba(255,255,255,0.9)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
                         <div style={{ fontSize: 20, fontWeight: 800, marginTop: 4, color: isLight ? '#1e293b' : '#fff' }}>{p.price} ₺</div>
                       </div>
-                      <div style={{ fontSize: 10, color: isLight ? '#64748b' : 'rgba(255,255,255,0.7)' }}>{p.period} Gün Geçerli</div>
+                      <div style={{ fontSize: 10, color: isLight ? '#64748b' : 'rgba(255,255,255,0.8)' }}>{p.period} Gün Geçerli</div>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <p style={{ color: '#64748b', fontSize: 14, margin: 0 }}>Henüz üyelik paketi oluşturulmadı.</p>
+              <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: 14, margin: 0 }}>Henüz üyelik paketi oluşturulmadı.</p>
             )}
           </div>
-          <Btn size="sm" color={BRAND.primary} style={{ marginTop: 16 }} onClick={() => onNavigate('plans')}>Tüm Paketleri İncele →</Btn>
+          <Btn size="sm" color={isDark ? '#00f2fe' : BRAND.primary} style={{ marginTop: 16 }} onClick={() => onNavigate('plans')}>Tüm Paketleri İncele →</Btn>
         </Card>
       </div>
     </div>
