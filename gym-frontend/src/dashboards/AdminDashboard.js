@@ -224,9 +224,8 @@ export default function AdminDashboard({ user, onLogout }) {
     { id: 'programs', label: <><FaClipboardList /> Programlar</>, roles: ['admin', 'trainer'] },
   ];
   const TABS = ALL_TABS.filter(t => t.roles.includes(user.role));
-  const color = { users: '#e94560', plans: '#3b82f6', enrollments: '#10b981', exercises: '#f59e0b', programs: '#8b5cf6', dashboard: '#8b5cf6', mymembers: '#8b5cf6', checkin: '#10b981', chat: '#ec4899' };
-
   const { isDark } = useTheme();
+  const color = { users: isDark ? '#00f2fe' : '#e94560', plans: '#3b82f6', enrollments: '#10b981', exercises: '#f59e0b', programs: '#8b5cf6', dashboard: '#8b5cf6', mymembers: '#8b5cf6', checkin: '#10b981', chat: '#ec4899' };
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', fontFamily: 'Segoe UI,sans-serif', color: 'var(--text-main)', transition: 'background-color 0.3s ease' }}>
@@ -238,7 +237,7 @@ export default function AdminDashboard({ user, onLogout }) {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <Logo light={isDark} />
-          <Badge label={user.role === 'admin' ? 'Admin' : 'Trainer'} color={BRAND.primary} />
+          <Badge label={user.role === 'admin' ? 'Admin' : 'Trainer'} color={isDark ? '#00f2fe' : BRAND.primary} />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <ThemeToggleBtn />
@@ -289,13 +288,13 @@ export default function AdminDashboard({ user, onLogout }) {
 
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '28px 20px' }}>
         <div style={{
-          background: '#f1f5f9', borderRadius: 20, padding: 6,
-          display: 'inline-flex', gap: 4, border: '1px solid #e2e8f0',
+          background: isDark ? '#0b1120' : '#f1f5f9', borderRadius: 20, padding: 6,
+          display: 'inline-flex', gap: 4, border: isDark ? '1px solid rgba(6, 182, 212, 0.2)' : '1px solid #e2e8f0',
           marginBottom: 28, flexWrap: 'wrap'
         }}>
           {TABS.map(t => {
             const isActive = tab === t.id;
-            const tabColor = color[t.id] || BRAND.primary;
+            const tabColor = color[t.id] || (isDark ? '#00f2fe' : BRAND.primary);
             return (
               <button
                 key={t.id}
@@ -304,16 +303,16 @@ export default function AdminDashboard({ user, onLogout }) {
                   padding: '10px 20px',
                   borderRadius: 14,
                   border: 'none',
-                  background: isActive ? `linear-gradient(135deg, ${tabColor}, ${BRAND.purple})` : 'transparent',
-                  color: isActive ? '#fff' : '#64748b',
+                  background: isActive ? `linear-gradient(135deg, ${tabColor}, ${isDark ? '#a855f7' : BRAND.purple})` : 'transparent',
+                  color: isActive ? (isDark ? '#090d16' : '#fff') : (isDark ? '#94a3b8' : '#64748b'),
                   fontWeight: 600,
                   fontSize: 14,
                   cursor: 'pointer',
                   boxShadow: isActive ? `0 4px 12px ${tabColor}30` : 'none',
                   transition: 'background .15s, color .15s, transform .1s'
                 }}
-                onMouseEnter={e => { if(!isActive) e.target.style.color = '#1e293b'; }}
-                onMouseLeave={e => { if(!isActive) e.target.style.color = '#64748b'; }}
+                onMouseEnter={e => { if(!isActive) e.target.style.color = isDark ? '#f8fafc' : '#1e293b'; }}
+                onMouseLeave={e => { if(!isActive) e.target.style.color = isDark ? '#94a3b8' : '#64748b'; }}
               >
                 {t.label}
               </button>

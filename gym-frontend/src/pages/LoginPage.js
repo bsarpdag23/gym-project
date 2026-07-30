@@ -83,8 +83,8 @@ export default function LoginPage({ onLogin, goRegister, goHome }) {
         <Card style={{ padding:34 }}>
           {mode === 'login' && (
             <>
-              <h2 style={{ margin:'0 0 4px', fontSize:22, display:'flex', alignItems:'center', gap:8 }}>Tekrar Hoş Geldiniz <FaRegSmile color={BRAND.primary} /></h2>
-              <p style={{ color:'#6b7280', fontSize:14, margin:'0 0 24px' }}>Hesabınıza giriş yapın</p>
+              <h2 style={{ margin:'0 0 4px', fontSize:22, display:'flex', alignItems:'center', gap:8 }}>Tekrar Hoş Geldiniz <FaRegSmile color={isDark ? '#00f2fe' : BRAND.primary} /></h2>
+              <p style={{ color: isDark ? '#94a3b8' : '#6b7280', fontSize:14, margin:'0 0 24px' }}>Hesabınıza giriş yapın</p>
 
               {err && <div style={{ background:'#fee2e2', border:'1px solid #fca5a5', color:'#dc2626', borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14, whiteSpace:'pre-line' }}>{err}</div>}
               {successMsg && <div style={{ background:'#dcfce7', border:'1px solid #bbf7d0', color:'#16a34a', borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14 }}>{successMsg}</div>}
@@ -94,7 +94,7 @@ export default function LoginPage({ onLogin, goRegister, goHome }) {
 
               <div style={{ textAlign:'right', marginBottom:16, marginTop:-8 }}>
                 <button onClick={() => { setMode('forgot'); setErr(''); setSuccessMsg(''); }}
-                  style={{ color:'#6b7280', background:'none', border:'none', cursor:'pointer', fontSize:13 }}>
+                  style={{ color: isDark ? '#94a3b8' : '#6b7280', background:'none', border:'none', cursor:'pointer', fontSize:13 }}>
                   Şifremi Unuttum
                 </button>
               </div>
@@ -103,10 +103,10 @@ export default function LoginPage({ onLogin, goRegister, goHome }) {
                 {loading ? 'Giriş yapılıyor...' : <><FaLock /> Giriş Yap</>}
               </Btn>
 
-              <p style={{ textAlign:'center', marginTop:20, fontSize:14, color:'#6b7280' }}>
+              <p style={{ textAlign:'center', marginTop:20, fontSize:14, color: isDark ? '#94a3b8' : '#6b7280' }}>
                 Hesabınız yok mu?{' '}
                 <button onClick={goRegister}
-                  style={{ color:BRAND.primary, background:'none', border:'none', cursor:'pointer', fontWeight:700, fontSize:14 }}>
+                  style={{ color: isDark ? '#00f2fe' : BRAND.primary, background:'none', border:'none', cursor:'pointer', fontWeight:700, fontSize:14 }}>
                   Kayıt Olun
                 </button>
               </p>
@@ -115,8 +115,8 @@ export default function LoginPage({ onLogin, goRegister, goHome }) {
 
           {mode === 'forgot' && (
             <>
-              <h2 style={{ margin:'0 0 4px', fontSize:22, display:'flex', alignItems:'center', gap:8 }}>Şifremi Unuttum <FaKey color={BRAND.primary} /></h2>
-              <p style={{ color:'#6b7280', fontSize:14, margin:'0 0 24px' }}>Hesabınıza ait e-posta adresini girin, şifre sıfırlama kodu gönderelim.</p>
+              <h2 style={{ margin:'0 0 4px', fontSize:22, display:'flex', alignItems:'center', gap:8 }}>Şifremi Unuttum <FaKey color={isDark ? '#00f2fe' : BRAND.primary} /></h2>
+              <p style={{ color: isDark ? '#94a3b8' : '#6b7280', fontSize:14, margin:'0 0 24px' }}>Hesabınıza ait e-posta adresini girin, şifre sıfırlama kodu gönderelim.</p>
 
               {err && <div style={{ background:'#fee2e2', border:'1px solid #fca5a5', color:'#dc2626', borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14, whiteSpace:'pre-line' }}>{err}</div>}
 
@@ -126,9 +126,9 @@ export default function LoginPage({ onLogin, goRegister, goHome }) {
                 {loading ? 'Kod Gönderiliyor...' : <><FaEnvelope /> Kod Gönder</>}
               </Btn>
 
-              <p style={{ textAlign:'center', marginTop:20, fontSize:14, color:'#6b7280' }}>
+              <p style={{ textAlign:'center', marginTop:20, fontSize:14, color: isDark ? '#94a3b8' : '#6b7280' }}>
                 <button onClick={() => { setMode('login'); setErr(''); setSuccessMsg(''); }}
-                  style={{ color:BRAND.primary, background:'none', border:'none', cursor:'pointer', fontWeight:700, fontSize:14 }}>
+                  style={{ color: isDark ? '#00f2fe' : BRAND.primary, background:'none', border:'none', cursor:'pointer', fontWeight:700, fontSize:14 }}>
                   Giriş Sayfasına Dön
                 </button>
               </p>
@@ -137,12 +137,12 @@ export default function LoginPage({ onLogin, goRegister, goHome }) {
 
           {mode === 'reset' && (
             <>
-              <h2 style={{ margin:'0 0 4px', fontSize:22, display:'flex', alignItems:'center', gap:8 }}>Şifreyi Sıfırla <FaLock color={BRAND.primary} /></h2>
-              <p style={{ color:'#6b7280', fontSize:14, margin:'0 0 24px' }}>E-posta adresinize gönderilen 6 haneli kodu ve yeni şifrenizi girin.</p>
+              <h2 style={{ margin:'0 0 4px', fontSize:22, display:'flex', alignItems:'center', gap:8 }}>Şifreyi Sıfırla <FaLock color={isDark ? '#00f2fe' : BRAND.primary} /></h2>
+              <p style={{ color: isDark ? '#94a3b8' : '#6b7280', fontSize:14, margin:'0 0 24px' }}>E-posta adresinize gönderilen 6 haneli kodu ve yeni şifrenizi girin.</p>
 
               {err && <div style={{ background:'#fee2e2', border:'1px solid #fca5a5', color:'#dc2626', borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14, whiteSpace:'pre-line' }}>{err}</div>}
               {simulatedCode && (
-                <div style={{ background:'#e0f2fe', border:'1px solid #bae6fd', color:'#0369a1', borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14, fontWeight:600 }}>
+                <div style={{ background: isDark ? 'rgba(6, 182, 212, 0.15)' : '#e0f2fe', border: isDark ? '1px solid rgba(6, 182, 212, 0.3)' : '1px solid #bae6fd', color: isDark ? '#00f2fe' : '#0369a1', borderRadius:8, padding:'10px 14px', marginBottom:16, fontSize:14, fontWeight:600 }}>
                   Simüle Edilen Kod: {simulatedCode} (Kutucuğa otomatik yazıldı)
                 </div>
               )}
@@ -155,9 +155,9 @@ export default function LoginPage({ onLogin, goRegister, goHome }) {
                 {loading ? 'Şifre Güncelleniyor...' : <><FaLock /> Şifreyi Güncelle</>}
               </Btn>
 
-              <p style={{ textAlign:'center', marginTop:20, fontSize:14, color:'#6b7280' }}>
+              <p style={{ textAlign:'center', marginTop:20, fontSize:14, color: isDark ? '#94a3b8' : '#6b7280' }}>
                 <button onClick={() => { setMode('login'); setErr(''); setSuccessMsg(''); }}
-                  style={{ color:BRAND.primary, background:'none', border:'none', cursor:'pointer', fontWeight:700, fontSize:14 }}>
+                  style={{ color: isDark ? '#00f2fe' : BRAND.primary, background:'none', border:'none', cursor:'pointer', fontWeight:700, fontSize:14 }}>
                   Giriş Sayfasına Dön
                 </button>
               </p>

@@ -106,10 +106,10 @@ export default function RegisterPage({ goLogin, goHome }) {
                 {loading ? 'Oluşturuluyor...' : <><FaBolt /> Kayıt Ol</>}
               </Btn>
 
-              <p style={{ textAlign: 'center', marginTop: 20, fontSize: 14, color: '#6b7280' }}>
+              <p style={{ textAlign: 'center', marginTop: 20, fontSize: 14, color: isDark ? '#94a3b8' : '#6b7280' }}>
                 Zaten hesabınız var mı?{' '}
                 <button onClick={goLogin}
-                  style={{ color: BRAND.primary, background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
+                  style={{ color: isDark ? '#00f2fe' : BRAND.primary, background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>
                   Giriş Yapın
                 </button>
               </p>

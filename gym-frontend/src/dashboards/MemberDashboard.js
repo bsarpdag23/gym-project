@@ -63,6 +63,7 @@ function getTodayWorkout(program) {
 
 // ─── Profilim & Diyet sekmesi (kişisel bilgiler + diyet tercihleri formu) ───
 function ProfileDietTab({ onAvatarChange, onLogout }) {
+  const { isDark } = useTheme();
   const [profile, setProfile] = useState(null);
   const [program, setProgram] = useState(null);
   const [me, setMe] = useState(null);
@@ -247,7 +248,8 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
           <button onClick={() => fileInputRef.current?.click()} disabled={uploadingAvatar} title="Fotoğrafı değiştir"
             style={{
               position: 'absolute', bottom: -2, right: -2, width: 26, height: 26, borderRadius: '50%',
-              background: BRAND.primary, border: '2px solid #fff', color: '#fff', cursor: 'pointer',
+              background: isDark ? '#00f2fe' : BRAND.primary, border: isDark ? '2px solid #0f172a' : '2px solid #fff',
+              color: isDark ? '#090d16' : '#fff', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12,
             }}>
             {uploadingAvatar ? '…' : <FaCamera size={11} />}
@@ -256,10 +258,10 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
         </div>
         <div>
           <div style={{ fontWeight: 700, fontSize: 16 }}>{me?.fullName}</div>
-          <div style={{ color: '#64748b', fontSize: 13 }}>{me?.email}</div>
+          <div style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: 13 }}>{me?.email}</div>
           <button onClick={() => fileInputRef.current?.click()} disabled={uploadingAvatar}
             style={{
-              background: 'none', border: 'none', color: BRAND.primary, fontSize: 12, fontWeight: 600,
+              background: 'none', border: 'none', color: isDark ? '#00f2fe' : BRAND.primary, fontSize: 12, fontWeight: 600,
               cursor: 'pointer', padding: 0, marginTop: 6
             }}>
             {uploadingAvatar ? 'Yükleniyor...' : 'Fotoğraf yükle'}
@@ -401,16 +403,18 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
 
             <button onClick={generateAI} disabled={generating || generatingAI} style={{
               textAlign: 'left', cursor: generating ? 'not-allowed' : 'pointer', border: 'none', borderRadius: 12,
-              padding: '16px 18px', background: `linear-gradient(135deg, ${BRAND.purple}, ${BRAND.primary})`, color: '#fff',
+              padding: '16px 18px',
+              background: isDark ? 'linear-gradient(135deg, #00f2fe, #a855f7)' : `linear-gradient(135deg, ${BRAND.purple}, ${BRAND.primary})`,
+              color: isDark ? '#090d16' : '#fff',
               display: 'flex', flexDirection: 'column', gap: 6, opacity: generating ? 0.5 : 1,
-              boxShadow: '0 4px 14px rgba(83,52,131,.35)', transition: 'transform .12s',
+              boxShadow: isDark ? '0 4px 16px rgba(0, 242, 254, 0.35)' : '0 4px 14px rgba(83,52,131,.35)', transition: 'transform .12s',
             }}
               onMouseEnter={e => { if (!generating) e.currentTarget.style.transform = 'translateY(-2px)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: 15 }}>
                 <FaRobot /> AI ile Oluştur
               </div>
-              <div style={{ fontSize: 12, color: '#ffffffcc' }}>Yapay zeka sana özel bir program hazırlasın.</div>
+              <div style={{ fontSize: 12, color: isDark ? 'rgba(9, 13, 22, 0.85)' : '#ffffffcc' }}>Yapay zeka sana özel bir program hazırlasın.</div>
               {generatingAI && <div style={{ fontSize: 12, fontWeight: 600 }}>AI düşünüyor...</div>}
             </button>
           </div>
@@ -421,19 +425,19 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
         <>
           <Card style={{ marginTop: 20 }}>
             <h3 style={{ margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 8 }}><FaAppleAlt /> Günlük Beslenme Hedefi</h3>
-            <p style={{ color: '#64748b', fontSize: 13, margin: '0 0 16px' }}>
+            <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: 13, margin: '0 0 16px' }}>
               Aktif programına göre hesaplanan günlük hedeflerin.
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
               {[
-                ['Kalori', program.dailyCalories, 'kcal', '#e94560'],
+                ['Kalori', program.dailyCalories, 'kcal', isDark ? '#00f2fe' : '#e94560'],
                 ['Protein', program.proteinG, 'g', '#3b82f6'],
                 ['Karbonhidrat', program.carbsG, 'g', '#f59e0b'],
                 ['Yağ', program.fatG, 'g', '#10b981'],
               ].map(([label, val, unit, c]) => (
-                <div key={label} style={{ background: c + '10', border: `1px solid ${c}33`, borderRadius: 10, padding: '14px 10px', textAlign: 'center' }}>
+                <div key={label} style={{ background: c + '15', border: `1px solid ${c}33`, borderRadius: 10, padding: '14px 10px', textAlign: 'center' }}>
                   <div style={{ fontSize: 22, fontWeight: 800, color: c }}>{val}</div>
-                  <div style={{ fontSize: 12, color: '#64748b' }}>{label} ({unit})</div>
+                  <div style={{ fontSize: 12, color: isDark ? '#94a3b8' : '#64748b' }}>{label} ({unit})</div>
                 </div>
               ))}
             </div>
@@ -448,14 +452,14 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                   {program.dietPlan.meals.map((meal, index) => (
-                    <Card key={index} style={{ borderLeft: `4px solid ${BRAND.primary}`, background: '#fff' }}>
+                    <Card key={index} style={{ borderLeft: `4px solid ${isDark ? '#00f2fe' : BRAND.primary}` }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, flexWrap: 'wrap', gap: 10 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ fontWeight: 700, fontSize: 15, color: BRAND.dark }}>{meal.name}</span>
+                          <span style={{ fontWeight: 700, fontSize: 15, color: isDark ? '#f8fafc' : BRAND.dark }}>{meal.name}</span>
                           <Badge label={meal.time} color='#64748b' />
                         </div>
                         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                          <Badge label={`${meal.calories} kcal`} color="#e94560" />
+                          <Badge label={`${meal.calories} kcal`} color={isDark ? '#00f2fe' : '#e94560'} />
                           {meal.macros && (
                             <>
                               <Badge label={`P: ${meal.macros.protein}g`} color="#3b82f6" />
@@ -465,7 +469,7 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
                           )}
                         </div>
                       </div>
-                      <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: '#475569', lineHeight: 1.6 }}>
+                      <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13, color: isDark ? '#cbd5e1' : '#475569', lineHeight: 1.6 }}>
                         {meal.items.map((item, idx) => (
                           <li key={idx} style={{ marginBottom: 4 }}>{item}</li>
                         ))}
@@ -475,8 +479,8 @@ function ProfileDietTab({ onAvatarChange, onLogout }) {
                 </div>
               </div>
             ) : (
-              <Card style={{ textAlign: 'center', padding: '30px 20px', border: '1.5px dashed #d1d5db', background: '#f9fafb' }}>
-                <div style={{ fontSize: 32, color: BRAND.primary, marginBottom: 8 }}><FaAppleAlt /></div>
+              <Card style={{ textAlign: 'center', padding: '30px 20px', border: isDark ? '1.5px dashed rgba(6, 182, 212, 0.3)' : '1.5px dashed #d1d5db', background: isDark ? '#0b1120' : '#f9fafb' }}>
+                <div style={{ fontSize: 32, color: isDark ? '#00f2fe' : BRAND.primary, marginBottom: 8 }}><FaAppleAlt /></div>
                 <h4 style={{ margin: '0 0 4px' }}>Detaylı Günlük Öğün Listesi Bulunmuyor</h4>
                 <p style={{ color: '#64748b', fontSize: 13, margin: '0 0 16px', maxWidth: 400, marginLeft: 'auto', marginRight: 'auto' }}>
                   Hedef kalori ve makrolarınıza uygun örnek kahvaltı, öğle, akşam yemekleri ve ara öğün listesi oluşturun.
@@ -1195,6 +1199,7 @@ function ProgramsCatalogTab() {
 
 // ─── Sohbet sekmesi (üyeler arası birebir mesajlaşma) ───
 function ChatTab({ user }) {
+  const { isDark } = useTheme();
   const [conversations, setConversations] = useState([]);
   const [directory, setDirectory] = useState([]);
   const [showDirectory, setShowDirectory] = useState(false);
@@ -1330,9 +1335,10 @@ function ChatTab({ user }) {
               ) : thread.map((m) => (
                 <div key={m.id} style={{
                   alignSelf: m.senderId === user.id ? 'flex-end' : 'flex-start',
-                  background: m.senderId === user.id ? BRAND.primary : '#f3f4f6',
-                  color: m.senderId === user.id ? '#fff' : '#111827',
+                  background: m.senderId === user.id ? (isDark ? '#00f2fe' : BRAND.primary) : (isDark ? '#1e293b' : '#f3f4f6'),
+                  color: m.senderId === user.id ? (isDark ? '#090d16' : '#fff') : (isDark ? '#f8fafc' : '#111827'),
                   borderRadius: 14, padding: '8px 14px', maxWidth: '70%', fontSize: 14, wordBreak: 'break-word',
+                  fontWeight: m.senderId === user.id && isDark ? 600 : 400
                 }}>
                   {m.content}
                 </div>
@@ -2196,11 +2202,11 @@ export default function MemberDashboard({ user, onLogout }) {
           {/* Logo container */}
           <div style={{
             width: 44, height: 44, borderRadius: 12,
-            background: `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})`,
+            background: isDark ? 'linear-gradient(135deg, #00f2fe, #a855f7)' : `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: `0 4px 12px ${BRAND.primary}40`, cursor: 'pointer'
+            boxShadow: isDark ? '0 4px 16px rgba(0, 242, 254, 0.4)' : `0 4px 12px ${BRAND.primary}40`, cursor: 'pointer'
           }} onClick={() => navigate('/member/dashboard')}>
-            <FaBolt color="#fff" size={20} />
+            <FaBolt color={isDark ? '#090d16' : '#fff'} size={20} />
           </div>
 
           {/* Navigation stack */}
@@ -2215,9 +2221,9 @@ export default function MemberDashboard({ user, onLogout }) {
                     style={{
                       width: 46, height: 46, borderRadius: 12, border: 'none',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      cursor: 'pointer', color: isActive ? '#fff' : (isDark ? '#94a3b8' : '#64748b'),
-                      background: isActive ? `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})` : 'transparent',
-                      boxShadow: isActive ? `0 4px 12px ${BRAND.primary}30` : 'none',
+                      cursor: 'pointer', color: isActive ? (isDark ? '#090d16' : '#fff') : (isDark ? '#94a3b8' : '#64748b'),
+                      background: isActive ? (isDark ? 'linear-gradient(135deg, #00f2fe, #a855f7)' : `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.purple})`) : 'transparent',
+                      boxShadow: isActive ? (isDark ? '0 4px 16px rgba(0, 242, 254, 0.35)' : `0 4px 12px ${BRAND.primary}30`) : 'none',
                       transition: 'all 0.15s'
                     }}
                     onMouseEnter={e => {
@@ -2269,7 +2275,7 @@ export default function MemberDashboard({ user, onLogout }) {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <span style={{ fontWeight: 800, fontSize: 18, color: 'var(--text-main)', letterSpacing: '-0.5px' }}>
-              GymLife <span style={{ color: BRAND.primary }}>Pro</span>
+              GymLife <span style={{ color: isDark ? '#00f2fe' : BRAND.primary }}>Pro</span>
             </span>
             {gymName && (
               <span style={{
@@ -2284,14 +2290,14 @@ export default function MemberDashboard({ user, onLogout }) {
                 gap: 6,
                 border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid #e2e8f0'
               }}>
-                <FaBuilding style={{ fontSize: 12, color: BRAND.primary }} /> {gymName}
+                <FaBuilding style={{ fontSize: 12, color: isDark ? '#00f2fe' : BRAND.primary }} /> {gymName}
               </span>
             )}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <ThemeToggleBtn />
-            <Btn size="sm" color={BRAND.primary} onClick={() => goTab('qr')}>+ Hızlı QR Kodum</Btn>
+            <Btn size="sm" color={isDark ? '#00f2fe' : BRAND.primary} onClick={() => goTab('qr')}>+ Hızlı QR Kodum</Btn>
 
             <div style={{ position: 'relative' }}>
               <div
@@ -2313,31 +2319,36 @@ export default function MemberDashboard({ user, onLogout }) {
                 <>
                   <div onClick={() => setShowUserMenu(false)} style={{ position: 'fixed', inset: 0, zIndex: 998 }} />
                   <div style={{
-                    position: 'absolute', top: 48, right: 0, background: '#ffffff',
-                    border: '1px solid #e2e8f0', borderRadius: 14,
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.06)', zIndex: 999, padding: '6px 0',
+                    position: 'absolute', top: 48, right: 0,
+                    background: isDark ? '#111827' : '#ffffff',
+                    border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid #e2e8f0',
+                    borderRadius: 14,
+                    boxShadow: isDark ? '0 10px 30px rgba(0,0,0,0.4)' : '0 10px 30px rgba(0,0,0,0.06)',
+                    zIndex: 999, padding: '6px 0',
                     width: 170, display: 'flex', flexDirection: 'column',
                     animation: 'slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
                   }}>
                     <button onClick={() => { setShowUserMenu(false); goTab('profile'); }} style={{
-                      background: 'none', border: 'none', padding: '10px 16px', color: '#1e293b',
+                      background: 'none', border: 'none', padding: '10px 16px',
+                      color: isDark ? '#f8fafc' : '#1e293b',
                       textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'background .15s'
-                    }} onMouseEnter={e => e.target.style.background = '#f1f5f9'}
+                    }} onMouseEnter={e => e.target.style.background = isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}
                       onMouseLeave={e => e.target.style.background = 'none'}>
                       👤 Profil & Diyet
                     </button>
                     <button onClick={() => { setShowUserMenu(false); goTab('chat'); }} style={{
-                      background: 'none', border: 'none', padding: '10px 16px', color: '#1e293b',
+                      background: 'none', border: 'none', padding: '10px 16px',
+                      color: isDark ? '#f8fafc' : '#1e293b',
                       textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600, transition: 'background .15s'
-                    }} onMouseEnter={e => e.target.style.background = '#f1f5f9'}
+                    }} onMouseEnter={e => e.target.style.background = isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}
                       onMouseLeave={e => e.target.style.background = 'none'}>
                       💬 Sohbet
                     </button>
                     <button onClick={() => { setShowUserMenu(false); onLogout(); }} style={{
                       background: 'none', border: 'none', padding: '10px 16px', color: '#ef4444',
                       textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-                      borderTop: '1px solid #f1f5f9', transition: 'background .15s'
-                    }} onMouseEnter={e => e.target.style.background = '#f1f5f9'}
+                      borderTop: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid #f1f5f9', transition: 'background .15s'
+                    }} onMouseEnter={e => e.target.style.background = isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'}
                       onMouseLeave={e => e.target.style.background = 'none'}>
                       🚪 Çıkış Yap
                     </button>
@@ -2369,12 +2380,12 @@ export default function MemberDashboard({ user, onLogout }) {
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 52, marginBottom: 10 }}>🏆</div>
             <h3 style={{ margin: '0 0 6px', color: '#10b981', fontWeight: 700 }}>{checkInNotice.message}</h3>
-            <p style={{ fontSize: 14, color: '#64748b', margin: '0 0 20px' }}>
+            <p style={{ fontSize: 14, color: isDark ? '#94a3b8' : '#64748b', margin: '0 0 20px' }}>
               Plan: {checkInNotice.plan || '—'} · Geçerlilik: {checkInNotice.validUntil}
             </p>
-            <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 12, padding: 16, border: '1px solid rgba(255,255,255,0.08)', display: 'inline-block', minWidth: 200 }}>
-              <div style={{ fontSize: 13, color: BRAND.primary, fontWeight: 600 }}>Kazanılan Puan: +{checkInNotice.pointsEarned} Puan</div>
-              <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, color: '#fff' }}>Toplam Puanınız: {checkInNotice.totalPoints}</div>
+            <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc', borderRadius: 12, padding: 16, border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid #e2e8f0', display: 'inline-block', minWidth: 200 }}>
+              <div style={{ fontSize: 13, color: isDark ? '#00f2fe' : BRAND.primary, fontWeight: 600 }}>Kazanılan Puan: +{checkInNotice.pointsEarned} Puan</div>
+              <div style={{ fontSize: 14, fontWeight: 700, marginTop: 4, color: isDark ? '#fff' : '#1e293b' }}>Toplam Puanınız: {checkInNotice.totalPoints}</div>
             </div>
             {checkInNotice.newBadges?.length > 0 && (
               <div style={{ marginTop: 20 }}>
