@@ -223,7 +223,7 @@ export default function AdminDashboard({ user, onLogout }) {
     { id: 'exercises', label: <><FaDumbbell /> Egzersizler</>, roles: ['admin', 'trainer'] },
     { id: 'programs', label: <><FaClipboardList /> Programlar</>, roles: ['admin', 'trainer'] },
   ];
-  const TABS = ALL_TABS.filter(t => t.roles.includes(user.role));
+  const TABS = ALL_TABS.filter(t => t.roles.includes(user?.role));
   const { isDark } = useTheme();
   const color = { users: isDark ? '#00f2fe' : '#e94560', plans: '#3b82f6', enrollments: '#10b981', exercises: '#f59e0b', programs: '#8b5cf6', dashboard: '#8b5cf6', mymembers: '#8b5cf6', checkin: '#10b981', chat: isDark ? '#00f2fe' : '#ec4899' };
 
@@ -232,7 +232,7 @@ export default function AdminDashboard({ user, onLogout }) {
       <Header
         user={user}
         onLogout={onLogout}
-        titleExtra={<Badge label={user.role === 'admin' ? 'Admin' : 'Trainer'} color={isDark ? '#00f2fe' : BRAND.primary} />}
+        titleExtra={<Badge label={user?.role === 'admin' ? 'Admin' : 'Trainer'} color={isDark ? '#00f2fe' : BRAND.primary} />}
       />
 
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '28px 20px' }}>

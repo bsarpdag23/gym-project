@@ -46,7 +46,7 @@ export default function ChatTab({ user }) {
     const socket = getSocket();
     if (!socket) return;
     const handler = (msg) => {
-      const otherPartyId = msg.senderId === user.id ? msg.recipientId : msg.senderId;
+      const otherPartyId = msg.senderId === user?.id ? msg.recipientId : msg.senderId;
       if (activeUserRef.current && otherPartyId === activeUserRef.current.id) {
         setThread((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
       }
@@ -149,7 +149,7 @@ export default function ChatTab({ user }) {
                     {c.unreadCount > 0 && <Badge label={c.unreadCount} color={isDark ? '#00f2fe' : '#e94560'} />}
                   </div>
                   <div style={{ fontSize: 12, color: isDark ? '#94a3b8' : '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {c.lastMessage.senderId === user.id ? 'Sen: ' : ''}{c.lastMessage.content}
+                    {c.lastMessage.senderId === user?.id ? 'Sen: ' : ''}{c.lastMessage.content}
                   </div>
                 </div>
               </div>
@@ -177,11 +177,11 @@ export default function ChatTab({ user }) {
               ) : (
                 thread.map((m) => (
                   <div key={m.id} style={{
-                    alignSelf: m.senderId === user.id ? 'flex-end' : 'flex-start',
-                    background: m.senderId === user.id ? (isDark ? '#00f2fe' : BRAND.primary) : (isDark ? '#1e293b' : '#f3f4f6'),
-                    color: m.senderId === user.id ? (isDark ? '#090d16' : '#fff') : (isDark ? '#f8fafc' : '#111827'),
+                    alignSelf: m.senderId === user?.id ? 'flex-end' : 'flex-start',
+                    background: m.senderId === user?.id ? (isDark ? '#00f2fe' : BRAND.primary) : (isDark ? '#1e293b' : '#f3f4f6'),
+                    color: m.senderId === user?.id ? (isDark ? '#090d16' : '#fff') : (isDark ? '#f8fafc' : '#111827'),
                     borderRadius: 14, padding: '8px 14px', maxWidth: '70%', fontSize: 14, wordBreak: 'break-word',
-                    fontWeight: m.senderId === user.id && isDark ? 600 : 400
+                    fontWeight: m.senderId === user?.id && isDark ? 600 : 400
                   }}>
                     {m.content}
                   </div>
