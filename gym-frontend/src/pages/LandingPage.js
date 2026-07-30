@@ -13,9 +13,10 @@ export default function LandingPage({ goLogin, goRegister }) {
     (async () => {
       try {
         const list = await api.gyms.getPublicList();
-        setGyms(list || []);
+        setGyms(Array.isArray(list) ? list : []);
       } catch (e) {
         console.error('Salonlar yuklenemedi', e);
+        setGyms([]);
       }
     })();
   }, []);
@@ -138,7 +139,7 @@ export default function LandingPage({ goLogin, goRegister }) {
           <p style={{ color: '#6b7280', fontSize: 15, margin: 0 }}>Size en yakın salonu seçin, paketlerini inceleyin ve anında kaydolun.</p>
         </div>
 
-        {gyms.length === 0 ? (
+        {!Array.isArray(gyms) || gyms.length === 0 ? (
           <Card style={{ textAlign: 'center', padding: 40 }}>
             <p style={{ color: '#9ca3af', margin: 0, fontSize: 14 }}>Sistemimizde şu an kayıtlı aktif salon bulunmamaktadır.</p>
           </Card>
