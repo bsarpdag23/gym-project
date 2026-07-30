@@ -1270,8 +1270,8 @@ function ChatTab({ user }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 16, height: 560 }}>
       <Card style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ padding: '14px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h4 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><FaComments /> Sohbetler</h4>
+        <div style={{ padding: '14px 16px', borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #f0f0f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h4 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 8, color: isDark ? '#f8fafc' : '#1e293b' }}><FaComments /> Sohbetler</h4>
           <Btn size="sm" outline onClick={() => { setShowDirectory(!showDirectory); if (!showDirectory) loadDirectory(); }}>
             {showDirectory ? 'Geri' : '+ Yeni'}
           </Btn>
@@ -1279,34 +1279,38 @@ function ChatTab({ user }) {
         <div style={{ overflowY: 'auto', flex: 1 }}>
           {showDirectory ? (
             directory.length === 0 ? (
-              <p style={{ padding: 16, color: '#64748b', fontSize: 13 }}>Sohbet başlatılabilecek üye yok.</p>
+              <p style={{ padding: 16, color: isDark ? '#94a3b8' : '#64748b', fontSize: 13 }}>Sohbet başlatılabilecek üye yok.</p>
             ) : directory.map((u) => (
               <div key={u.id} onClick={() => openThread(u)}
                 style={{
-                  padding: '12px 16px', cursor: 'pointer', borderBottom: '1px solid #f8fafc',
+                  padding: '12px 16px', cursor: 'pointer',
+                  borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid #f8fafc',
                   display: 'flex', alignItems: 'center', gap: 10
                 }}>
                 <Avatar src={resolveAvatarUrl(u.avatarUrl)} name={u.fullName} size={30} />
-                <span style={{ fontWeight: 600, fontSize: 14 }}>{u.fullName}</span>
+                <span style={{ fontWeight: 600, fontSize: 14, color: isDark ? '#f8fafc' : '#1e293b' }}>{u.fullName}</span>
               </div>
             ))
           ) : (
             conversations.length === 0 ? (
-              <p style={{ padding: 16, color: '#64748b', fontSize: 13 }}>Henüz sohbetin yok. "+ Yeni" ile başlat.</p>
+              <p style={{ padding: 16, color: isDark ? '#94a3b8' : '#64748b', fontSize: 13 }}>Henüz sohbetin yok. "+ Yeni" ile başlat.</p>
             ) : conversations.map((c) => (
               <div key={c.user.id} onClick={() => openThread(c.user)}
                 style={{
-                  padding: '12px 16px', cursor: 'pointer', borderBottom: '1px solid #f8fafc',
+                  padding: '12px 16px', cursor: 'pointer',
+                  borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid #f8fafc',
                   display: 'flex', alignItems: 'center', gap: 10,
-                  background: activeUser?.id === c.user.id ? '#faf5ff' : 'transparent'
+                  background: activeUser?.id === c.user.id ? (isDark ? 'rgba(6, 182, 212, 0.18)' : '#faf5ff') : 'transparent',
+                  borderLeft: activeUser?.id === c.user.id ? `3px solid ${isDark ? '#00f2fe' : BRAND.primary}` : '3px solid transparent',
+                  transition: 'background .15s'
                 }}>
                 <Avatar src={resolveAvatarUrl(c.user.avatarUrl)} name={c.user.fullName} size={34} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontWeight: 600, fontSize: 14 }}>{c.user.fullName}</span>
-                    {c.unreadCount > 0 && <Badge label={c.unreadCount} color="#e94560" />}
+                    <span style={{ fontWeight: 600, fontSize: 14, color: isDark ? '#f8fafc' : '#1e293b' }}>{c.user.fullName}</span>
+                    {c.unreadCount > 0 && <Badge label={c.unreadCount} color={isDark ? '#00f2fe' : '#e94560'} />}
                   </div>
-                  <div style={{ fontSize: 12, color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <div style={{ fontSize: 12, color: isDark ? '#94a3b8' : '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {c.lastMessage.senderId === user.id ? 'Sen: ' : ''}{c.lastMessage.content}
                   </div>
                 </div>
@@ -1318,20 +1322,20 @@ function ChatTab({ user }) {
 
       <Card style={{ padding: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {!activeUser ? (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#64748b', gap: 10 }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: isDark ? '#94a3b8' : '#64748b', gap: 10 }}>
             <FaComments size={40} />
             <p style={{ margin: 0 }}>Sohbet etmek için soldan bir üye seç.</p>
           </div>
         ) : (
           <>
-            <div style={{ padding: '14px 16px', borderBottom: '1px solid #f0f0f0', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ padding: '14px 16px', borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #f0f0f0', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 10, color: isDark ? '#f8fafc' : '#1e293b' }}>
               <Avatar src={resolveAvatarUrl(activeUser.avatarUrl)} name={activeUser.fullName} size={30} /> {activeUser.fullName}
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
               {loadingThread ? (
-                <p style={{ color: '#64748b', textAlign: 'center' }}>Yükleniyor...</p>
+                <p style={{ color: isDark ? '#94a3b8' : '#64748b', textAlign: 'center' }}>Yükleniyor...</p>
               ) : thread.length === 0 ? (
-                <p style={{ color: '#64748b', textAlign: 'center' }}>İlk mesajı sen gönder!</p>
+                <p style={{ color: isDark ? '#94a3b8' : '#64748b', textAlign: 'center' }}>İlk mesajı sen gönder!</p>
               ) : thread.map((m) => (
                 <div key={m.id} style={{
                   alignSelf: m.senderId === user.id ? 'flex-end' : 'flex-start',
@@ -1345,13 +1349,17 @@ function ChatTab({ user }) {
               ))}
               <div ref={bottomRef} />
             </div>
-            <div style={{ padding: 12, borderTop: '1px solid #f0f0f0', display: 'flex', gap: 8 }}>
+            <div style={{ padding: 12, borderTop: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #f0f0f0', display: 'flex', gap: 8 }}>
               <input
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') sendMessage(); }}
                 placeholder="Mesaj yaz..."
-                style={{ flex: 1, border: '1.5px solid #e5e7eb', borderRadius: 9, padding: '10px 14px', fontSize: 14, outline: 'none' }}
+                style={{
+                  flex: 1, border: isDark ? '1px solid rgba(6, 182, 212, 0.3)' : '1.5px solid #e5e7eb',
+                  borderRadius: 9, padding: '10px 14px', fontSize: 14, outline: 'none',
+                  background: isDark ? '#0b1120' : '#fff', color: isDark ? '#f8fafc' : '#1e293b'
+                }}
               />
               <Btn onClick={sendMessage}><FaPaperPlane /></Btn>
             </div>
