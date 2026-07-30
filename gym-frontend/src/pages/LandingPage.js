@@ -117,15 +117,15 @@ export default function LandingPage({ goLogin, goRegister }) {
       <div id="features" style={{ maxWidth:1180, margin:'0 auto', padding:'90px 24px' }}>
         <div style={{ textAlign:'center', marginBottom:54 }}>
           <Badge label="ÖZELLİKLER" />
-          <h2 style={{ fontSize:34, fontWeight:800, margin:'14px 0 12px' }}>Her Şey Tek Bir Yerde</h2>
-          <p style={{ color:'#6b7280', fontSize:15 }}>İhtiyacınız olan her araç, modern ve kolay kullanımlı arayüzde.</p>
+          <h2 style={{ fontSize:34, fontWeight:800, margin:'14px 0 12px', color: isDark ? '#f8fafc' : '#1e293b' }}>Her Şey Tek Bir Yerde</h2>
+          <p style={{ color: isDark ? '#94a3b8' : '#6b7280', fontSize:15 }}>İhtiyacınız olan her araç, modern ve kolay kullanımlı arayüzde.</p>
         </div>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))', gap:20 }}>
           {features.map(f => (
             <Card key={f.title} style={{ transition:'transform .15s' }}>
-              <div style={{ fontSize:32, marginBottom:14, color:BRAND.primary }}>{f.icon}</div>
-              <h3 style={{ margin:'0 0 8px', fontSize:17 }}>{f.title}</h3>
-              <p style={{ color:'#6b7280', fontSize:14, lineHeight:1.6, margin:0 }}>{f.desc}</p>
+              <div style={{ fontSize:32, marginBottom:14, color: isDark ? '#00f2fe' : BRAND.primary }}>{f.icon}</div>
+              <h3 style={{ margin:'0 0 8px', fontSize:17, color: isDark ? '#f8fafc' : '#1e293b' }}>{f.title}</h3>
+              <p style={{ color: isDark ? '#94a3b8' : '#6b7280', fontSize:14, lineHeight:1.6, margin:0 }}>{f.desc}</p>
             </Card>
           ))}
         </div>
@@ -135,22 +135,22 @@ export default function LandingPage({ goLogin, goRegister }) {
       <div id="gyms" style={{ maxWidth: 1180, margin: '0 auto', padding: '0 24px 90px' }}>
         <div style={{ textAlign: 'center', marginBottom: 44 }}>
           <Badge label="ANLAŞMALI SALONLARIMIZ" />
-          <h2 style={{ fontSize: 34, fontWeight: 800, margin: '14px 0 12px' }}>Anlaşmalı Spor Salonlarımız</h2>
-          <p style={{ color: '#6b7280', fontSize: 15, margin: 0 }}>Size en yakın salonu seçin, paketlerini inceleyin ve anında kaydolun.</p>
+          <h2 style={{ fontSize: 34, fontWeight: 800, margin: '14px 0 12px', color: isDark ? '#f8fafc' : '#1e293b' }}>Anlaşmalı Spor Salonlarımız</h2>
+          <p style={{ color: isDark ? '#94a3b8' : '#6b7280', fontSize: 15, margin: 0 }}>Size en yakın salonu seçin, paketlerini inceleyin ve anında kaydolun.</p>
         </div>
 
         {!Array.isArray(gyms) || gyms.length === 0 ? (
           <Card style={{ textAlign: 'center', padding: 40 }}>
-            <p style={{ color: '#9ca3af', margin: 0, fontSize: 14 }}>Sistemimizde şu an kayıtlı aktif salon bulunmamaktadır.</p>
+            <p style={{ color: isDark ? '#94a3b8' : '#9ca3af', margin: 0, fontSize: 14 }}>Sistemimizde şu an kayıtlı aktif salon bulunmamaktadır.</p>
           </Card>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 20 }}>
             {gyms.map(g => (
-              <Card key={g.id} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: '1px solid #e5e7eb' }}>
+              <Card key={g.id} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: isDark ? '1px solid rgba(6, 182, 212, 0.2)' : '1px solid #e5e7eb' }}>
                 <div>
-                  <h3 style={{ margin: '0 0 10px', fontSize: 17, fontWeight: 700 }}>{g.name}</h3>
-                  <div style={{ color: '#64748b', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
-                    <FaMapMarkerAlt /> {g.address || 'Adres belirtilmemiş.'}
+                  <h3 style={{ margin: '0 0 10px', fontSize: 17, fontWeight: 700, color: isDark ? '#f8fafc' : '#1e293b' }}>{g.name}</h3>
+                  <div style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
+                    <FaMapMarkerAlt style={{ color: isDark ? '#00f2fe' : BRAND.primary }} /> {g.address || 'Adres belirtilmemiş.'}
                   </div>
                 </div>
                 <Btn onClick={() => navigate(`/gym/${g.id}`)} style={{ width: '100%', justifyContent: 'center' }}>
@@ -163,44 +163,48 @@ export default function LandingPage({ goLogin, goRegister }) {
       </div>
 
       {/* ── FİYATLANDIRMA ── */}
-      <div id="pricing" style={{ background:'#f8fafc', padding:'90px 24px' }}>
+      <div id="pricing" style={{ background: isDark ? 'rgba(11, 17, 32, 0.5)' : '#f8fafc', padding:'90px 24px', borderTop: isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid #f0f0f0', borderBottom: isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid #f0f0f0' }}>
         <div style={{ maxWidth:1100, margin:'0 auto' }}>
           <div style={{ textAlign:'center', marginBottom:54 }}>
             <Badge label="FİYATLANDIRMA" />
-            <h2 style={{ fontSize:34, fontWeight:800, margin:'14px 0 12px' }}>Size Uygun Planı Seçin</h2>
-            <p style={{ color:'#6b7280', fontSize:15 }}>Gizli ücret yok, istediğiniz zaman iptal edin.</p>
+            <h2 style={{ fontSize:34, fontWeight:800, margin:'14px 0 12px', color: isDark ? '#f8fafc' : '#1e293b' }}>Size Uygun Planı Seçin</h2>
+            <p style={{ color: isDark ? '#94a3b8' : '#6b7280', fontSize:15 }}>Gizli ücret yok, istediğiniz zaman iptal edin.</p>
           </div>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(270px,1fr))', gap:22 }}>
             {plans.map(p => (
               <Card key={p.name} style={{
-                border: p.highlight ? `2.5px solid ${BRAND.primary}` : '1px solid #f0f0f0',
+                border: p.highlight
+                  ? (isDark ? '2.5px solid #00f2fe' : `2.5px solid ${BRAND.primary}`)
+                  : (isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid #f0f0f0'),
                 position:'relative', transform: p.highlight ? 'scale(1.04)' : 'none',
-                boxShadow: p.highlight ? `0 12px 30px ${BRAND.primary}33` : '0 2px 12px rgba(0,0,0,.07)',
+                boxShadow: p.highlight
+                  ? (isDark ? '0 0 25px rgba(6, 182, 212, 0.35)' : `0 12px 30px ${BRAND.primary}33`)
+                  : (isDark ? '0 8px 30px rgba(0,0,0,0.3)' : '0 2px 12px rgba(0,0,0,.07)'),
               }}>
                 {p.highlight && (
                   <div style={{ position:'absolute', top:-13, left:'50%', transform:'translateX(-50%)' }}>
-                    <Badge label="EN POPÜLER" />
+                    <Badge label="EN POPÜLER" color={isDark ? '#00f2fe' : BRAND.primary} />
                   </div>
                 )}
-                <h3 style={{ margin:'8px 0 6px' }}>{p.name}</h3>
+                <h3 style={{ margin:'8px 0 6px', color: isDark ? '#f8fafc' : '#1e293b' }}>{p.name}</h3>
                 <div style={{ margin:'14px 0 20px', display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <div style={{ textDecoration: 'line-through', color: '#9ca3af', fontSize: 13, fontWeight: 600 }}>
+                  <div style={{ textDecoration: 'line-through', color: isDark ? '#64748b' : '#9ca3af', fontSize: 13, fontWeight: 600 }}>
                     {p.originalPrice}
                   </div>
                   <div>
-                    <span style={{ fontSize:34, fontWeight:800, color: BRAND.primary }}>{p.price}</span>
-                    <span style={{ color:'#6b7280', fontSize:14 }}>{p.period}</span>
+                    <span style={{ fontSize:34, fontWeight:800, color: isDark ? '#00f2fe' : BRAND.primary }}>{p.price}</span>
+                    <span style={{ color: isDark ? '#94a3b8' : '#6b7280', fontSize:14 }}>{p.period}</span>
                   </div>
                 </div>
                 <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:24 }}>
                   {p.features.map(f => (
-                    <div key={f} style={{ display:'flex', gap:8, fontSize:14, color:'#374151' }}>
-                      <span style={{ color:BRAND.primary }}><FaCheck/></span>{f}
+                    <div key={f} style={{ display:'flex', gap:8, fontSize:14, color: isDark ? '#cbd5e1' : '#374151' }}>
+                      <span style={{ color: isDark ? '#00f2fe' : BRAND.primary }}><FaCheck/></span>{f}
                     </div>
                   ))}
                 </div>
                 <Btn onClick={goRegister} style={{ width:'100%', justifyContent:'center' }}
-                  color={p.highlight ? BRAND.primary : '#374151'} outline={!p.highlight}>
+                  color={p.highlight ? (isDark ? '#00f2fe' : BRAND.primary) : (isDark ? '#00f2fe' : '#374151')} outline={!p.highlight}>
                   Başla
                 </Btn>
               </Card>
