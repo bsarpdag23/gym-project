@@ -1,3 +1,11 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+Allow: /login
+Allow: /register
+Allow: /gym/
+Disallow: /admin/
+Disallow: /member/
+Disallow: /super-admin/
+
+Sitemap: https://gymlifepro.tech/sitemap.xml
