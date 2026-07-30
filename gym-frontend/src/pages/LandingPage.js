@@ -34,7 +34,9 @@ export default function LandingPage({ goLogin, goRegister }) {
     { 
       name: 'Başlangıç', 
       price: '₺749', 
-      originalPrice: '₺1.499',
+      originalPrice: '₺1.499 /ay',
+      promoLabel: 'İlk 6 Ay %50 İndirim',
+      afterPromo: '6 aydan sonra ₺1.499 /ay',
       period: '/ay', 
       features: ['100 üyeye kadar', '1 Admin hesabı', 'Temel metrikler & QR giriş', 'Haftalık yedekleme', 'Email destek'], 
       highlight: false 
@@ -42,7 +44,9 @@ export default function LandingPage({ goLogin, goRegister }) {
     { 
       name: 'Profesyonel', 
       price: '₺1.399', 
-      originalPrice: '₺2.999',
+      originalPrice: '₺2.799 /ay',
+      promoLabel: 'İlk 6 Ay %50 İndirim',
+      afterPromo: '6 aydan sonra ₺2.799 /ay',
       period: '/ay', 
       features: ['500 üyeye kadar', 'Sınırsız Trainer hesabı', 'Üye Kayıp Önleme (Retention) Modülü', 'AI Diyet Modülü Entegrasyonu', 'Gelişmiş Gelir Analizi & Raporlama', 'Öncelikli Destek'], 
       highlight: true 
@@ -50,7 +54,9 @@ export default function LandingPage({ goLogin, goRegister }) {
     { 
       name: 'Kurumsal', 
       price: '₺2.899', 
-      originalPrice: '₺5.999',
+      originalPrice: '₺5.799 /ay',
+      promoLabel: 'İlk 6 Ay %50 İndirim',
+      afterPromo: '6 aydan sonra ₺5.799 /ay',
       period: '/ay', 
       features: ['Sınırsız üye & şube', 'Çoklu Şube Yönetimi', 'Sanal POS Entegrasyonu', 'Özel Domain/Microsite Desteği', 'Turnike & Donanım Entegrasyonu', '7/24 Telefon Desteği'], 
       highlight: false 
@@ -166,9 +172,9 @@ export default function LandingPage({ goLogin, goRegister }) {
       <div id="pricing" style={{ background: isDark ? 'rgba(11, 17, 32, 0.5)' : '#f8fafc', padding:'90px 24px', borderTop: isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid #f0f0f0', borderBottom: isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid #f0f0f0' }}>
         <div style={{ maxWidth:1100, margin:'0 auto' }}>
           <div style={{ textAlign:'center', marginBottom:54 }}>
-            <Badge label="FİYATLANDIRMA" />
-            <h2 style={{ fontSize:34, fontWeight:800, margin:'14px 0 12px', color: isDark ? '#f8fafc' : '#1e293b' }}>Size Uygun Planı Seçin</h2>
-            <p style={{ color: isDark ? '#94a3b8' : '#6b7280', fontSize:15 }}>Gizli ücret yok, istediğiniz zaman iptal edin.</p>
+            <Badge label="🎉 İLK 6 AY %50 İNDİRİM FIRSATI" color={isDark ? '#00f2fe' : BRAND.primary} />
+            <h2 style={{ fontSize:34, fontWeight:800, margin:'14px 0 10px', color: isDark ? '#f8fafc' : '#1e293b' }}>Size Uygun Planı Seçin</h2>
+            <p style={{ color: isDark ? '#94a3b8' : '#6b7280', fontSize:15, margin:0 }}>Tüm yeni kaydolan salonlar için ilk 6 ay %50 indirim tanımlanır. Taahhüt yok, dilediğiniz zaman iptal edebilirsiniz.</p>
           </div>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(270px,1fr))', gap:22 }}>
             {plans.map(p => (
@@ -187,15 +193,30 @@ export default function LandingPage({ goLogin, goRegister }) {
                   </div>
                 )}
                 <h3 style={{ margin:'8px 0 6px', color: isDark ? '#f8fafc' : '#1e293b' }}>{p.name}</h3>
-                <div style={{ margin:'14px 0 20px', display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <div style={{ textDecoration: 'line-through', color: isDark ? '#64748b' : '#9ca3af', fontSize: 13, fontWeight: 600 }}>
-                    {p.originalPrice}
+                
+                <div style={{ margin:'14px 0 20px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ textDecoration: 'line-through', color: isDark ? '#64748b' : '#9ca3af', fontSize: 13, fontWeight: 600 }}>
+                      {p.originalPrice}
+                    </span>
+                    <span style={{
+                      background: isDark ? 'rgba(6, 182, 212, 0.15)' : 'rgba(233, 69, 96, 0.1)',
+                      color: isDark ? '#00f2fe' : BRAND.primary,
+                      border: isDark ? '1px solid rgba(6, 182, 212, 0.3)' : `1px solid ${BRAND.primary}40`,
+                      padding: '2px 8px', borderRadius: 12, fontSize: 11, fontWeight: 700
+                    }}>
+                      {p.promoLabel}
+                    </span>
                   </div>
-                  <div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
                     <span style={{ fontSize:34, fontWeight:800, color: isDark ? '#00f2fe' : BRAND.primary }}>{p.price}</span>
                     <span style={{ color: isDark ? '#94a3b8' : '#6b7280', fontSize:14 }}>{p.period}</span>
                   </div>
+                  <div style={{ fontSize: 11, color: isDark ? '#94a3b8' : '#64748b', fontWeight: 500, marginTop: 2 }}>
+                    ({p.afterPromo})
+                  </div>
                 </div>
+
                 <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:24 }}>
                   {p.features.map(f => (
                     <div key={f} style={{ display:'flex', gap:8, fontSize:14, color: isDark ? '#cbd5e1' : '#374151' }}>
